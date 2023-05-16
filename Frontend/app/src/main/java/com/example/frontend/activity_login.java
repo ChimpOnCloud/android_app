@@ -3,6 +3,7 @@ package com.example.frontend;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -26,10 +27,20 @@ public class activity_login extends AppCompatActivity {
     EditText usernameText;
     EditText passwordText;
     TextView notificationText;
+    private String loginUsername;
+    private String loginPassword;
+    private String TESTSTRING1 = "username";
+    private String TESTSTRING2 = "password";
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.frontend";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        // we can get status of loginUser from the following lines:
+        System.out.println(mPreferences.getString(TESTSTRING1, loginUsername));
+        System.out.println(mPreferences.getString(TESTSTRING2, loginPassword));
         setContentView(R.layout.activity_login);
     }
     public void ReturnToMain(View v) {
@@ -75,11 +86,21 @@ public class activity_login extends AppCompatActivity {
                     // notificationText.setText("repeated username. Please choose another one!");
                 } else if (msg_obj_string.equals("ok")) {
                     System.out.println("succeeded");
+                    loginUsername = username;
+                    loginPassword = password;
                     // notificationText.setText("successfully registered a new account! Now you can login");
                 }  else if (msg_obj_string.equals("not registered yet!")) {
                     System.out.println("please register first");
                 }
             }
         });
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putString(TESTSTRING1, loginUsername);
+        preferencesEditor.putString(TESTSTRING2, loginPassword);
+        preferencesEditor.apply();
     }
 }
