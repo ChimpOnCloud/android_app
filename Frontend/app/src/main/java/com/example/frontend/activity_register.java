@@ -55,7 +55,7 @@ public class activity_register extends AppCompatActivity {
             return;
         }
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
-        String requestUrl = "http://183.173.45.25:8000/register/";
+        String requestUrl = "http://183.173.46.28:8000/register/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
@@ -83,9 +83,14 @@ public class activity_register extends AppCompatActivity {
                     // notificationText.setText("repeated username. Please choose another one!");
                 } else if (msg_obj_string.equals("succeeded")) {
                     System.out.println("succeeded");
+                    jumpToHomePage(v);
                     // notificationText.setText("successfully registered a new account! Now you can login");
                 }
             }
         });
+    }
+    public void jumpToHomePage(View v) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

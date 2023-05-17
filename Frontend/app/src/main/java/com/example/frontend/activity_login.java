@@ -31,6 +31,8 @@ public class activity_login extends AppCompatActivity {
     private String loginPassword;
     private String TESTSTRING1 = "username";
     private String TESTSTRING2 = "password";
+    private String LOGINSTATUS = "loginstatus";
+    private boolean isLogin = false;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
 
@@ -58,7 +60,7 @@ public class activity_login extends AppCompatActivity {
             return;
         }
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
-        String requestUrl = "http://183.173.45.25:8000/login/";
+        String requestUrl = "http://183.173.46.28:8000/login/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
@@ -88,6 +90,7 @@ public class activity_login extends AppCompatActivity {
                     System.out.println("succeeded");
                     loginUsername = username;
                     loginPassword = password;
+                    jumpToHomePage(v);
                     // notificationText.setText("successfully registered a new account! Now you can login");
                 }  else if (msg_obj_string.equals("not registered yet!")) {
                     System.out.println("please register first");
@@ -95,12 +98,24 @@ public class activity_login extends AppCompatActivity {
             }
         });
     }
+    public void jumpToHomePage(View v) {
+        isLogin = true;
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
+        bundle.putString("password", password);
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        Intent intent = new Intent(this, activity_homepage.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
     @Override
     protected void onPause() {
         super.onPause();
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putString(TESTSTRING1, loginUsername);
         preferencesEditor.putString(TESTSTRING2, loginPassword);
+        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
         preferencesEditor.apply();
     }
 }

@@ -14,7 +14,7 @@ def register_view(request):
             return HttpResponse('repeated!')
         else:
             account.objects.create(
-                username=user_data['username'], password=user_data['password'])
+                username=user_data['username'], password=user_data['password'], nickname="your nickname", introduction="you can edit your introduction here")
         return HttpResponse('succeeded')
     elif request.method == 'GET':
         return HttpResponse('GET')

@@ -3,15 +3,32 @@ package com.example.frontend;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
+    private SharedPreferences mPreferences;
+    private String loginUsername = "";
+    private String loginPassword = "";
+    private boolean isLogin = false;
+    final private String TESTSTRING1 = "username";
+    final private String TESTSTRING2 = "password";
+    final private String LOGINSTATUS = "loginstatus";
+    private String sharedPrefFile = "com.example.frontend";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        isLogin = mPreferences.getBoolean(LOGINSTATUS, isLogin);
+        if (isLogin == true) {
+            mPreferences.getString(TESTSTRING1, loginUsername);
+            mPreferences.getString(TESTSTRING2, loginPassword);
+            setContentView(R.layout.activity_homepage);
+        } else {
+            setContentView(R.layout.activity_main);
+        }
     }
     public void gotoRegister(View v) {
         Intent intent = new Intent(this, activity_register.class);
@@ -20,5 +37,12 @@ public class MainActivity extends AppCompatActivity {
     public void gotoLogin(View v) {
         Intent intent = new Intent(this, activity_login.class);
         startActivity(intent);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        preferencesEditor.apply();
     }
 }
