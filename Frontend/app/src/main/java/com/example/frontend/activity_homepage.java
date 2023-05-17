@@ -38,11 +38,9 @@ public class activity_homepage extends AppCompatActivity {
         startActivity(intent);
     }
     public void logout(View v) {
-        Bundle bundle = new Bundle();
-        bundle.putString("username", "");
-        bundle.putString("password", "");
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
     protected void onPause() {
