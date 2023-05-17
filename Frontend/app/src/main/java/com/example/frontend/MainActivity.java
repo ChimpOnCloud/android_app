@@ -25,7 +25,14 @@ public class MainActivity extends AppCompatActivity {
         if (isLogin == true) {
             mPreferences.getString(TESTSTRING1, loginUsername);
             mPreferences.getString(TESTSTRING2, loginPassword);
-            setContentView(R.layout.activity_homepage);
+            setContentView(R.layout.activity_main);
+            Bundle bundle = new Bundle();
+            bundle.putString("username", loginUsername);
+            bundle.putString("password", loginPassword);
+            bundle.putBoolean("isLogin", isLogin);
+            Intent intent = new Intent(this, activity_homepage.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
         } else {
             setContentView(R.layout.activity_main);
         }
@@ -44,5 +51,16 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
         preferencesEditor.apply();
+    }
+    public void jumpToHomePage(View v) {
+//        isLogin = true;
+//        Bundle bundle = new Bundle();
+//        bundle.putString("username", username);
+//        bundle.putString("password", password);
+//        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+//        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        Intent intent = new Intent(this, activity_homepage.class);
+//        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
