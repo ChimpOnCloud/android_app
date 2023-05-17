@@ -29,6 +29,12 @@
             android:name=".activity_register"
             android:exported="false" />
         <activity
+            android:name=".activity_chat"
+            android:exported="false" />
+        <activity
+            android:name=".chat_detail"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

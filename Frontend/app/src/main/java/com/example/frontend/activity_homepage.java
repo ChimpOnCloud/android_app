@@ -47,15 +47,14 @@ public class activity_homepage extends AppCompatActivity {
                     case R.id.navigation_topic:
                         selectedFragment = new BlankFragment();
                         break;
-                    case R.id.navigation_guide:
-                        selectedFragment = new BlankFragment();
-                        break;
-                    case R.id.navigation_me:
-                        {
-                            jumpToUserInfo(); // 调用跳转到用户信息界面的方法
-                            return true; // 注意要在此处返回 true，表示已处理点击事件
-                        }
-
+                    case R.id.navigation_guide: {
+                        jumpToChat();
+                        return true;
+                    }
+                    case R.id.navigation_me: {
+                        jumpToUserInfo(); // 调用跳转到用户信息界面的方法
+                        return true; // 注意要在此处返回 true，表示已处理点击事件
+                    }
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
                 return true;
@@ -68,6 +67,15 @@ public class activity_homepage extends AppCompatActivity {
         bundle.putString("username", username);
         bundle.putString("password", password);
         Intent intent = new Intent(this, activity_userinfo.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    public void jumpToChat(){
+        Bundle bundle = new Bundle();
+        bundle.putString("username", username);
+        bundle.putString("password", password);
+        Intent intent = new Intent(this, activity_chat.class);
         intent.putExtras(bundle);
         startActivity(intent);
     }
