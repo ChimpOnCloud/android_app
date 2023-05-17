@@ -30,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
             bundle.putString("username", loginUsername);
             bundle.putString("password", loginPassword);
             bundle.putBoolean("isLogin", isLogin);
-            Intent intent = new Intent(this, activity_homepage.class);
-            intent.putExtras(bundle);
-            startActivity(intent);
+//            Intent intent = new Intent(this, activity_homepage.class);
+//            intent.putExtras(bundle);
+//            startActivity(intent);
         } else {
             setContentView(R.layout.activity_main);
         }
