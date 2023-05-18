@@ -17,11 +17,16 @@ public class chatList {
 
 class chat{
     private user opposite;
-    private ArrayList<message> chatContent=new ArrayList<>();
+    private ArrayList<message> chatContent;
 
     public chat(user u,ArrayList<message> c){
         opposite=u;
         chatContent=c;
+    }
+
+    public chat(user u){
+        opposite=u;
+        chatContent=new ArrayList<>();
     }
 
     public ArrayList<message> getChatContent() {
@@ -31,11 +36,13 @@ class chat{
     public user getOpposite() {
         return opposite;
     }
+    public void insert(message m){ chatContent.add(m);}
 }
 
 class message{
     private String messageString;
     private user From;
+    private user To;
 
     public message(String m,user f){
         messageString=m;
@@ -48,5 +55,9 @@ class message{
 
     public user getFrom() {
         return From;
+    }
+
+    public user getTo() {
+        return To;
     }
 }

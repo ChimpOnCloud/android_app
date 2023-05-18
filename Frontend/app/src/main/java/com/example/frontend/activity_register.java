@@ -55,7 +55,7 @@ public class activity_register extends AppCompatActivity {
             return;
         }
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
-        String requestUrl = "http://183.172.222.42:8000/register/";
+        String requestUrl = getString(R.string.ipv4)+"register/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")

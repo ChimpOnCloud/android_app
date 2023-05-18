@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Frontend</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="ipv4">http://183.172.134.183:8000/</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
