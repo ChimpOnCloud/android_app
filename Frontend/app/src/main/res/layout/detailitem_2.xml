@@ -17,12 +17,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp">
 
-        <ImageButton
-            android:id="@+id/oppoIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            app:srcCompat="@drawable/ic_launcher_background" />
-
         <TextView
             android:id="@+id/oneMessage"
             android:layout_width="0dp"
@@ -30,6 +24,14 @@
             android:layout_weight="1"
             android:text=""
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="30dp"/>
+            android:layout_marginRight="30dp"
+            android:gravity="right"/>
+
+        <ImageButton
+            android:id="@+id/selfIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/ic_launcher_background" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

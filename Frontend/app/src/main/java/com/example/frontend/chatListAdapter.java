@@ -2,6 +2,7 @@ package com.example.frontend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,14 +58,23 @@ class chatViewHolder extends RecyclerView.ViewHolder{
         lastChat=itemView.findViewById(R.id.lastChat);
         userIcon.setOnClickListener(view -> {
             Intent intent=new Intent(context, activity_chatdetail.class);
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("chat",chatHistory);
+            intent.putExtras(bundle);
             context.startActivity(intent);
         });
         chatName.setOnClickListener(view -> {
             Intent intent=new Intent(context, activity_chatdetail.class);
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("chat",chatHistory);
+            intent.putExtras(bundle);
             context.startActivity(intent);
         });
         lastChat.setOnClickListener(view -> {
             Intent intent=new Intent(context, activity_chatdetail.class);
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("chat",chatHistory);
+            intent.putExtras(bundle);
             context.startActivity(intent);
         });
     }

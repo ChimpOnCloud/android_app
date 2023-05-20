@@ -1,6 +1,10 @@
 package com.example.frontend;
 
-public class user {
+import androidx.annotation.Nullable;
+
+import java.io.Serializable;
+
+public class user implements Serializable {
     private int ID;
     private String username;
     private String password;
@@ -12,6 +16,19 @@ public class user {
         password=p;
         nickname=n;
         introduction=i;
+    }
+
+    public user(){
+        ID=1;
+        username="testuser";
+        password="password";
+        nickname="nickname";
+        introduction="intro";
+    }
+
+    public boolean equals(user u) {
+        if(u.ID==ID && u.username==username) return true;
+        return false;
     }
 
     public int getID() {

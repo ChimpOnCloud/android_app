@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class chatList {
@@ -15,7 +16,7 @@ public class chatList {
     public int getCount(){return count;}
 }
 
-class chat{
+class chat implements Serializable {
     private user opposite;
     private ArrayList<message> chatContent;
 
@@ -39,7 +40,7 @@ class chat{
     public void insert(message m){ chatContent.add(m);}
 }
 
-class message{
+class message implements Serializable{
     private String messageString;
     private user From;
     private user To;

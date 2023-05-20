@@ -12,6 +12,8 @@ import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.concurrent.SynchronousQueue;
+
 public class activity_homepage extends AppCompatActivity {
     String username = "";
     String password = "";
@@ -24,6 +26,7 @@ public class activity_homepage extends AppCompatActivity {
     private String sharedPrefFile = "com.example.frontend";
     boolean isLogin = false; // if True, restore the previous login status.
     private BottomNavigationView bottomNavigationView;
+    public static user User;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,8 @@ public class activity_homepage extends AppCompatActivity {
         password = bundle.getString("password");
         isLogin = bundle.getBoolean("isLogin");
         System.out.println(isLogin);
+        // todo: create the user with params
+        User=new user();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

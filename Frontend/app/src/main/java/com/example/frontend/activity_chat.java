@@ -32,7 +32,7 @@ public class activity_chat extends AppCompatActivity {
         mAdapter=new chatListAdapter(this,mChatList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        user VirtualUser=new user(1,"username","password","nickname","my introduction");
+        user VirtualUser=new user(2,"username","password","nickname","my introduction");
         ArrayList<message> VirtualList=new ArrayList<>();
         VirtualList.add(new message("Hello!",VirtualUser));
         chat VirtualChat=new chat(VirtualUser,VirtualList);
