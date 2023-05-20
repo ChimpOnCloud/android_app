@@ -53,6 +53,52 @@
         app:layout_constraintStart_toEndOf="@id/textView_password"
         app:layout_constraintTop_toBottomOf="@id/textView_usrname_content"
          />
+    <TextView
+        android:id="@+id/textView_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your nickname:"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_password"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp" />
+
+    <TextView
+        android:id="@+id/textView_nickname_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nickname"
+        android:textSize="20dp"
+        android:textColor="@color/purple_500"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintStart_toEndOf="@id/textView_nickname"
+        app:layout_constraintTop_toBottomOf="@id/textView_password_content"
+        />
+    <TextView
+        android:id="@+id/textView_introduction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your introduction:"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_nickname"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp" />
+
+    <TextView
+        android:id="@+id/textView_introduction_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="introduction"
+        android:textSize="20dp"
+        android:textColor="@color/purple_500"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintStart_toEndOf="@id/textView_introduction"
+        app:layout_constraintTop_toBottomOf="@id/textView_nickname_content"
+        />
 
     <Button
         android:id="@+id/button5"
@@ -61,6 +107,27 @@
         android:text="return to homepage"
         android:layout_marginTop="30dp"
         android:onClick="jumpToHomePage"
-        app:layout_constraintTop_toBottomOf="@id/textView_password"
+        app:layout_constraintTop_toBottomOf="@id/textView_introduction"
         app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/usrname_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="reset"
+        android:onClick="changeUsername"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintStart_toEndOf="@id/textView_usrname_content"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <Button
+        android:id="@+id/passwd_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="reset"
+        android:onClick="changePassword"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintStart_toEndOf="@id/textView_password_content"
+        app:layout_constraintTop_toBottomOf="@id/usrname_change"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
