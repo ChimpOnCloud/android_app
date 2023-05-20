@@ -38,6 +38,7 @@ public class activity_register extends AppCompatActivity {
     EditText passwordText;
     EditText passwordAgain;
     private TextView login;
+    private TextView backToStart;
     // TextView notificationText;
 
     @Override
@@ -46,10 +47,10 @@ public class activity_register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         usernameText = findViewById(R.id.usrname);
         passwordText = findViewById(R.id.passwd);
-        passwordAgain=findViewById(R.id.passwdagain);
-        login=findViewById(R.id.signIn);
+        passwordAgain = findViewById(R.id.passwdagain);
+        login = findViewById(R.id.signIn);
         String textL="已有账户？登录";
-        SpannableString spannableStringL=new SpannableString(textL);
+        SpannableString spannableStringL = new SpannableString(textL);
         spannableStringL.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
@@ -59,6 +60,19 @@ public class activity_register extends AppCompatActivity {
         },5,7, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         login.setText(spannableStringL);
         login.setMovementMethod(LinkMovementMethod.getInstance());
+
+        backToStart = findViewById(R.id.backToStart);
+        String textBackToStart = "返回首页";
+        SpannableString spannableStringL2 = new SpannableString(textBackToStart);
+        spannableStringL2.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(activity_register.this, MainActivity.class);
+                startActivity(intent);
+            }
+        },0,4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        backToStart.setText(spannableStringL2);
+        backToStart.setMovementMethod(LinkMovementMethod.getInstance());
     }
     public void RegisterAccount(View v) {
         // notificationText = findViewById(R.id.textView_notification);

@@ -32,6 +32,7 @@ public class activity_login extends AppCompatActivity {
     EditText usernameText;
     EditText passwordText;
     private TextView reg;
+    private TextView reg2;
     // TextView notificationText;
     private String loginUsername;
     private String loginPassword;
@@ -47,12 +48,12 @@ public class activity_login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         // we can get status of loginUser from the following lines:
-        System.out.println(mPreferences.getString(TESTSTRING1, loginUsername));
-        System.out.println(mPreferences.getString(TESTSTRING2, loginPassword));
+//        System.out.println(mPreferences.getString(TESTSTRING1, loginUsername));
+//        System.out.println(mPreferences.getString(TESTSTRING2, loginPassword));
         setContentView(R.layout.activity_login);
-        reg=findViewById(R.id.signUp);
+        reg = findViewById(R.id.signUp);
         String textR="还没有账户？注册";
-        SpannableString spannableStringR=new SpannableString(textR);
+        SpannableString spannableStringR = new SpannableString(textR);
         spannableStringR.setSpan(new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
@@ -62,6 +63,19 @@ public class activity_login extends AppCompatActivity {
         },6,8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         reg.setText(spannableStringR);
         reg.setMovementMethod(LinkMovementMethod.getInstance());
+
+        reg2 = findViewById(R.id.backToStart);
+        String textR2 = "返回首页";
+        SpannableString spannableStringR2 = new SpannableString(textR2);
+        spannableStringR2.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(activity_login.this, MainActivity.class);
+                startActivity(intent);
+            }
+        },0,4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        reg2.setText(spannableStringR2);
+        reg2.setMovementMethod(LinkMovementMethod.getInstance());
     }
     public void ReturnToMain(View v) {
         Intent intent = new Intent(this, MainActivity.class);

@@ -107,6 +107,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUp"
         android:textAlignment="center"/>
+    <TextView
+        android:id="@+id/backToStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signIn"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center"/>
 
     <Button
         android:id="@+id/signUp"
