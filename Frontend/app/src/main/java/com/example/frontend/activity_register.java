@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,25 +36,39 @@ public class activity_register extends AppCompatActivity {
     String password;
     EditText usernameText;
     EditText passwordText;
-    TextView notificationText;
+    EditText passwordAgain;
+    private TextView login;
+    // TextView notificationText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-    }
-    public void ReturnToMain(View v) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-    public void RegisterAccount(View v) {
         usernameText = findViewById(R.id.usrname);
         passwordText = findViewById(R.id.passwd);
-        notificationText = findViewById(R.id.textView_notification);
+        passwordAgain=findViewById(R.id.passwdagain);
+        login=findViewById(R.id.signIn);
+        String textL="已有账户？登录";
+        SpannableString spannableStringL=new SpannableString(textL);
+        spannableStringL.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(activity_register.this, activity_login.class);
+                startActivity(intent);
+            }
+        },5,7, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        login.setText(spannableStringL);
+        login.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+    public void RegisterAccount(View v) {
+        // notificationText = findViewById(R.id.textView_notification);
         // get the usrname and passwd
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
+        if(!password.equals(passwordAgain.getText().toString())){
+            // todo: tell the user the password entered is wrong
+            return;
+        }
         if(username.isEmpty()||password.isEmpty()){
             return;
         }

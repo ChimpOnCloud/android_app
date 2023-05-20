@@ -1,11 +1,16 @@
 package com.example.frontend;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,7 +31,8 @@ public class activity_login extends AppCompatActivity {
     String password;
     EditText usernameText;
     EditText passwordText;
-    TextView notificationText;
+    private TextView reg;
+    // TextView notificationText;
     private String loginUsername;
     private String loginPassword;
     private String TESTSTRING1 = "username";
@@ -44,6 +50,18 @@ public class activity_login extends AppCompatActivity {
         System.out.println(mPreferences.getString(TESTSTRING1, loginUsername));
         System.out.println(mPreferences.getString(TESTSTRING2, loginPassword));
         setContentView(R.layout.activity_login);
+        reg=findViewById(R.id.signUp);
+        String textR="还没有账户？注册";
+        SpannableString spannableStringR=new SpannableString(textR);
+        spannableStringR.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(activity_login.this, activity_register.class);
+                startActivity(intent);
+            }
+        },6,8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        reg.setText(spannableStringR);
+        reg.setMovementMethod(LinkMovementMethod.getInstance());
     }
     public void ReturnToMain(View v) {
         Intent intent = new Intent(this, MainActivity.class);
@@ -52,7 +70,7 @@ public class activity_login extends AppCompatActivity {
     public void UserLogin(View v) {
         usernameText = findViewById(R.id.usrname);
         passwordText = findViewById(R.id.passwd);
-        notificationText = findViewById(R.id.textView_notification);
+        // notificationText = findViewById(R.id.textView_notification);
         // get the usrname and passwd
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();

@@ -1,11 +1,19 @@
 package com.example.frontend;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.text.TextRunShaper;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
@@ -16,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
     final private String TESTSTRING2 = "password";
     final private String LOGINSTATUS = "loginstatus";
     private String sharedPrefFile = "com.example.frontend";
+    private TextView welcomeText;
+    private TextView pLogin;
+    private TextView pRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +41,39 @@ public class MainActivity extends AppCompatActivity {
             bundle.putString("username", loginUsername);
             bundle.putString("password", loginPassword);
             bundle.putBoolean("isLogin", isLogin);
-//            Intent intent = new Intent(this, activity_homepage.class);
-//            intent.putExtras(bundle);
-//            startActivity(intent);
+            Intent intent = new Intent(this, activity_homepage.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
         } else {
             setContentView(R.layout.activity_main);
         }
-    }
-    public void gotoRegister(View v) {
-        Intent intent = new Intent(this, activity_register.class);
-        startActivity(intent);
-    }
-    public void gotoLogin(View v) {
-        Intent intent = new Intent(this, activity_login.class);
-        startActivity(intent);
+
+        welcomeText=findViewById(R.id.welcome);
+        welcomeText.setText("Welcome to "+getString(R.string.project_name)+"!");
+        pLogin=findViewById(R.id.promptLogin);
+        pRegister=findViewById(R.id.promptRegister);
+        String textL="登录";
+        String textR="注册";
+        SpannableString spannableStringL=new SpannableString(textL);
+        SpannableString spannableStringR=new SpannableString(textR);
+        spannableStringL.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(MainActivity.this, activity_login.class);
+                startActivity(intent);
+            }
+        },0,textL.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        pLogin.setText(spannableStringL);
+        spannableStringR.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(MainActivity.this, activity_register.class);
+                startActivity(intent);
+            }
+        },0,textR.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        pRegister.setText(spannableStringR);
+        pLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        pRegister.setMovementMethod(LinkMovementMethod.getInstance());
     }
     @Override
     protected void onPause() {
@@ -51,16 +81,5 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
         preferencesEditor.apply();
-    }
-    public void jumpToHomePage(View v) {
-//        isLogin = true;
-//        Bundle bundle = new Bundle();
-//        bundle.putString("username", username);
-//        bundle.putString("password", password);
-//        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-//        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
-        Intent intent = new Intent(this, activity_homepage.class);
-//        intent.putExtras(bundle);
-        startActivity(intent);
     }
 }
