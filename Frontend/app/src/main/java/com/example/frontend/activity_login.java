@@ -60,7 +60,7 @@ public class activity_login extends AppCompatActivity {
             return;
         }
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\" }";
-        String requestUrl = "http://101.5.130.24:8000/login/";
+        String requestUrl = "http://0.0.0.0:8000/login/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
