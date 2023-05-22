@@ -30,7 +30,6 @@ public class user implements Serializable {
         if(u.ID==ID && u.username==username) return true;
         return false;
     }
-
     public int getID() {
         return ID;
     }
