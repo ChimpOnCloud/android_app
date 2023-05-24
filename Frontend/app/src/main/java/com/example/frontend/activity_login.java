@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.*;
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -25,17 +28,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class activity_login extends AppCompatActivity {
     String username;
     String password;
+    String nickname;
+    String introduction;
     EditText usernameText;
     EditText passwordText;
     private TextView reg;
     private TextView reg2;
     // TextView notificationText;
-    private String loginUsername;
-    private String loginPassword;
     private String TESTSTRING1 = "username";
     private String TESTSTRING2 = "password";
     private String LOGINSTATUS = "loginstatus";
@@ -47,9 +51,6 @@ public class activity_login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        // we can get status of loginUser from the following lines:
-//        System.out.println(mPreferences.getString(TESTSTRING1, loginUsername));
-//        System.out.println(mPreferences.getString(TESTSTRING2, loginPassword));
         setContentView(R.layout.activity_login);
         reg = findViewById(R.id.signUp);
         String textR="还没有账户？注册";
@@ -91,7 +92,8 @@ public class activity_login extends AppCompatActivity {
         if(username.isEmpty()||password.isEmpty()){
             return;
         }
-        String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
+        String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"";
+        jsonStr = jsonStr + ",\"nickname\":\"" + nickname + "\",\"introduction\":\"" + introduction + "\"}";
         String requestUrl = getString(R.string.ipv4)+"login/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -114,14 +116,16 @@ public class activity_login extends AppCompatActivity {
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
+                JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+//                System.out.println("hello" + msg_json.getString("username"));
                 String repeatString = "repeated!";
                 if (msg_obj_string.equals("wrong password")) {
                     System.out.println("password not correct");
                     // notificationText.setText("repeated username. Please choose another one!");
-                } else if (msg_obj_string.equals("ok")) {
+                } else if (msg_json.getString("status").equals("success")) {
                     System.out.println("succeeded");
-                    loginUsername = username;
-                    loginPassword = password;
+                    nickname = msg_json.getString("nickname");
+                    introduction = msg_json.getString("introduction");
                     jumpToHomePage(v);
                     // notificationText.setText("successfully registered a new account! Now you can login");
                 }  else if (msg_obj_string.equals("not registered yet!")) {
@@ -132,21 +136,20 @@ public class activity_login extends AppCompatActivity {
     }
     public void jumpToHomePage(View v) {
         isLogin = true;
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username);
-        bundle.putString("password", password);
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        preferencesEditor.putString("username", username);
+        preferencesEditor.putString("password", password);
+        preferencesEditor.putString("nickname", nickname);
+        preferencesEditor.putString("introduction", introduction);
+        preferencesEditor.apply();
         Intent intent = new Intent(this, activity_homepage.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
     @Override
     protected void onPause() {
         super.onPause();
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putString(TESTSTRING1, loginUsername);
-        preferencesEditor.putString(TESTSTRING2, loginPassword);
         preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
         preferencesEditor.apply();
     }

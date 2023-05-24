@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="31">
         <activity
+            android:name=".activity_editinfo"
+            android:exported="false" />
+        <activity
             android:name=".activity_userinfo"
             android:exported="false" />
         <activity
@@ -34,7 +37,7 @@
         <activity
             android:name=".activity_chatdetail"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
