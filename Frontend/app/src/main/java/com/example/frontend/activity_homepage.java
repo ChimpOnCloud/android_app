@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -27,7 +29,7 @@ public class activity_homepage extends AppCompatActivity {
     private String TESTSTRING2 = "password";
     private String loginUsername = "";
     private String loginPassword = "";
-    private String LOGINSTATUS = "loginstatus";
+    private final String LOGINSTATUS = "loginstatus";
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
     boolean isLogin = false; // if True, restore the previous login status.
@@ -55,8 +57,7 @@ public class activity_homepage extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        selectedFragment = new BlankFragment();
-                        break;
+                        return true;
                     case R.id.navigation_topic:
                         selectedFragment = new BlankFragment();
                         break;
@@ -144,9 +145,12 @@ public class activity_homepage extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @SuppressLint("ApplySharedPref")
     public void logout(View v) {
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
+        preferencesEditor.commit();
+        Log.d("a",String.valueOf(mPreferences.getBoolean(LOGINSTATUS,false)));
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
