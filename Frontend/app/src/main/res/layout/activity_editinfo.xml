@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity_userinfo">
+    tools:context=".activity_editinfo">
 
     <TextView
         android:id="@+id/textView_usrname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your username:"
+        android:text="New username:"
         android:textSize="20dp"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp"
@@ -18,14 +18,14 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <TextView
+    <EditText
         android:id="@+id/textView_usrname_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="username"
         android:textSize="20dp"
         android:textColor="@color/purple_200"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintStart_toEndOf="@id/textView_usrname"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -34,43 +34,43 @@
         android:id="@+id/textView_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your password:"
+        android:text="New password:"
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_usrname"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp" />
 
-    <TextView
+    <EditText
         android:id="@+id/textView_password_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="password"
         android:textSize="20dp"
         android:textColor="@color/purple_500"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintStart_toEndOf="@id/textView_password"
         app:layout_constraintTop_toBottomOf="@id/textView_usrname_content"
-         />
+        />
     <TextView
         android:id="@+id/textView_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your nickname:"
+        android:text="New nickname:"
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_password"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp" />
-    <TextView
+    <EditText
         android:id="@+id/textView_nickname_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="nickname"
         android:textSize="20dp"
         android:textColor="@color/purple_200"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintStart_toEndOf="@id/textView_nickname"
         app:layout_constraintTop_toBottomOf="@id/textView_password_content"
@@ -79,13 +79,13 @@
         android:id="@+id/textView_introduction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your introduction:"
+        android:text="New introduction:"
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_nickname"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp" />
-    <TextView
+    <EditText
         android:id="@+id/textView_introduction_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,21 +99,12 @@
         />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="return to homepage"
-        android:layout_marginTop="30dp"
-        android:onClick="jumpToHomePage"
+        android:text="save"
+        android:onClick="saveInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-    <Button
-        android:id="@+id/changeInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="edit your info"
-        android:layout_marginTop="30dp"
-        android:onClick="jumpToInfoEditPage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_introduction_content"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

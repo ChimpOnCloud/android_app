@@ -99,7 +99,7 @@ public class activity_register extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("failed");
+                System.out.println("register failed");
                 e.printStackTrace();
             }
 
