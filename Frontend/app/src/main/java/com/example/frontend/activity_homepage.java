@@ -25,6 +25,8 @@ import java.util.concurrent.SynchronousQueue;
 public class activity_homepage extends AppCompatActivity {
     String username = "";
     String password = "";
+    String nickname = "";
+    String introduction = "";
     private String TESTSTRING1 = "username";
     private String TESTSTRING2 = "password";
     private String loginUsername = "";
@@ -43,10 +45,11 @@ public class activity_homepage extends AppCompatActivity {
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
         Bundle bundle = this.getIntent().getExtras();
-        username = bundle.getString("username");
-        password = bundle.getString("password");
-        isLogin = bundle.getBoolean("isLogin");
-        System.out.println(isLogin);
+        username = mPreferences.getString("username", username);
+        password = mPreferences.getString("password", password);
+        nickname = mPreferences.getString("nickname", nickname);
+        introduction = mPreferences.getString("introduction", introduction);
+        isLogin = mPreferences.getBoolean("loginstatus", isLogin);
         // todo: create the user with params
         User=new user();
 
@@ -128,11 +131,7 @@ public class activity_homepage extends AppCompatActivity {
     }
 
     public void jumpToUserInfo() {
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username);
-        bundle.putString("password", password);
         Intent intent = new Intent(this, activity_userinfo.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
 
@@ -150,16 +149,11 @@ public class activity_homepage extends AppCompatActivity {
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
         preferencesEditor.commit();
-        Log.d("a",String.valueOf(mPreferences.getBoolean(LOGINSTATUS,false)));
+        // Log.d("a",String.valueOf(mPreferences.getBoolean(LOGINSTATUS,false)));
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
     protected void onPause() {
         super.onPause();
-        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putString(TESTSTRING1, loginUsername);
-        preferencesEditor.putString(TESTSTRING2, loginPassword);
-        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
-        preferencesEditor.apply();
     }
 }
