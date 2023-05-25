@@ -26,6 +26,7 @@ public class activity_userinfo extends AppCompatActivity {
         setContentView(R.layout.activity_userinfo);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         username = mPreferences.getString("username", username);
+        System.out.println("new page:" + username);
         password = mPreferences.getString("password", password);
         nickname = mPreferences.getString("nickname", nickname);
         introduction = mPreferences.getString("introduction", introduction);
