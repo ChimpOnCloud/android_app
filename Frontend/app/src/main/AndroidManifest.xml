@@ -26,13 +26,13 @@
             android:name=".activity_homepage"
             android:exported="false" />
         <activity
+            android:name=".activity_chat"
+            android:exported="false" />
+        <activity
             android:name=".activity_login"
             android:exported="false" />
         <activity
             android:name=".activity_register"
-            android:exported="false" />
-        <activity
-            android:name=".activity_chat"
             android:exported="false" />
         <activity
             android:name=".activity_chatdetail"

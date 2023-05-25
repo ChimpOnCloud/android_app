@@ -30,6 +30,8 @@ public class activity_userinfo extends AppCompatActivity {
         nickname = mPreferences.getString("nickname", nickname);
         introduction = mPreferences.getString("introduction", introduction);
         usrnameContent = findViewById(R.id.textView_usrname_content);
+        nicknameContent = findViewById(R.id.textView_nickname_content);
+        introductionContent = findViewById(R.id.textView_nickname_content);
         passwdContent = findViewById(R.id.textView_password_content);
         nicknameContent = findViewById(R.id.textView_nickname_content);
         introductionContent = findViewById(R.id.textView_introduction_content);
@@ -45,5 +47,8 @@ public class activity_userinfo extends AppCompatActivity {
     public void jumpToInfoEditPage(View v) {
         Intent intent = new Intent(this, activity_editinfo.class);
         startActivity(intent);
+    }
+    public void changeUsername(View v) {
+
     }
 }

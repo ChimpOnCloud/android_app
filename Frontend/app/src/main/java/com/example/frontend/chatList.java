@@ -20,6 +20,7 @@ class chat implements Serializable {
     private user opposite;
     private ArrayList<message> chatContent;
 
+
     public chat(user u,ArrayList<message> c){
         opposite=u;
         chatContent=c;
