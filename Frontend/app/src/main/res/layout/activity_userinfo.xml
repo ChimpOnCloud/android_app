@@ -6,97 +6,62 @@
     android:layout_height="match_parent"
     tools:context=".activity_userinfo">
 
-    <TextView
-        android:id="@+id/textView_usrname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your username:"
-        android:textSize="20dp"
-        android:layout_marginTop="30dp"
+    <ImageView
+        android:id="@+id/userIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:srcCompat="@drawable/ic_launcher_background" />
 
     <TextView
         android:id="@+id/textView_usrname_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
         android:text="username"
-        android:textSize="20dp"
         android:textColor="@color/purple_200"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        app:layout_constraintStart_toEndOf="@id/textView_usrname"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textSize="34sp"
+        app:layout_constraintStart_toEndOf="@+id/userIcon"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your password:"
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_usrname"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp" />
-
-    <TextView
-        android:id="@+id/textView_password_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="password"
-        android:textSize="20dp"
-        android:textColor="@color/purple_500"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        app:layout_constraintStart_toEndOf="@id/textView_password"
-        app:layout_constraintTop_toBottomOf="@id/textView_usrname_content"
-         />
     <TextView
         android:id="@+id/textView_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your nickname:"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="10dp"
+        android:text="Nickname: "
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_password"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_usrname_content" />
+
     <TextView
         android:id="@+id/textView_nickname_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="nickname"
-        android:textSize="20dp"
         android:textColor="@color/purple_200"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
-        app:layout_constraintStart_toEndOf="@id/textView_nickname"
-        app:layout_constraintTop_toBottomOf="@id/textView_password_content"
-        />
-    <TextView
-        android:id="@+id/textView_introduction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Your introduction:"
         android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_nickname"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp" />
+        app:layout_constraintStart_toEndOf="@+id/textView_nickname"
+        app:layout_constraintTop_toBottomOf="@+id/textView_usrname_content" />
+
     <TextView
         android:id="@+id/textView_introduction_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="introduction"
-        android:textSize="20dp"
-        android:textColor="@color/purple_700"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="30dp"
+        android:text="introduction"
+        android:textColor="@color/purple_700"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_introduction"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/userIcon" />
 
     <Button
         android:id="@+id/button5"
@@ -107,13 +72,51 @@
         android:onClick="jumpToHomePage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
     <Button
         android:id="@+id/changeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="edit your info"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="272dp"
         android:onClick="jumpToInfoEditPage"
+        android:text="edit your info"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_introduction_content"/>
+        app:layout_constraintTop_toBottomOf="@id/textView_introduction_content" />
+
+    <TextView
+        android:id="@+id/textView_password_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
+        android:text="Password: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
+
+    <Button
+        android:id="@+id/checkSubscribed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="14dp"
+        android:backgroundTint="@color/bottom_nav_item_color"
+        android:onClick="checkSubscribed"
+        android:stateListAnimator="@null"
+        android:text="Subscribed"
+        android:textColor="@color/purple_500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_password_content" />
+
+    <ImageButton
+        android:id="@+id/subscribe"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="47dp"
+        android:gravity="center"
+        app:icon="@android:drawable/btn_star_big_off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

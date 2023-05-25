@@ -50,8 +50,9 @@ public class activity_homepage extends AppCompatActivity {
         nickname = mPreferences.getString("nickname", nickname);
         introduction = mPreferences.getString("introduction", introduction);
         isLogin = mPreferences.getBoolean("loginstatus", isLogin);
-        // todo: create the user with params
-        User=new user();
+        // todo: create the User with params
+        User=new user(1,username,password,nickname,introduction);
+        Log.d("a",User.getUsername());
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -60,6 +61,7 @@ public class activity_homepage extends AppCompatActivity {
                 Fragment selectedFragment = null;
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
+                        jumpToHomePage();
                         return true;
                     case R.id.navigation_topic:
                         selectedFragment = new BlankFragment();
@@ -130,6 +132,10 @@ public class activity_homepage extends AppCompatActivity {
 
     }
 
+    public void jumpToHomePage(){
+        Intent intent=new Intent(this,activity_homepage.class);
+        startActivity(intent);
+    }
     public void jumpToUserInfo() {
         Intent intent = new Intent(this, activity_userinfo.class);
         startActivity(intent);
