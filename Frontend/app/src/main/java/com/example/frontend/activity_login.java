@@ -116,20 +116,20 @@ public class activity_login extends AppCompatActivity {
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
-                JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
 //                System.out.println("hello" + msg_json.getString("username"));
                 String repeatString = "repeated!";
                 if (msg_obj_string.equals("wrong password")) {
                     System.out.println("password not correct");
                     // notificationText.setText("repeated username. Please choose another one!");
-                } else if (msg_json.getString("status").equals("success")) {
+                } else if (msg_obj_string.equals("not registered yet!")) {
+                    System.out.println("please register first");
+                } else {
                     System.out.println("succeeded");
+                    System.out.println(msg_obj_string);
+                    JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
                     nickname = msg_json.getString("nickname");
                     introduction = msg_json.getString("introduction");
                     jumpToHomePage(v);
-                    // notificationText.setText("successfully registered a new account! Now you can login");
-                }  else if (msg_obj_string.equals("not registered yet!")) {
-                    System.out.println("please register first");
                 }
             }
         });

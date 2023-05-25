@@ -20,5 +20,6 @@ from android_server import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', views.register_view),
-    path('login/',  views.login_view)
+    path('login/',  views.login_view),
+    path('changeUserinfo/', views.change_userinfo)
 ]
