@@ -13,7 +13,7 @@
         android:icon="@drawable/ic_launcher_background" />
     <item
         android:id="@+id/navigation_guide"
-        android:title="导读"
+        android:title="私聊"
         app:showAsAction="always"
         android:icon="@drawable/ic_launcher_background" />
     <item

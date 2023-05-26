@@ -21,7 +21,7 @@ public class activity_subscribelist extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_subscribelist);
         // todo: create mUserList properly with post
         mUserList=new ArrayList<>();
         mRecyclerView=findViewById(R.id.recyclerview);
