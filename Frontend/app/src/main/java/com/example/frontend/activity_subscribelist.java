@@ -1,6 +1,8 @@
 package com.example.frontend;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,5 +32,9 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         user VirtualUser=new user();
         userInsert(VirtualUser);
+    }
+    public void jumpToUserSearchPage(View v) {
+        Intent intent = new Intent(this, activity_searchuser.class);
+        startActivity(intent);
     }
 }
