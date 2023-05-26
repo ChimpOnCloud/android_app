@@ -57,12 +57,17 @@ public class activity_userinfo extends AppCompatActivity {
         introductionContent.setText(mUser.getIntroduction());
         // todo: get subscribe info and change the button icon
         subscribe=false;
-        subButton.setOnClickListener(view -> {
-            subscribe=!subscribe;
+        if(!mUser.getUsername().equals(activity_homepage.User.getUsername())) {
+            subButton.setOnClickListener(view -> {
+                subscribe = !subscribe;
+                subButtonSetIcon();
+                // todo: post the data to backend
+            });
             subButtonSetIcon();
-            // todo: post the data to backend
-        });
-        subButtonSetIcon();
+        }
+        else{
+            subButton.setEnabled(false);
+        }
     }
     public void jumpToHomePage(View v) {
         Intent intent = new Intent(this, activity_homepage.class);
