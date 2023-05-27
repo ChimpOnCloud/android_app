@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
@@ -32,15 +34,18 @@ public class activity_searchuser extends AppCompatActivity {
     private userAdapter mAdapter;
     private Button searchButton;
     private EditText inputName;
+    private final Handler handler = new Handler();
 
     public void userInsert(user u){
         mUserList.add(u);
         mRecyclerView.setAdapter(mAdapter);
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_searchuser);
+
         // todo: create mUserList properly with post
         mUserList=new ArrayList<>();
         mRecyclerView=findViewById(R.id.recyclerview);
@@ -49,8 +54,8 @@ public class activity_searchuser extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchButton=findViewById(R.id.buttonSearch);
         inputName=findViewById(R.id.search);
-        user VirtualUser=new user();
-        userInsert(VirtualUser);
+        /*user VirtualUser=new user();
+        userInsert(VirtualUser);*/
     }
     public void jumpToUserSearchPage(View v) {
         Intent intent = new Intent(this, activity_searchuser.class);
@@ -96,7 +101,13 @@ public class activity_searchuser extends AppCompatActivity {
                     String nickname = msg_json.getString("nickname");
                     String introduction = msg_json.getString("introduction");
                     user targetUser = new user(id, username, password, nickname, introduction);
-                    userInsert(targetUser);// TODO: bug here!
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            userInsert(targetUser);
+                        }
+                    });// TODO: bug here!
                 }
             }
         });
