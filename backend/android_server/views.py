@@ -60,3 +60,22 @@ def change_userinfo(request):
             target_user.introduction = full_user_data['newIntroduction']
             target_user.save()
             return HttpResponse('ok')
+
+
+def search_user(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        potential_user = account.objects.filter(
+            username=user_data['targetName'])
+        if not potential_user:
+            return HttpResponse('notfound')
+        else:
+            target_user = account.objects.get(username=user_data['targetName'])
+            return_dict = {}
+            return_dict['ID'] = target_user.ID
+            return_dict['username'] = target_user.username
+            return_dict['password'] = target_user.password
+            return_dict['nickname'] = target_user.nickname
+            return_dict['introduction'] = target_user.introduction
+            print(target_user.username)
+            return HttpResponse(json.dumps(return_dict))
