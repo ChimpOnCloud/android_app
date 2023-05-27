@@ -24,14 +24,25 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/userName"
-                android:layout_width="match_parent"
                 android:layout_height="70dp"
+                android:layout_width="250dp"
                 android:textColor="@color/black"
                 android:backgroundTint="@color/white"
+                android:text="username"
+                android:stateListAnimator="@null"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"/>
+            <Button
+                android:id="@+id/followButton"
+                android:layout_width="95dp"
+                android:layout_height="70dp"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/purple_200"
+                android:text="follow"
                 android:stateListAnimator="@null"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"/>
