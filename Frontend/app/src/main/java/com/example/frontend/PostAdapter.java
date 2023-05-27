@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -52,6 +53,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (mPosts == null || mPosts.size() <= position) {
             return;
         }
+        // todo: get subscribe info here
+        Boolean sub=true;
+        if(!sub) {
+            holder.mSubscribed.setEnabled(false);
+            holder.mSubscribed.setText("");
+        }
         holder.bind(mPosts.get(position));
     }
 
@@ -62,7 +69,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mTitle;
         private TextView mContent;
         private ImageView[] mImages= new ImageView[6];
-
+        private TextView mSubscribed;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -77,6 +84,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mImages[3] = itemView.findViewById(R.id.post_image_4);
             mImages[4] = itemView.findViewById(R.id.post_image_5);
             mImages[5] = itemView.findViewById(R.id.post_image_6);
+            mSubscribed=itemView.findViewById(R.id.subscribe);
+
 //            mTitle.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
