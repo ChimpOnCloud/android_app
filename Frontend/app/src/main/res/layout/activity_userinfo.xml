@@ -78,12 +78,12 @@
         android:id="@+id/changeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="224dp"
-        android:layout_marginTop="468dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginBottom="16dp"
         android:onClick="jumpToInfoEditPage"
         android:text="edit your info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_introduction_content" />
+        app:layout_constraintStart_toEndOf="@id/button5"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/textView_password_content"
