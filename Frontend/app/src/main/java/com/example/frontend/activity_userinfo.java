@@ -3,6 +3,8 @@ package com.example.frontend;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.security.Guard;
+import java.util.ArrayList;
 
 public class activity_userinfo extends AppCompatActivity {
     user mUser;
@@ -40,7 +43,15 @@ public class activity_userinfo extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
     private Boolean isCurrentUser;
+    private RecyclerView mRecyclerview;
+    private ArrayList<Post> mPostList;
+    private PostAdapter mAdapter;
 
+
+    private void postInsert(Post p){
+        mPostList.add(p);
+        mRecyclerview.setAdapter(mAdapter);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +75,7 @@ public class activity_userinfo extends AppCompatActivity {
         subButton=findViewById(R.id.subscribe);
         shieldText=findViewById(R.id.shield);
         changeInfoButton=findViewById(R.id.changeInfo);
+        mRecyclerview=findViewById(R.id.pyqlist);
 
         usrnameContent.setText(mUser.getUsername());
         if(isCurrentUser) passwdContent.setText("Password: "+mUser.getPassword());
@@ -96,6 +108,13 @@ public class activity_userinfo extends AppCompatActivity {
             changeInfoButton.setEnabled(false);
             changeInfoButton.setVisibility(View.INVISIBLE);
         }
+
+        // todo: crete mPostList
+        mPostList=new ArrayList<>();
+        mAdapter=new PostAdapter(mPostList);
+        mRecyclerview.setAdapter(mAdapter);
+        mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        postInsert(new Post());
     }
     public void jumpToHomePage(View v) {
         Intent intent = new Intent(this, activity_homepage.class);
