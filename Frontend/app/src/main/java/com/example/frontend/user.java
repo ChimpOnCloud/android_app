@@ -18,7 +18,6 @@ public class user implements Serializable {
         password=p;
         nickname=n;
         introduction=i;
-        Log.d("user",username);
     }
 
     public user(){

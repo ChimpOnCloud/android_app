@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse
-from android_server.models import account
+from android_server.models import account, followperson
 import json
 # Create your views here.
 
@@ -79,3 +79,33 @@ def search_user(request):
             return_dict['introduction'] = target_user.introduction
             print(target_user.username)
             return HttpResponse(json.dumps(return_dict))
+
+
+def show_subscribelist(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        user_ID = int(user_data['followedUser'])
+        potential_user = account.objects.filter(ID=user_ID)
+        if not potential_user:
+            return HttpResponse('notfound')
+        else:
+            followed_user = account.objects.filter(ID=user_ID)
+            return_dict = {}
+            return_dict['ID'] = followed_user.ID
+            return_dict['username'] = followed_user.username
+            return HttpResponse(json.dumps(return_dict))
+
+
+def handle_followuser(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        # print(user_data['dstusername'])  # the username of the one was followed
+        dst_user = account.objects.filter(
+            username=user_data['dstusername'])
+        dst_user_dict = dst_user.first().__dict__
+        src_user = account.objects.filter(
+            username=user_data['srcusername'])
+        src_user_dict = src_user.first().__dict__
+        followperson.objects.create(
+            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'])
+        return HttpResponse('ok')

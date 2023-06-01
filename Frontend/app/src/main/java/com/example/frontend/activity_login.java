@@ -19,7 +19,10 @@ import org.json.*;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,6 +40,7 @@ public class activity_login extends AppCompatActivity {
     String introduction;
     EditText usernameText;
     EditText passwordText;
+    Set<String> followers = new HashSet<>();
     private TextView reg;
     private TextView reg2;
     // TextView notificationText;

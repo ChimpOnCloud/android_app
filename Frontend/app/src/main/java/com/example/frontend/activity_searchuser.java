@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -35,6 +36,7 @@ public class activity_searchuser extends AppCompatActivity {
     private Button searchButton;
     private EditText inputName;
     private final Handler handler = new Handler();
+    user targetUser;
 
     public void userInsert(user u){
         mUserList.add(u);
@@ -54,8 +56,8 @@ public class activity_searchuser extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchButton=findViewById(R.id.buttonSearch);
         inputName=findViewById(R.id.search);
-        /*user VirtualUser=new user();
-        userInsert(VirtualUser);*/
+//        user VirtualUser=new user();
+//        userInsert(VirtualUser);
     }
     public void jumpToUserSearchPage(View v) {
         Intent intent = new Intent(this, activity_searchuser.class);
@@ -90,9 +92,18 @@ public class activity_searchuser extends AppCompatActivity {
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
+                    mAdapter.mUserList.clear();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.setAdapter(mAdapter);
+                        }
+                    });
                     System.out.println("no such user");
                 } else {
                     System.out.println("succeeded");
+                    // empty the mUserList
+                    mAdapter.mUserList.clear();
                     System.out.println(msg_obj_string);
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
                     int id = msg_json.getIntValue("ID");
@@ -100,14 +111,15 @@ public class activity_searchuser extends AppCompatActivity {
                     String password = msg_json.getString("password");
                     String nickname = msg_json.getString("nickname");
                     String introduction = msg_json.getString("introduction");
-                    user targetUser = new user(id, username, password, nickname, introduction);
+                    targetUser = new user(id, username, password, nickname, introduction);
+                    mAdapter.mUserList.add(targetUser);
 
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             userInsert(targetUser);
                         }
-                    });// TODO: bug here!
+                    });
                 }
             }
         });
