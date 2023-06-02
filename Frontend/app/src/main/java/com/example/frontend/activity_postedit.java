@@ -3,6 +3,7 @@ package com.example.frontend;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -19,11 +20,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -43,6 +49,8 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     private Double longitude,latitude;
     private LocationManager locationManager;
     private String mLocation="";
+    private TextView tagText;
+    private Post post;
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -53,6 +61,8 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         contentText=findViewById(R.id.content);
         addImageButton=findViewById(R.id.addImageButton);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        tagText=findViewById(R.id.post_topic);
+        post=new Post();
     }
 
     public void onBackClicked(View v){
@@ -61,7 +71,6 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     }
     public void onConfirmClicked(View v){
         Intent intent=new Intent();
-        Post post=new Post();
         post.setTitle(titleText.getText().toString());
         post.setContent(contentText.getText().toString());
         post.setTime();
@@ -87,7 +96,6 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, activity_postedit.this);
         String provider = getProvider(locationManager);
-        Log.d("a",provider);
         if (provider == null) {
             Toast.makeText(activity_postedit.this, "定位失败", Toast.LENGTH_SHORT).show();
         }
@@ -120,6 +128,21 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onTagChangeClicked(View v){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("选择话题");
+        builder.setSingleChoiceItems(Post.tagList, 0, new DialogInterface.OnClickListener() {
+            @Override
+            //which为你当前选中的索引，从0开始
+            public void onClick(DialogInterface dialogInterface, int which) {
+                tagText.setText(Post.tagList[which]);
+                post.setTag(Post.tagList[which]);
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
     }
     @Override
     public void onLocationChanged(@NonNull Location location) {

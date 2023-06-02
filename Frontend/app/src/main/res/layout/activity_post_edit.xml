@@ -26,6 +26,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="发布动态"
+            android:layout_gravity="right"
             android:textSize="20sp" />
 
         <!-- 发布按钮 -->
@@ -37,6 +38,20 @@
             android:text="发布" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/post_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/bg_corner_image"
+        android:padding="2dp"
+        android:text="#默认话题"
+        android:clickable="true"
+        android:onClick="onTagChangeClicked"
+        android:textColor="#ffffff"
+        android:focusable="true" />
 
     <!-- 标题输入框 -->
     <EditText

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Post implements Parcelable {
@@ -22,6 +23,13 @@ public class Post implements Parcelable {
     private String content; // 帖子内容
     private int[] images; // 帖子图片
     private String location;
+    private String tag;
+    public static final String[] tagList=new String[]{
+        "#默认话题",
+        "#校园资讯",
+        "#二手交易",
+        "#思绪随笔",
+        "#吐槽盘点"};
 
     public Post() {
         this.avatar = R.drawable.ic_default_avatar;
@@ -31,6 +39,7 @@ public class Post implements Parcelable {
         this.content = "1.默认内容\n2.默认内容\n3.默认内容";
         this.images = null;
         this.location=null;
+        this.tag="#默认话题";
     }
 
     protected Post(Parcel in) {
@@ -41,6 +50,7 @@ public class Post implements Parcelable {
         content=in.readString();
         images = in.createIntArray();
         location=in.readString();
+        tag=in.readString();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -119,6 +129,7 @@ public class Post implements Parcelable {
         parcel.writeString(content);
         parcel.writeIntArray(images);
         parcel.writeString(location);
+        parcel.writeString(tag);
     }
 
     public void setLocation(String location) {
@@ -127,5 +138,13 @@ public class Post implements Parcelable {
 
     public String getLocation() {
         return location;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return tag;
     }
 }

@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +73,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private ImageView[] mImages= new ImageView[6];
         private TextView mSubscribed;
         private TextView mLocation;
+        private TextView mTag;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -80,6 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mTitle = itemView.findViewById(R.id.post_title);
             mContent = itemView.findViewById(R.id.post_content);
             mLocation=itemView.findViewById(R.id.post_location);
+            mTag=itemView.findViewById(R.id.post_topic);
             mImages[0] = itemView.findViewById(R.id.post_image_1);
             mImages[1] = itemView.findViewById(R.id.post_image_2);
             mImages[2] = itemView.findViewById(R.id.post_image_3);
@@ -130,8 +134,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 }
             }
             mLocation.setText(post.getLocation());
+            mTag.setText(post.getTag());
         }
-
     }
 }
 
