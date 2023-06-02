@@ -92,6 +92,9 @@ public class activity_editinfo extends AppCompatActivity {
                     System.out.println("successfully changed userinfo");
                     SharedPreferences.Editor preferencesEditor = mPreferences.edit();
                     preferencesEditor.putString("username", newUsername);
+                    preferencesEditor.putString("password", newPassword);
+                    preferencesEditor.putString("nickname", newNickname);
+                    preferencesEditor.putString("introduction", newIntroduction);
                     preferencesEditor.apply();
                 } else if (msg_obj_string.equals("repeated username!")) {
                     System.out.println("already have this username!");

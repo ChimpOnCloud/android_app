@@ -53,8 +53,11 @@ def change_userinfo(request):
             username=full_user_data['newUsername'])
         if not potential_user:
             return HttpResponse('not registered yet!')
-        elif potential_new_user:
-            print('sss')
+        elif full_user_data['newUsername'] == full_user_data['oldUsername']:
+            account.objects.filter(username=full_user_data['oldUsername']).update(
+                username=full_user_data['newUsername'], password=full_user_data['newPassword'], nickname=full_user_data['newNickname'], introduction=full_user_data['newIntroduction'])
+            return HttpResponse('ok')
+        elif potential_new_user and full_user_data['newPassword'] == full_user_data['oldPassword'] and full_user_data['newNickname'] == full_user_data['oldNickname'] and full_user_data['newIntroduction'] == full_user_data['oldIntroduction']:
             return HttpResponse('repeated username!')
         else:
             account.objects.filter(username=full_user_data['oldUsername']).update(
