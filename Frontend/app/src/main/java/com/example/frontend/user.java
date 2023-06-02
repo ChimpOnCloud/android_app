@@ -27,6 +27,13 @@ public class user implements Serializable {
         nickname="nickname";
         introduction="intro bla bla bla...";
     }
+    public user(String u){
+        ID=1;
+        username=u;
+        password="password";
+        nickname="nickname";
+        introduction="intro bla bla bla...";
+    }
 
     public boolean equals(user u) {
         if(u.ID==ID && u.username==username) return true;

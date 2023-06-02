@@ -84,15 +84,21 @@ def search_user(request):
 def show_subscribelist(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
-        user_ID = int(user_data['followedUser'])
-        potential_user = account.objects.filter(ID=user_ID)
+        potential_user = account.objects.filter(
+            username=user_data['srcUsername'])  # a list contains at most 1 element
         if not potential_user:
-            return HttpResponse('notfound')
+            return HttpResponse('error')
         else:
-            followed_user = account.objects.filter(ID=user_ID)
+            follow_relations = followperson.objects.filter(
+                followerID=potential_user.first().__dict__['ID'])
             return_dict = {}
-            return_dict['ID'] = followed_user.ID
-            return_dict['username'] = followed_user.username
+            for i, follow_relation in enumerate(follow_relations):
+                followedpersonID = follow_relation.__dict__[
+                    'followedpersonID']
+                followedpersonUsername = account.objects.filter(
+                    ID=followedpersonID).first().__dict__['username']
+                return_dict[i] = followedpersonUsername
+            print(return_dict)
             return HttpResponse(json.dumps(return_dict))
 
 

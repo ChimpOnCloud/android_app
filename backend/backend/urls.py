@@ -24,5 +24,6 @@ urlpatterns = [
     path('changeUserinfo/', views.change_userinfo),
     path('searchUser/', views.search_user),
     path('handleFollowuser/', views.handle_followuser),
-    path('handleunFollowuser/', views.handle_unfollowuser)
+    path('handleunFollowuser/', views.handle_unfollowuser),
+    path('showSubscribedlist/', views.show_subscribelist)
 ]

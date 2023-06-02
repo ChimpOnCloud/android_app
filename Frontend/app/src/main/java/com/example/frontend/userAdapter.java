@@ -84,7 +84,7 @@ class userViewHolder extends RecyclerView.ViewHolder{
 
         handler.post(new Runnable() {
             @Override
-            public void run() {
+            public void run() { // on create, judge if this user was already followed
                 String mSrcusername = "";
                 mSrcusername = mPreferences.getString("username", mSrcusername);
                 String mJsonStr = "{\"dstusername\":\""+ mUser.getUsername() + "\"";
