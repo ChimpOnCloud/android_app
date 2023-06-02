@@ -3,6 +3,7 @@ package com.example.frontend;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -41,6 +42,7 @@ public class activity_subscribelist extends AppCompatActivity {
     Set<String> followedUsers;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
+    private final Handler handler = new Handler();
 
     public void userInsert(user u){
         mUserList.add(u);
@@ -58,11 +60,10 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        String username = "";
-        username = mPreferences.getString("username", username);
-
+        String Username = "";
+        Username = mPreferences.getString("username", Username);
         // get all the followed users from backend
-        String jsonStr = "{\"srcUsername\":\""+ username + "\"}";
+        String jsonStr = "{\"srcUsername\":\""+ Username + "\"}";
         String requestUrl = getString(R.string.ipv4)+"showSubscribedlist/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -92,7 +93,13 @@ public class activity_subscribelist extends AppCompatActivity {
                     for (int i = 0; i < msg_json.size(); i++) {
                         String insert_username = msg_json.getString(Integer.toString(i));
                         user insertUser = new user(insert_username); // here we only store username, other attributes shouldn't be used!
-                        userInsert(insertUser);
+                        System.out.println(insert_username);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                userInsert(insertUser);
+                            }
+                        });
                     }
                 }
             }

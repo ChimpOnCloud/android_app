@@ -49,16 +49,16 @@ def change_userinfo(request):
         full_user_data = json.loads(request.body)  # from frontend
         potential_user = account.objects.filter(
             username=full_user_data['oldUsername'])  # a list contains at most 1 element
+        potential_new_user = account.objects.filter(
+            username=full_user_data['newUsername'])
         if not potential_user:
             return HttpResponse('not registered yet!')
+        elif potential_new_user:
+            print('sss')
+            return HttpResponse('repeated username!')
         else:
-            target_user = account.objects.get(
-                username=full_user_data['oldUsername'])
-            target_user.username = full_user_data['newUsername']
-            target_user.password = full_user_data['newPassword']
-            target_user.nickname = full_user_data['newNickname']
-            target_user.introduction = full_user_data['newIntroduction']
-            target_user.save()
+            account.objects.filter(username=full_user_data['oldUsername']).update(
+                username=full_user_data['newUsername'], password=full_user_data['newPassword'], nickname=full_user_data['newNickname'], introduction=full_user_data['newIntroduction'])
             return HttpResponse('ok')
 
 
@@ -77,7 +77,6 @@ def search_user(request):
             return_dict['password'] = target_user.password
             return_dict['nickname'] = target_user.nickname
             return_dict['introduction'] = target_user.introduction
-            print(target_user.username)
             return HttpResponse(json.dumps(return_dict))
 
 
@@ -88,6 +87,7 @@ def show_subscribelist(request):
             username=user_data['srcUsername'])  # a list contains at most 1 element
         if not potential_user:
             return HttpResponse('error')
+
         else:
             follow_relations = followperson.objects.filter(
                 followerID=potential_user.first().__dict__['ID'])
@@ -98,7 +98,6 @@ def show_subscribelist(request):
                 followedpersonUsername = account.objects.filter(
                     ID=followedpersonID).first().__dict__['username']
                 return_dict[i] = followedpersonUsername
-            print(return_dict)
             return HttpResponse(json.dumps(return_dict))
 
 
