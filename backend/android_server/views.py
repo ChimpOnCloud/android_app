@@ -98,7 +98,12 @@ def show_subscribelist(request):
 
 def handle_followuser(request):
     if request.method == 'POST':
+        # for i, obj in enumerate(followperson.objects.all()):
+        #     obj.delete()
+        # return HttpResponse('hellop')
         user_data = json.loads(request.body)
+
+        follow_relation_cnt = len(followperson.objects.all())
 
         dst_user = account.objects.filter(
             username=user_data['dstusername'])
@@ -113,7 +118,7 @@ def handle_followuser(request):
             return HttpResponse('followed')
 
         followperson.objects.create(
-            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'])
+            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'], ID=follow_relation_cnt)
         return HttpResponse('ok')
 
 
@@ -135,4 +140,7 @@ def handle_unfollowuser(request):
 
         followperson.objects.get(
             followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID']).delete()
+        for i, obj in enumerate(followperson.objects.all()):
+            followperson.objects.filter(ID=obj.__dict__['ID']).update(ID=i)
+            print(i, obj.__dict__['ID'])
         return HttpResponse('ok')
