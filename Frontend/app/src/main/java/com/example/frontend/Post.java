@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.SpannableString;
@@ -20,6 +21,7 @@ public class Post implements Parcelable {
     private String title; // 帖子标题
     private String content; // 帖子内容
     private int[] images; // 帖子图片
+    private String location;
 
     public Post() {
         this.avatar = R.drawable.ic_default_avatar;
@@ -28,6 +30,7 @@ public class Post implements Parcelable {
         this.title = "默认标题";
         this.content = "1.默认内容\n2.默认内容\n3.默认内容";
         this.images = null;
+        this.location=null;
     }
 
     protected Post(Parcel in) {
@@ -37,6 +40,7 @@ public class Post implements Parcelable {
         title=in.readString();
         content=in.readString();
         images = in.createIntArray();
+        location=in.readString();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -114,5 +118,14 @@ public class Post implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(content);
         parcel.writeIntArray(images);
+        parcel.writeString(location);
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

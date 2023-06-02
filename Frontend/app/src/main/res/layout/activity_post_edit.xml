@@ -107,4 +107,12 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/useLocate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="onLocationClicked"
+        android:text="Activate Location" />
+
 </LinearLayout>
