@@ -114,10 +114,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             // 将数据绑定到ViewHolder中的控件上
             mAvatar.setImageResource(post.getAvatar());
             mAuthor.setText(post.getAuthor());
-            long timestamp = post.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            String formattedTime = sdf.format(new Date(timestamp));
-            mTime.setText(formattedTime);
+            mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());
             mContent.setText(post.getContent());
             if(post.getImages() != null) {

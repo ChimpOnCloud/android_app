@@ -32,10 +32,7 @@ public class PostInfoActivity extends AppCompatActivity {
         authorTextView.setText(post.getAuthor());
 
         TextView timeTextView = findViewById(R.id.post_time);
-        long timestamp = post.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String formattedTime = sdf.format(new Date(timestamp));
-        timeTextView.setText(formattedTime);
+        timeTextView.setText(post.getTime());
 
 
         // 设置返回按钮的点击事件

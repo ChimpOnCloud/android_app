@@ -56,8 +56,6 @@ public class activity_searchuser extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchButton=findViewById(R.id.buttonSearch);
         inputName=findViewById(R.id.search);
-//        user VirtualUser=new user();
-//        userInsert(VirtualUser);
     }
     public void jumpToUserSearchPage(View v) {
         Intent intent = new Intent(this, activity_searchuser.class);
@@ -111,7 +109,7 @@ public class activity_searchuser extends AppCompatActivity {
                     String nickname = msg_json.getString("nickname");
                     String introduction = msg_json.getString("introduction");
                     targetUser = new user(id, username, password, nickname, introduction);
-                    mAdapter.mUserList.add(targetUser);
+                    // mAdapter.mUserList.add(targetUser);
 
                     handler.post(new Runnable() {
                         @Override
