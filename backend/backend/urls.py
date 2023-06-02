@@ -23,5 +23,6 @@ urlpatterns = [
     path('login/',  views.login_view),
     path('changeUserinfo/', views.change_userinfo),
     path('searchUser/', views.search_user),
-    path('handleFollowuser/', views.handle_followuser)
+    path('handleFollowuser/', views.handle_followuser),
+    path('handleunFollowuser/', views.handle_unfollowuser)
 ]

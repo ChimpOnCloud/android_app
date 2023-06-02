@@ -4,7 +4,7 @@ from django.db import models
 
 
 class followperson(models.Model):
-    ID = models.AutoField(default=0, primary_key=True)
+    ID = models.AutoField(primary_key=True)
     followerID = models.IntegerField()  # 关注的人
     followedpersonID = models.IntegerField()  # 被关注的人
 

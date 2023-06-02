@@ -3,6 +3,9 @@ package com.example.frontend;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
+import android.graphics.Color;
+import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +37,10 @@ public class userAdapter extends RecyclerView.Adapter<userViewHolder> {
     public final LayoutInflater inflater;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
-
     public userAdapter(Context context,ArrayList<user> list){
         mUserList=list;
         inflater=LayoutInflater.from(context);
+        mPreferences = context.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE);
     }
 
     @NonNull
@@ -70,6 +73,7 @@ class userViewHolder extends RecyclerView.ViewHolder{
     public user mUser;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
+    private final Handler handler = new Handler();
     public userViewHolder(@NonNull View itemView,userAdapter adapter){
         super(itemView);
         Context context=itemView.getContext();
@@ -77,6 +81,47 @@ class userViewHolder extends RecyclerView.ViewHolder{
         userIconButton=itemView.findViewById(R.id.userIcon);
         followButton = itemView.findViewById(R.id.followButton);
         mPreferences = context.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE);
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                String mSrcusername = "";
+                mSrcusername = mPreferences.getString("username", mSrcusername);
+                String mJsonStr = "{\"dstusername\":\""+ mUser.getUsername() + "\"";
+                mJsonStr = mJsonStr + ",\"srcusername\":\"" + mSrcusername + "\"}";
+                String mRequestUrl = context.getString(R.string.ipv4)+"handleFollowuser/";
+                OkHttpClient mclient = new OkHttpClient();
+                MediaType mJSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody mbody = RequestBody.create(mJSON, mJsonStr);
+                Request mrequest = new Request.Builder()
+                        .url(mRequestUrl)
+                        .post(mbody)
+                        .build();
+                mclient.newCall(mrequest).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("failed");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        if (msg_obj_string.equals("ok")) {
+
+                        } else if (msg_obj_string.equals("followed")){
+                            followButton.setText("unfollow");
+                            followButton.setBackgroundColor(Color.GRAY);
+                        }
+                    }
+                });
+            }
+        });
+
         userIconButton.setOnClickListener(view ->  {
             Intent intent=new Intent(context,activity_userinfo.class);
             intent.putExtra("user",mUser);
@@ -95,8 +140,6 @@ class userViewHolder extends RecyclerView.ViewHolder{
                 String jsonStr = "{\"dstusername\":\""+ mUser.getUsername() + "\"";
                 jsonStr = jsonStr + ",\"srcusername\":\"" + srcusername + "\"}";
                 String requestUrl = context.getString(R.string.ipv4)+"handleFollowuser/";
-                System.out.println(jsonStr);
-                System.out.println(requestUrl);
                 OkHttpClient client = new OkHttpClient();
                 MediaType JSON = MediaType.parse("application/json; charset=utf-8");
                 @SuppressWarnings("deprecation")
@@ -119,15 +162,51 @@ class userViewHolder extends RecyclerView.ViewHolder{
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         String msg_obj_string = msg.obj.toString();
                         if (msg_obj_string.equals("ok")) {
-
-                        } else {
-
+                            followButton.setText("unfollow");
+                            followButton.setBackgroundColor(Color.GRAY);
+                        } else if (msg_obj_string.equals("followed")){
+                            followButton.setText("unfollow");
+                            followButton.setBackgroundColor(Color.GRAY);
                         }
                     }
                 });
             }
-            else if (followText == "unfollow") { // follow, cancel it.
+            else if (followText.equals("unfollow")) { // follow, cancel it.
+                String srcusername = "";
+                srcusername = mPreferences.getString("username", srcusername);
+                String jsonStr = "{\"dstusername\":\""+ mUser.getUsername() + "\"";
+                jsonStr = jsonStr + ",\"srcusername\":\"" + srcusername + "\"}";
+                String requestUrl = context.getString(R.string.ipv4)+"handleunFollowuser/";
+                OkHttpClient client = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody body = RequestBody.create(JSON, jsonStr);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("failed");
+                        e.printStackTrace();
+                    }
 
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        if (msg_obj_string.equals("ok")) {
+                            followButton.setText("follow");
+                            followButton.setBackgroundColor(Color.YELLOW);
+                        } else if (msg_obj_string.equals("unfollowed")){
+                            followButton.setText("follow");
+                            followButton.setBackgroundColor(Color.YELLOW);
+                        }
+                    }
+                });
             }
         });
     }
