@@ -53,57 +53,50 @@ public class activity_subscribelist extends AppCompatActivity {
         // todo: create mUserList properly with post
         mUserList=new ArrayList<>();
         mRecyclerView=findViewById(R.id.recyclerview);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         mAdapter=new userAdapter(this,mUserList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        followedUsers = mPreferences.getStringSet("followedUsers", followedUsers);
+        String username = "";
+        username = mPreferences.getString("username", username);
 
-
-        if (followedUsers != null) {
-            for (String followedUser : followedUsers) {
-                // TODO: GET userinfo from id in string format
-                String jsonStr = "{\"followedUserID\":\""+ followedUser + "\"}";
-                String requestUrl = getString(R.string.ipv4)+"showSubscribedlist/";
-                OkHttpClient client = new OkHttpClient();
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-                @SuppressWarnings("deprecation")
-                RequestBody body = RequestBody.create(JSON, jsonStr);
-                Request request = new Request.Builder()
-                        .url(requestUrl)
-                        .post(body)
-                        .build();
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        System.out.println("failed");
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onResponse(Call call, final Response response)
-                            throws IOException {
-                        Message msg = new Message();
-                        msg.obj = Objects.requireNonNull(response.body()).string();
-                        String msg_obj_string = msg.obj.toString();
-//                System.out.println("hello" + msg_json.getString("username"));
-                        String repeatString = "repeated!";
-                        if (msg_obj_string.equals("notfound")) {
-
-                        } else {
-                            JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                            int ID = msg_json.getIntValue("ID");
-                            String username = msg_json.getString("username");
-                            // TODO: add to the list in UI
-                        }
-                    }
-                });
+        // get all the followed users from backend
+        String jsonStr = "{\"srcUsername\":\""+ username + "\"}";
+        String requestUrl = getString(R.string.ipv4)+"showSubscribedlist/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
             }
-        }
 
-        user VirtualUser=new user();
-        userInsert(VirtualUser);
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+                    JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                    for (int i = 0; i < msg_json.size(); i++) {
+                        String insert_username = msg_json.getString(Integer.toString(i));
+                        user insertUser = new user(insert_username); // here we only store username, other attributes shouldn't be used!
+                        userInsert(insertUser);
+                    }
+                }
+            }
+        });
 
         prompt=findViewById(R.id.promptSearch);
         String target="寻找更多用户";

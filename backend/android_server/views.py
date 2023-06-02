@@ -84,28 +84,69 @@ def search_user(request):
 def show_subscribelist(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
-        user_ID = int(user_data['followedUser'])
-        potential_user = account.objects.filter(ID=user_ID)
+        potential_user = account.objects.filter(
+            username=user_data['srcUsername'])  # a list contains at most 1 element
         if not potential_user:
-            return HttpResponse('notfound')
+            return HttpResponse('error')
         else:
-            followed_user = account.objects.filter(ID=user_ID)
+            follow_relations = followperson.objects.filter(
+                followerID=potential_user.first().__dict__['ID'])
             return_dict = {}
-            return_dict['ID'] = followed_user.ID
-            return_dict['username'] = followed_user.username
+            for i, follow_relation in enumerate(follow_relations):
+                followedpersonID = follow_relation.__dict__[
+                    'followedpersonID']
+                followedpersonUsername = account.objects.filter(
+                    ID=followedpersonID).first().__dict__['username']
+                return_dict[i] = followedpersonUsername
+            print(return_dict)
             return HttpResponse(json.dumps(return_dict))
 
 
 def handle_followuser(request):
     if request.method == 'POST':
+        # for i, obj in enumerate(followperson.objects.all()):
+        #     obj.delete()
+        # return HttpResponse('hellop')
         user_data = json.loads(request.body)
-        # print(user_data['dstusername'])  # the username of the one was followed
+
+        follow_relation_cnt = len(followperson.objects.all())
+
         dst_user = account.objects.filter(
             username=user_data['dstusername'])
         dst_user_dict = dst_user.first().__dict__
         src_user = account.objects.filter(
             username=user_data['srcusername'])
         src_user_dict = src_user.first().__dict__
-        followperson.objects.create(
+
+        potential_follow = followperson.objects.filter(
             followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'])
+        if potential_follow:  # already followed
+            return HttpResponse('followed')
+
+        followperson.objects.create(
+            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'], ID=follow_relation_cnt)
+        return HttpResponse('ok')
+
+
+def handle_unfollowuser(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+
+        dst_user = account.objects.filter(
+            username=user_data['dstusername'])
+        dst_user_dict = dst_user.first().__dict__
+        src_user = account.objects.filter(
+            username=user_data['srcusername'])
+        src_user_dict = src_user.first().__dict__
+
+        potential_follow = followperson.objects.filter(
+            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'])
+        if not potential_follow:  # already unfollowed
+            return HttpResponse('unfollowed')
+
+        followperson.objects.get(
+            followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID']).delete()
+        for i, obj in enumerate(followperson.objects.all()):
+            followperson.objects.filter(ID=obj.__dict__['ID']).update(ID=i)
+            print(i, obj.__dict__['ID'])
         return HttpResponse('ok')

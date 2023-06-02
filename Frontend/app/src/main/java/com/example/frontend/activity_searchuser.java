@@ -104,7 +104,6 @@ public class activity_searchuser extends AppCompatActivity {
                     System.out.println("succeeded");
                     // empty the mUserList
                     mAdapter.mUserList.clear();
-                    System.out.println(msg_obj_string);
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
                     int id = msg_json.getIntValue("ID");
                     String username = msg_json.getString("username");
