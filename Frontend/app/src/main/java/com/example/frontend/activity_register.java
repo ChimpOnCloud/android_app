@@ -1,9 +1,12 @@
 package com.example.frontend;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
@@ -39,7 +42,10 @@ public class activity_register extends AppCompatActivity {
     EditText passwordAgain;
     private TextView login;
     private TextView backToStart;
-    // TextView notificationText;
+    private String LOGINSTATUS = "loginstatus";
+    private boolean isLogin = false;
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.frontend";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +79,46 @@ public class activity_register extends AppCompatActivity {
         },0,4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         backToStart.setText(spannableStringL2);
         backToStart.setMovementMethod(LinkMovementMethod.getInstance());
+        mPreferences=getSharedPreferences(sharedPrefFile,MODE_PRIVATE);
     }
     public void RegisterAccount(View v) {
-        // notificationText = findViewById(R.id.textView_notification);
         // get the usrname and passwd
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
         if(!password.equals(passwordAgain.getText().toString())){
-            // todo: tell the user the password entered is wrong
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
+                    builder.setTitle("Error");
+                    builder.setMessage("两次输入的密码不一致");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog dialog=builder.create();
+                    dialog.show();
+                }
+            });
             return;
         }
         if(username.isEmpty()||password.isEmpty()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
+                    builder.setTitle("Info");
+                    builder.setMessage("请输入用户名和密码");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog dialog=builder.create();
+                    dialog.show();
+                }
+            });
             return;
         }
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
@@ -99,7 +134,22 @@ public class activity_register extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("register failed");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                    }
+                });
+                // System.out.println("register failed");
                 e.printStackTrace();
             }
 
@@ -111,17 +161,39 @@ public class activity_register extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 String repeatString = "repeated!";
                 if (msg_obj_string.equals(repeatString)) {
-                    System.out.println("repeated");
-                    // notificationText.setText("repeated username. Please choose another one!");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
+                            builder.setTitle("Error");
+                            builder.setMessage("该用户名已经被占用，换一个吧");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
+                    // System.out.println("repeated");
                 } else if (msg_obj_string.equals("succeeded")) {
                     System.out.println("succeeded");
                     jumpToHomePage(v);
-                    // notificationText.setText("successfully registered a new account! Now you can login");
                 }
             }
         });
     }
     public void jumpToHomePage(View v) {
+        isLogin = true;
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        preferencesEditor.putString("username", username);
+        preferencesEditor.putString("password", password);
+        user mUser=new user();
+        preferencesEditor.putString("nickname", mUser.getNickname());
+        preferencesEditor.putString("introduction", mUser.getIntroduction());
+        preferencesEditor.apply();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

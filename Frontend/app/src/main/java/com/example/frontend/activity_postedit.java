@@ -33,6 +33,7 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     private EditText titleText;
     private EditText contentText;
     private Button addImageButton;
+    private Button locateButton;
     public SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
     private Boolean useLocation=false;
@@ -51,6 +53,9 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     private String mLocation="";
     private TextView tagText;
     private Post post;
+    private static final String titleString="title";
+    private static final String contentString="content";
+    private static final String tagString="tag";
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -60,12 +65,22 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         titleText=findViewById(R.id.title);
         contentText=findViewById(R.id.content);
         addImageButton=findViewById(R.id.addImageButton);
+        locateButton=findViewById(R.id.useLocate);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         tagText=findViewById(R.id.post_topic);
         post=new Post();
+
+        titleText.setText(mPreferences.getString(titleString,""));
+        contentText.setText(mPreferences.getString(contentString,""));
+        tagText.setText(mPreferences.getString(tagString,""));
     }
 
     public void onBackClicked(View v){
+        SharedPreferences.Editor editor=mPreferences.edit();
+        editor.putString(titleString,titleText.getText().toString());
+        editor.putString(contentString,contentText.getText().toString());
+        editor.putString(tagString,tagText.getText().toString());
+        editor.apply();
         setResult(RESULT_CANCELED);
         finish();
     }
@@ -97,13 +112,29 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, activity_postedit.this);
         String provider = getProvider(locationManager);
         if (provider == null) {
-            Toast.makeText(activity_postedit.this, "定位失败", Toast.LENGTH_SHORT).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_postedit.this);
+                    builder.setTitle("Error");
+                    builder.setMessage("定位失败。。可能没有开启位置信息？");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog dialog=builder.create();
+                    dialog.show();
+                }
+            });
+            useLocation=false;
+            // Toast.makeText(activity_postedit.this, "定位失败", Toast.LENGTH_SHORT).show();
         }
         return locationManager.getLastKnownLocation(provider);
     }
     public void onLocationClicked(View v){
         // final todo: add the following part
-        // useLocation=!useLocation;
+        useLocation=!useLocation;
         if(useLocation){
             if (ActivityCompat.checkSelfPermission(activity_postedit.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity_postedit.this, new String[] {Manifest.permission.INTERNET}, 100);
@@ -115,6 +146,25 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                 ActivityCompat.requestPermissions(activity_postedit.this, new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
             }
             Location location=getLocation();
+            if(location==null){
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_postedit.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("定位失败。。可能没有开启位置信息？");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                    }
+                });
+                useLocation=false;
+                return;
+            }
             latitude = location.getLatitude();
             // 获取当前经度
             longitude = location.getLongitude();
@@ -127,6 +177,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            locateButton.setText("Deactivate Location");
         }
     }
 

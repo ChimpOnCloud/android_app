@@ -1,8 +1,10 @@
 package com.example.frontend;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -43,9 +45,6 @@ public class activity_login extends AppCompatActivity {
     Set<String> followers = new HashSet<>();
     private TextView reg;
     private TextView reg2;
-    // TextView notificationText;
-    private String TESTSTRING1 = "username";
-    private String TESTSTRING2 = "password";
     private String LOGINSTATUS = "loginstatus";
     private boolean isLogin = false;
     private SharedPreferences mPreferences;
@@ -110,7 +109,22 @@ public class activity_login extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("failed");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                    }
+                });
+                // System.out.println("failed");
                 e.printStackTrace();
             }
 
@@ -120,13 +134,42 @@ public class activity_login extends AppCompatActivity {
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
-//                System.out.println("hello" + msg_json.getString("username"));
-                String repeatString = "repeated!";
+                // String repeatString = "repeated!";
                 if (msg_obj_string.equals("wrong password")) {
-                    System.out.println("password not correct");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
+                            builder.setTitle("Error");
+                            builder.setMessage("输入的密码有误");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
+                    // System.out.println("password not correct");
                     // notificationText.setText("repeated username. Please choose another one!");
                 } else if (msg_obj_string.equals("not registered yet!")) {
-                    System.out.println("please register first");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
+                            builder.setTitle("Info");
+                            builder.setMessage("看起来您还没有注册，请先注册");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
+                    // System.out.println("please register first");
                 } else {
                     System.out.println("succeeded");
                     System.out.println(msg_obj_string);

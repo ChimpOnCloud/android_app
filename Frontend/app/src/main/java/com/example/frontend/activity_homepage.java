@@ -55,7 +55,7 @@ public class activity_homepage extends AppCompatActivity {
         isLogin = mPreferences.getBoolean("loginstatus", isLogin);
         // todo: create the User with params
         User=new user(1,username,password,nickname,introduction);
-        Log.d("a",User.getUsername());
+        // Log.d("a",User.getUsername());
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -105,11 +105,9 @@ public class activity_homepage extends AppCompatActivity {
         mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String viewType) {
-                if (viewType.equals("title") || viewType.equals("content")) {
-                    Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-                    intent.putExtra("post", posts.get(position));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
+                intent.putExtra("post", posts.get(position));
+                startActivity(intent);
             }
         });
 

@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="602dp"
+                android:layout_marginTop="482dp"
                 android:src="@drawable/ic_add"
                 app:tint="@android:color/white" />
 

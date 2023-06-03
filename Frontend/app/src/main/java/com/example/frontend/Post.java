@@ -24,6 +24,9 @@ public class Post implements Parcelable {
     private int[] images; // 帖子图片
     private String location;
     private String tag;
+    private int commentNumber;
+    private int thumbsupNumber;
+    private int likeNumber;
     public static final String[] tagList=new String[]{
         "#默认话题",
         "#校园资讯",
@@ -40,6 +43,7 @@ public class Post implements Parcelable {
         this.images = null;
         this.location=null;
         this.tag="#默认话题";
+        this.commentNumber=this.thumbsupNumber=this.likeNumber=0;
     }
 
     protected Post(Parcel in) {
@@ -51,6 +55,9 @@ public class Post implements Parcelable {
         images = in.createIntArray();
         location=in.readString();
         tag=in.readString();
+        commentNumber=in.readInt();
+        thumbsupNumber=in.readInt();
+        likeNumber=in.readInt();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -130,6 +137,9 @@ public class Post implements Parcelable {
         parcel.writeIntArray(images);
         parcel.writeString(location);
         parcel.writeString(tag);
+        parcel.writeInt(commentNumber);
+        parcel.writeInt(thumbsupNumber);
+        parcel.writeInt(likeNumber);
     }
 
     public void setLocation(String location) {
@@ -146,5 +156,29 @@ public class Post implements Parcelable {
 
     public String getTag() {
         return tag;
+    }
+
+    public void setCommentNumber(int commentNumber) {
+        this.commentNumber = commentNumber;
+    }
+
+    public void setLikeNumber(int likeNumber) {
+        this.likeNumber = likeNumber;
+    }
+
+    public void setThumbsupNumber(int thumbsupNumber) {
+        this.thumbsupNumber = thumbsupNumber;
+    }
+
+    public int getCommentNumber() {
+        return commentNumber;
+    }
+
+    public int getLikeNumber() {
+        return likeNumber;
+    }
+
+    public int getThumbsupNumber() {
+        return thumbsupNumber;
     }
 }

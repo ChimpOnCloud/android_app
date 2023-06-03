@@ -1,11 +1,13 @@
 package com.example.frontend;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,7 +65,6 @@ public class activity_searchuser extends AppCompatActivity {
     }
 
     public void onSearchClicked(View v){
-        // todo: get info from backend and create mUserList properly
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
         String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
@@ -79,7 +80,22 @@ public class activity_searchuser extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("failed");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                    }
+                });
+                // System.out.println("failed");
                 e.printStackTrace();
             }
 
@@ -91,6 +107,21 @@ public class activity_searchuser extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mUserList.clear();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                            builder.setTitle("Info");
+                            builder.setMessage("该用户不存在");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -109,7 +140,6 @@ public class activity_searchuser extends AppCompatActivity {
                     String nickname = msg_json.getString("nickname");
                     String introduction = msg_json.getString("introduction");
                     targetUser = new user(id, username, password, nickname, introduction);
-                    // mAdapter.mUserList.add(targetUser);
 
                     handler.post(new Runnable() {
                         @Override

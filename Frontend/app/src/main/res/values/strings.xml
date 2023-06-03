@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Frontend</string>
-    <string name="ipv4">http://183.172.133.214:8000/</string>
+    <string name="ipv4">http://183.172.220.173:8000/</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="project_name">Chat THU</string>
 </resources>

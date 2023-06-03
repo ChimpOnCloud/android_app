@@ -64,23 +64,15 @@
         app:layout_constraintTop_toBottomOf="@+id/userIcon" />
 
     <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:onClick="jumpToHomePage"
-        android:text="return to homepage"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
         android:id="@+id/changeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="42dp"
         android:onClick="jumpToInfoEditPage"
         android:text="edit your info"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button5" />
+        app:layout_constraintStart_toEndOf="@+id/checkSubscribed"
+        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
 
     <TextView
         android:id="@+id/textView_password_content"
