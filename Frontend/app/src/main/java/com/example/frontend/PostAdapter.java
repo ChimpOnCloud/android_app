@@ -14,16 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> mPosts;
+    ArrayList<Post> mPosts;
     private OnItemClickListener mItemClickListener;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(ArrayList<Post> posts) {
         mPosts = posts;
     }
 
@@ -75,9 +76,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mSubscribed;
         private TextView mLocation;
         private TextView mTag;
-        private LinearLayout commentLayout;
-        private LinearLayout thumbsupLayout;
-        private LinearLayout likeLayout;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);

@@ -41,7 +41,7 @@ public class activity_homepage extends AppCompatActivity {
     private RecyclerView mPostRecyclerView;
     private PostAdapter mPostAdapter;
     private static final int newPost=1;
-    private List<Post> posts;
+    private ArrayList<Post> posts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +67,8 @@ public class activity_homepage extends AppCompatActivity {
                         jumpToHomePage();
                         return true;
                     case R.id.navigation_topic:
-                        selectedFragment = new BlankFragment();
-                        break;
+                        jumpToSearch();
+                        return true;
                     case R.id.navigation_guide: {
                         jumpToChat();
                         return true;
@@ -110,9 +110,6 @@ public class activity_homepage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
         FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +118,7 @@ public class activity_homepage extends AppCompatActivity {
                 startActivityForResult(intent,newPost);
             }
         });
-
+        LoadingDialogUtil.getInstance().showLoadingDialog(this,"Loading..");
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -149,13 +146,15 @@ public class activity_homepage extends AppCompatActivity {
     }
 
     public void jumpToChat(){
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username);
-        bundle.putString("password", password);
         Intent intent = new Intent(this, activity_chat.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
+
+    public void jumpToSearch(){
+        Intent intent=new Intent(this,activity_search.class);
+        startActivity(intent);
+    }
+
 
     @SuppressLint("ApplySharedPref")
     public void logout(View v) {
