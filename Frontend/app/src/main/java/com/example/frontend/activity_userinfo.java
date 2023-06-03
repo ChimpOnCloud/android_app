@@ -76,7 +76,10 @@ public class activity_userinfo extends AppCompatActivity {
                 else if("设置".equals(item.getTitle())){
                     jumpToInfoEditPage();
                 }
-                else if("关注".equals(item.getTitle())){
+                else if ("通知".equals(item.getTitle())) {
+                    jumpToInfoPage();
+                }
+                else if("关注/取关".equals(item.getTitle())){
                     subscribe=!subscribe;
                     // todo: notify backend
                     runOnUiThread(new Runnable() {
@@ -95,9 +98,16 @@ public class activity_userinfo extends AppCompatActivity {
                         }
                     });
                 }
-                else if("屏蔽".equals(item.getTitle())){
+                else if("屏蔽/解除".equals(item.getTitle())){
                     shielded=!shielded;
                     // todo: notify backend
+                }
+                else if("私聊".equals(item.getTitle())){
+                    // todo: get chat content
+                    chat targetChat=new chat(mUser,new ArrayList<>());
+                    Intent intent=new Intent(activity_userinfo.this,activity_chatdetail.class);
+                    intent.putExtra("chat",targetChat);
+                    startActivity(intent);
                 }
                 return true;
             }
@@ -142,9 +152,9 @@ public class activity_userinfo extends AppCompatActivity {
         usrnameContent.setText(mUser.getUsername());
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
-        // todo: get subscribe info and change the button icon
+        // todo: get subscribe pattern
         subscribe=false;
-        // todo: get the shield pattern here
+        // todo: get shield pattern
         shielded=false;
 
         // todo: crete mPostList
@@ -160,7 +170,10 @@ public class activity_userinfo extends AppCompatActivity {
         startActivity(intent);
     }
 
-    
+    public void jumpToInfoPage(){
+        Intent intent=new Intent(this,activity_newinfo.class);
+        startActivity(intent);
+    }
     public void checkSubscribed(View v){
         Intent intent=new Intent(this,activity_subscribelist.class);
         intent.putExtra("user",mUser);

@@ -3,7 +3,7 @@ package com.example.frontend;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class chatList {
+public class chatList implements Serializable{
     private ArrayList<chat> cList=new ArrayList<>();
     private int count=0;
     public void insert(chat c){
