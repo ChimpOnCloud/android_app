@@ -150,5 +150,24 @@ def handle_unfollowuser(request):
             followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID']).delete()
         for i, obj in enumerate(followperson.objects.all()):
             followperson.objects.filter(ID=obj.__dict__['ID']).update(ID=i)
-            print(i, obj.__dict__['ID'])
         return HttpResponse('ok')
+
+
+# def get_chat_users(request):
+#     if request.method == 'POST':
+#         user_data = json.loads(request.body)
+#         potential_user = account.objects.filter(
+#             username=user_data['srcUsername'])  # a list contains at most 1 element
+#         if not potential_user:
+#             return HttpResponse('error')
+
+
+def add_message_to_chat(request):
+    if request.method == 'POST':
+        msg_json = json.loads(request.body)
+        user = account.objects.filter(
+            username=msg_json['fromUser'])
+        user_dict = user.first().__dict__
+        # if not existing such a chat, create one
+        print(user_dict)
+        return HttpResponse('success')

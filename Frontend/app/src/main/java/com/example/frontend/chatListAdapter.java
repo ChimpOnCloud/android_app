@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,7 @@ public class chatListAdapter extends RecyclerView.Adapter<chatViewHolder> {
         if(History.size()!=0) holder.lastChat.setText(History.get(History.size() - 1).getMessageString());
         else holder.lastChat.setText("");
         holder.chatHistory=mChatList.get(position);
-        holder.chatName.setText(mChatList.get(position).getOpposite().getNickname());
+        holder.chatName.setText(mChatList.get(position).getOpposite().getUsername());
     }
 
     @Override
@@ -53,8 +54,8 @@ public class chatListAdapter extends RecyclerView.Adapter<chatViewHolder> {
 
 class chatViewHolder extends RecyclerView.ViewHolder{
     public final ImageButton userIcon;
-    public final Button chatName;
-    public final Button lastChat;
+    public final TextView chatName;
+    public final TextView lastChat;
     public chat chatHistory;
     public chatViewHolder(@NonNull View itemView, chatListAdapter adapter) {
         super(itemView);
