@@ -2,11 +2,13 @@ package com.example.frontend;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -18,11 +20,14 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.Guard;
 import java.util.ArrayList;
@@ -30,28 +35,82 @@ import java.util.ArrayList;
 public class activity_userinfo extends AppCompatActivity {
     user mUser;
     TextView usrnameContent;
-    TextView passwdContent;
     TextView nicknameContent;
     TextView introductionContent;
-    ImageButton subButton;
     Button checkSubButton;
     ImageView userIcon;
     Boolean subscribe;
-    TextView shieldText;
     Boolean shielded;
-    Button changeInfoButton;
+    private ImageButton moreButton;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
     private Boolean isCurrentUser;
     private RecyclerView mRecyclerview;
     private ArrayList<Post> mPostList;
     private PostAdapter mAdapter;
+    private TextView logoutText;
+    private final String LOGINSTATUS = "loginstatus";
 
 
     private void postInsert(Post p){
         mPostList.add(p);
         mRecyclerview.setAdapter(mAdapter);
     }
+
+    private void showPopupMenu(View view) {
+        // View当前PopupMenu显示的相对View的位置
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        if(isCurrentUser) popupMenu.getMenuInflater().inflate(R.menu.user_self, popupMenu.getMenu());
+        else popupMenu.getMenuInflater().inflate(R.menu.user_other,popupMenu.getMenu());
+        // menu的item点击事件
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if ("退出".equals(item.getTitle())) {
+                    SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+                    preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
+                    preferencesEditor.commit();
+                    Intent intent = new Intent(activity_userinfo.this, MainActivity.class);
+                    startActivity(intent);
+                }
+                else if("设置".equals(item.getTitle())){
+                    jumpToInfoEditPage();
+                }
+                else if("关注".equals(item.getTitle())){
+                    subscribe=!subscribe;
+                    // todo: notify backend
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_userinfo.this);
+                            builder.setTitle("...");
+                            builder.setMessage("to be finished");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
+                }
+                else if("屏蔽".equals(item.getTitle())){
+                    shielded=!shielded;
+                    // todo: notify backend
+                }
+                return true;
+            }
+        });
+        // PopupMenu关闭事件
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            @Override
+            public void onDismiss(PopupMenu menu) {
+            }
+        });
+        popupMenu.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,47 +126,26 @@ public class activity_userinfo extends AppCompatActivity {
 
         // todo: create userIcon with image
         usrnameContent = findViewById(R.id.textView_usrname_content);
-        passwdContent = findViewById(R.id.textView_password_content);
         nicknameContent = findViewById(R.id.textView_nickname_content);
         introductionContent = findViewById(R.id.textView_introduction_content);
         checkSubButton=findViewById(R.id.checkSubscribed);
         userIcon=findViewById(R.id.userIcon);
-        subButton=findViewById(R.id.subscribe);
-        shieldText=findViewById(R.id.shield);
-        changeInfoButton=findViewById(R.id.changeInfo);
+        moreButton=findViewById(R.id.moreButton);
         mRecyclerview=findViewById(R.id.pyqlist);
+        moreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupMenu(view);
+            }
+        });
 
         usrnameContent.setText(mUser.getUsername());
-        if(isCurrentUser) passwdContent.setText("Password: "+mUser.getPassword());
-        else passwdContent.setText("");
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
         // todo: get subscribe info and change the button icon
         subscribe=false;
-        if(!isCurrentUser) {
-            subButton.setOnClickListener(view -> {
-                subscribe = !subscribe;
-                subButtonSetIcon();
-                // todo: post the data to backend
-            });
-            subButtonSetIcon();
-        }
-        else{
-            subButton.setEnabled(false);
-        }
         // todo: get the shield pattern here
         shielded=false;
-        if(!isCurrentUser) {
-            shieldTextSet();
-        }
-        else{
-            shieldText.setText("");
-            shieldText.setEnabled(false);
-        }
-        if(!isCurrentUser){
-            changeInfoButton.setEnabled(false);
-            changeInfoButton.setVisibility(View.INVISIBLE);
-        }
 
         // todo: crete mPostList
         mPostList=new ArrayList<>();
@@ -116,41 +154,12 @@ public class activity_userinfo extends AppCompatActivity {
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         postInsert(new Post());
     }
-    public void jumpToHomePage(View v) {
-        Intent intent = new Intent(this, activity_homepage.class);
-        startActivity(intent);
-    }
-    public void jumpToInfoEditPage(View v) {
+
+    public void jumpToInfoEditPage() {
         Intent intent = new Intent(this, activity_editinfo.class);
         startActivity(intent);
     }
 
-    public void subButtonSetIcon(){
-        if(subscribe) subButton.setImageDrawable(getResources().getDrawable(android.R.drawable.star_big_on));
-        else subButton.setImageDrawable(getResources().getDrawable(android.R.drawable.star_big_off));
-    }
-
-    public void shieldTextSet(){
-        String sText;
-        SpannableString spannableString;
-        if(shielded) sText="已屏蔽";
-        else sText="屏蔽";
-        spannableString =new SpannableString(sText);
-        spannableString.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(@NonNull View view) {
-                    shielded=!shielded;
-                    // todo: post the data to backend
-                    shieldTextSet();
-                }
-            },0,sText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        if(shielded) spannableString.setSpan(new ForegroundColorSpan(Color.parseColor("#ff0000")),0,sText.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        shieldText.setText(spannableString);
-        shieldText.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    public void changeUsername(View v) {
-    }
     
     public void checkSubscribed(View v){
         Intent intent=new Intent(this,activity_subscribelist.class);
