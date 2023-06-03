@@ -29,6 +29,9 @@
             android:name=".activity_searchuser"
             android:exported="false" />
         <activity
+            android:name=".activity_search"
+            android:exported="false" />
+        <activity
             android:name=".activity_editinfo"
             android:exported="false" />
         <activity
@@ -53,6 +56,9 @@
             android:name=".activity_postedit"
             android:exported="false" />
         <activity
+            android:name=".activity_newinfo"
+            android:exported="false" />
+        <activity
             android:name=".activity_chatdetail"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -61,7 +67,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

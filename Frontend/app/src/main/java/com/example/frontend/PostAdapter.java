@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,16 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> mPosts;
+    ArrayList<Post> mPosts;
     private OnItemClickListener mItemClickListener;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(ArrayList<Post> posts) {
         mPosts = posts;
     }
 
@@ -74,6 +76,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mSubscribed;
         private TextView mLocation;
         private TextView mTag;
+        private TextView mComment;
+        private TextView mThumbs;
+        private TextView mLike;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -91,6 +96,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mImages[4] = itemView.findViewById(R.id.post_image_5);
             mImages[5] = itemView.findViewById(R.id.post_image_6);
             mSubscribed=itemView.findViewById(R.id.subscribe);
+            mComment=itemView.findViewById(R.id.commentNumber);
+            mThumbs=itemView.findViewById(R.id.thumbsNumber);
+            mLike=itemView.findViewById(R.id.likeNumber);
 
 //            mTitle.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -135,6 +143,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
             mLocation.setText(post.getLocation());
             mTag.setText(post.getTag());
+            mComment.setText(String.valueOf(post.getCommentNumber()));
+            mThumbs.setText(String.valueOf(post.getThumbsupNumber()));
+            mLike.setText(String.valueOf(post.getLikeNumber()));
         }
     }
 }

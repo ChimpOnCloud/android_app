@@ -31,7 +31,6 @@ public class activity_chatdetail extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatdetail);
-        // user VirtualUser=new user(2,"username","password","nickname","my introduction");
         Intent intent=this.getIntent();
         mChat=(chat)intent.getSerializableExtra("chat");
         mRecyclerView=findViewById(R.id.chatrecyclerview);

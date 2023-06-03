@@ -224,6 +224,7 @@
                     android:layout_marginEnd="4dp"/>
 
                 <TextView
+                    android:id="@+id/commentNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="评论"/>
@@ -244,6 +245,7 @@
                     android:layout_marginEnd="4dp"/>
 
                 <TextView
+                    android:id="@+id/thumbsNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="点赞"/>
@@ -264,6 +266,7 @@
                     android:layout_marginEnd="4dp"/>
 
                 <TextView
+                    android:id="@+id/likeNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="收藏"/>

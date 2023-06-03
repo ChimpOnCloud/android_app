@@ -41,13 +41,12 @@ public class activity_homepage extends AppCompatActivity {
     private RecyclerView mPostRecyclerView;
     private PostAdapter mPostAdapter;
     private static final int newPost=1;
-    private List<Post> posts;
+    private ArrayList<Post> posts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
-        Bundle bundle = this.getIntent().getExtras();
         username = mPreferences.getString("username", username);
         password = mPreferences.getString("password", password);
         nickname = mPreferences.getString("nickname", nickname);
@@ -55,7 +54,7 @@ public class activity_homepage extends AppCompatActivity {
         isLogin = mPreferences.getBoolean("loginstatus", isLogin);
         // todo: create the User with params
         User=new user(1,username,password,nickname,introduction);
-        Log.d("a",User.getUsername());
+        // Log.d("a",User.getUsername());
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,8 +66,8 @@ public class activity_homepage extends AppCompatActivity {
                         jumpToHomePage();
                         return true;
                     case R.id.navigation_topic:
-                        selectedFragment = new BlankFragment();
-                        break;
+                        jumpToSearch();
+                        return true;
                     case R.id.navigation_guide: {
                         jumpToChat();
                         return true;
@@ -105,16 +104,11 @@ public class activity_homepage extends AppCompatActivity {
         mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String viewType) {
-                if (viewType.equals("title") || viewType.equals("content")) {
-                    Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-                    intent.putExtra("post", posts.get(position));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
+                intent.putExtra("post", posts.get(position));
+                startActivity(intent);
             }
         });
-
-
-
         FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +117,6 @@ public class activity_homepage extends AppCompatActivity {
                 startActivityForResult(intent,newPost);
             }
         });
-
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -151,13 +144,15 @@ public class activity_homepage extends AppCompatActivity {
     }
 
     public void jumpToChat(){
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username);
-        bundle.putString("password", password);
         Intent intent = new Intent(this, activity_chat.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
+
+    public void jumpToSearch(){
+        Intent intent=new Intent(this,activity_search.class);
+        startActivity(intent);
+    }
+
 
     @SuppressLint("ApplySharedPref")
     public void logout(View v) {

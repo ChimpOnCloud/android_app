@@ -37,12 +37,7 @@ public class MainActivity extends AppCompatActivity {
         if (isLogin == true) {
             mPreferences.getString(TESTSTRING1, loginUsername);
             mPreferences.getString(TESTSTRING2, loginPassword);
-            Bundle bundle = new Bundle();
-            bundle.putString("username", loginUsername);
-            bundle.putString("password", loginPassword);
-            bundle.putBoolean("isLogin", isLogin);
             Intent intent = new Intent(this, activity_homepage.class);
-            intent.putExtras(bundle);
             startActivity(intent);
         }
         welcomeText=findViewById(R.id.welcome);

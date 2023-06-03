@@ -1,29 +1,31 @@
 package com.example.frontend;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import com.alibaba.fastjson.JSONObject;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
-import java.io.SyncFailedException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -34,42 +36,66 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class activity_searchuser extends AppCompatActivity {
-    private ArrayList<user> mUserList;
+public class activity_search extends AppCompatActivity {
+    private ArrayList<Post> mPostList;
     private RecyclerView mRecyclerView;
-    private userAdapter mAdapter;
+    private PostAdapter mAdapter;
     private Button searchButton;
     private EditText inputName;
     private final Handler handler = new Handler();
-    user targetUser;
-
-    public void userInsert(user u){
-        mUserList.add(u);
-        mRecyclerView.setAdapter(mAdapter);
-    }
+    private TextView targetText;
+    private static final String[] targetList=new String[]{"title","content","tag","username"};
+    private TextView prompt;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
-        setContentView(R.layout.activity_searchuser);
-
+        setContentView(R.layout.activity_search);
         // todo: create mUserList properly with post
-        mUserList=new ArrayList<>();
+        mPostList=new ArrayList<>();
         mRecyclerView=findViewById(R.id.recyclerview);
-        mAdapter=new userAdapter(this,mUserList);
+        mAdapter=new PostAdapter(mPostList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchButton=findViewById(R.id.buttonSearch);
         inputName=findViewById(R.id.search);
+        targetText=findViewById(R.id.target);
+        prompt=findViewById(R.id.promptSearchUser);
+        String text = prompt.getText().toString();
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                Intent intent = new Intent(activity_search.this, activity_searchuser.class);
+                startActivity(intent);
+            }
+        },0,text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        prompt.setText(spannableString);
+        prompt.setMovementMethod(LinkMovementMethod.getInstance());
     }
     public void jumpToUserSearchPage(View v) {
         Intent intent = new Intent(this, activity_searchuser.class);
         startActivity(intent);
     }
+    public void onTargetClicked(View v){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("选择话题");
+        builder.setSingleChoiceItems(activity_search.targetList, 0, new DialogInterface.OnClickListener() {
+            @Override
+            //which为你当前选中的索引，从0开始
+            public void onClick(DialogInterface dialogInterface, int which) {
+                targetText.setText(activity_search.targetList[which]);
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
+    }
 
     public void onSearchClicked(View v){
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
+        // todo: change the searching target to correct pyq
+        String searchTarget=targetText.getText().toString(); // todo: use this
         String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
         String requestUrl = getString(R.string.ipv4)+"searchUser/";
         OkHttpClient client = new OkHttpClient();
@@ -86,7 +112,7 @@ public class activity_searchuser extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_search.this);
                         builder.setTitle("Error");
                         builder.setMessage("无法连接至服务器。。或许网络出错了？");
                         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -109,13 +135,13 @@ public class activity_searchuser extends AppCompatActivity {
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
-                    mAdapter.mUserList.clear();
+                    mAdapter.mPosts.clear();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_search.this);
                             builder.setTitle("Info");
-                            builder.setMessage("该用户不存在");
+                            builder.setMessage("该动态不存在");
                             builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -131,23 +157,18 @@ public class activity_searchuser extends AppCompatActivity {
                             mRecyclerView.setAdapter(mAdapter);
                         }
                     });
-                    System.out.println("no such user");
+                    System.out.println("no such post");
                 } else {
                     System.out.println("succeeded");
-                    // empty the mUserList
-                    mAdapter.mUserList.clear();
+                    mAdapter.mPosts.clear();
+                    // todo: change treatment here
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                    int id = msg_json.getIntValue("ID");
-                    String username = msg_json.getString("username");
-                    String password = msg_json.getString("password");
-                    String nickname = msg_json.getString("nickname");
-                    String introduction = msg_json.getString("introduction");
-                    targetUser = new user(id, username, password, nickname, introduction);
 
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            userInsert(targetUser);
+                            // todo: create mPosts properly
+                            mRecyclerView.setAdapter(mAdapter);
                         }
                     });
                 }
