@@ -121,6 +121,12 @@ public class activity_register extends AppCompatActivity {
             });
             return;
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadingDialogUtil.getInstance().showLoadingDialog(activity_register.this, "Loading...");
+            }
+        });
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
         String requestUrl = getString(R.string.ipv4)+"register/";
         OkHttpClient client = new OkHttpClient();
@@ -134,6 +140,7 @@ public class activity_register extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -156,6 +163,7 @@ public class activity_register extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response)
                     throws IOException {
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();

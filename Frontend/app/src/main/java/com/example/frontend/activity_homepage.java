@@ -47,7 +47,6 @@ public class activity_homepage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
-        Bundle bundle = this.getIntent().getExtras();
         username = mPreferences.getString("username", username);
         password = mPreferences.getString("password", password);
         nickname = mPreferences.getString("nickname", nickname);
@@ -118,7 +117,6 @@ public class activity_homepage extends AppCompatActivity {
                 startActivityForResult(intent,newPost);
             }
         });
-        LoadingDialogUtil.getInstance().showLoadingDialog(this,"Loading..");
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -35,18 +35,10 @@ public class MainActivity extends AppCompatActivity {
         isLogin = mPreferences.getBoolean(LOGINSTATUS, isLogin);
         setContentView(R.layout.activity_main);
         if (isLogin == true) {
-            // todo
-            LoadingDialogUtil.getInstance().showLoadingDialog(this, "Loading...");
             mPreferences.getString(TESTSTRING1, loginUsername);
             mPreferences.getString(TESTSTRING2, loginPassword);
-            Bundle bundle = new Bundle();
-            bundle.putString("username", loginUsername);
-            bundle.putString("password", loginPassword);
-            bundle.putBoolean("isLogin", isLogin);
             Intent intent = new Intent(this, activity_homepage.class);
-            intent.putExtras(bundle);
             startActivity(intent);
-            LoadingDialogUtil.getInstance().closeLoadingDialog();
         }
         welcomeText=findViewById(R.id.welcome);
         welcomeText.setText("Welcome to "+getString(R.string.project_name)+"!");

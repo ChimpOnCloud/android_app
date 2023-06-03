@@ -13,6 +13,12 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+// LoadingDialogUtil.getInstance().showLoadingDialog(this, "Loading..."); 开启加载动画
+// LoadingDialogUtil.getInstance().closeLoadingDialog(); 关闭动画
 public class LoadingDialogUtil {
     public static LoadingDialogUtil mInstance;
     public static final int BUTTON_OK = 0;
@@ -22,7 +28,7 @@ public class LoadingDialogUtil {
     private static Animation operatingAnim;
     private static ImageView imageView;
     private static boolean isLoading;
-
+    private static boolean loading=false;
     private LoadingDialogUtil() {
     }
 
@@ -154,7 +160,4 @@ public class LoadingDialogUtil {
         }
         return mInstance;
     }
-
-    // LoadingDialogUtil.getInstance().showLoadingDialog(this, "Loading..."); 开启加载动画
-    // LoadingDialogUtil.getInstance().closeLoadingDialog(); 关闭动画
 }
