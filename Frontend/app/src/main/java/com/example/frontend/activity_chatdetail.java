@@ -56,12 +56,13 @@ public class activity_chatdetail extends AppCompatActivity {
         sendButton=findViewById(R.id.buttonsend);
         sendButton.setOnClickListener(view -> {
             String content=text.getText().toString();
-            if(content=="") return;
+            if(content.equals("")) return;
             message m=new message(content,activity_homepage.User);
             chatInsert(m);
             text.setText("");
             // TODO: backend adds this message
-            String jsonStr = "{\"msgContent\":\""+ content + "\",\"fromUser\":\""+activity_homepage.User.getUsername()+"\"}";
+            String jsonStr = "{\"msgContent\":\""+ content + "\",\"fromUser\":\""+activity_homepage.User.getUsername();
+            jsonStr = jsonStr + "\",\"toUser\":\"" + mChat.getOpposite().getUsername() + "\"}";
             System.out.println(jsonStr);
             String requestUrl = getString(R.string.ipv4)+"addMessageToChat/";
             OkHttpClient client = new OkHttpClient();

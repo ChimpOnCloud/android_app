@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.http import HttpResponse
-from android_server.models import account, followperson
+from android_server.models import *
 import json
 # Create your views here.
 
@@ -165,9 +165,38 @@ def handle_unfollowuser(request):
 def add_message_to_chat(request):
     if request.method == 'POST':
         msg_json = json.loads(request.body)
-        user = account.objects.filter(
+        from_user = account.objects.filter(
             username=msg_json['fromUser'])
-        user_dict = user.first().__dict__
+        from_user_dict = from_user.first().__dict__
         # if not existing such a chat, create one
-        print(user_dict)
+        to_user = account.objects.filter(username=msg_json['toUser'])
+        to_user_dict = to_user.first().__dict__
+        # print(from_user_dict)
+        # print(to_user_dict)
+        potential_chat_list = chats.objects.filter(
+            user_ID=from_user_dict['ID'])
+        if not potential_chat_list:
+            potential_chat_list = chats.objects.create(
+                user_ID=from_user_dict['ID'])
+
+        potential_chat = chat.objects.filter(
+            from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+        chat_msg_cnt = 0
+        if not potential_chat:
+            potential_chat = chat.objects.create(
+                msg_cnt=0, from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+        else:
+            chat_msg_cnt = potential_chat.first().__dict__['msg_cnt']
+
+        new_msg = message.objects.create(
+            msg_content=msg_json['msgContent'], msg_ID=chat_msg_cnt)
+
+        # for i, obj in enumerate(chat.objects.all()):
+        #     obj.delete()
+        # for i, obj in enumerate(message.objects.all()):
+        #     obj.delete()
+        potential_chat = chat.objects.filter(
+            from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+        potential_chat.update(msg_cnt=chat_msg_cnt + 1)
+        print(new_msg.__dict__)
         return HttpResponse('success')
