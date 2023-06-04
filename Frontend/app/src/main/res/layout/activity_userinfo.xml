@@ -88,12 +88,13 @@
 
     <ImageButton
         android:id="@+id/moreButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="53dp"
+        android:layout_height="57dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:backgroundTint="@color/white"
+        app:srcCompat="@drawable/more" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

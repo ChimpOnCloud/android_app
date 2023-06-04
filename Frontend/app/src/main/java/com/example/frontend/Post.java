@@ -44,6 +44,7 @@ public class Post implements Parcelable {
         this.location=null;
         this.tag="#默认话题";
         this.commentNumber=this.thumbsupNumber=this.likeNumber=0;
+        this.images=new int[]{0,0,0,0,0,0};
     }
 
     protected Post(Parcel in) {
@@ -117,7 +118,13 @@ public class Post implements Parcelable {
     public int[] getImages() {
         return images;
     }
-
+    public int getImagesLength(){
+        int i=0;
+        for(;i<6;i++){
+            if(images[i]==0) break;
+        }
+        return i;
+    }
     public void setImages(int[] images) {
         this.images = images;
     }

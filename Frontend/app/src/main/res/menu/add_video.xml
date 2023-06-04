@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/record"
+        android:title="录像"/>
+    <item android:id="@+id/selectvideo"
+        android:title="相册选取"/>
+</menu>

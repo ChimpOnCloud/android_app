@@ -73,13 +73,34 @@
         android:layout_height="wrap_content"
         android:hint="请输入正文" />
 
-    <!-- 添加图片按钮 -->
-    <Button
-        android:id="@+id/addImageButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="添加图片" />
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/addImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAddImageClicked"
+            android:text="添加图片" />
+
+        <Button
+            android:id="@+id/useLocate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="onLocationClicked"
+            android:text="开启地址" />
+
+        <Button
+            android:id="@+id/addVideoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAddVideoClicked"
+            android:text="添加视频" />
+
+    </LinearLayout>
 
     <!-- 图片容器 -->
     <LinearLayout
@@ -89,45 +110,35 @@
         android:padding="16dp">
 
         <ImageView
+            android:id="@+id/image_1"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_2"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_3"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_4"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_5"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
-
-        <Button
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"
-            android:text="添加图片" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/useLocate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:onClick="onLocationClicked"
-        android:text="Activate Location" />
 
 </LinearLayout>
