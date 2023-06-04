@@ -40,8 +40,10 @@ class message(models.Model):
 
 
 class chat(models.Model):
+    ID = models.AutoField(primary_key=True)
     msg_contain = models.ManyToManyField(message)
-    oppo_id = models.AutoField(verbose_name='对面ID', primary_key=True)
+    from_id = models.IntegerField()
+    oppo_id = models.IntegerField(verbose_name='对面ID')
     msg_cnt = models.IntegerField(verbose_name='消息数量')
 
 
