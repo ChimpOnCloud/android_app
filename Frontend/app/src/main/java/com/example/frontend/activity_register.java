@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,39 +88,11 @@ public class activity_register extends AppCompatActivity {
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
         if(!password.equals(passwordAgain.getText().toString())){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
-                    builder.setTitle("Error");
-                    builder.setMessage("两次输入的密码不一致");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    AlertDialog dialog=builder.create();
-                    dialog.show();
-                }
-            });
+            buildDialog("Error","两次输入的密码不一致",activity_register.this);
             return;
         }
         if(username.isEmpty()||password.isEmpty()){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
-                    builder.setTitle("Info");
-                    builder.setMessage("请输入用户名和密码");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    AlertDialog dialog=builder.create();
-                    dialog.show();
-                }
-            });
+            buildDialog("Info","请输入用户名和密码",activity_register.this);
             return;
         }
         runOnUiThread(new Runnable() {
@@ -141,21 +115,7 @@ public class activity_register extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 LoadingDialogUtil.getInstance().closeLoadingDialog();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
-                        builder.setTitle("Error");
-                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        AlertDialog dialog=builder.create();
-                        dialog.show();
-                    }
-                });
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？致",activity_register.this);
                 // System.out.println("register failed");
                 e.printStackTrace();
             }
@@ -169,21 +129,7 @@ public class activity_register extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 String repeatString = "repeated!";
                 if (msg_obj_string.equals(repeatString)) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_register.this);
-                            builder.setTitle("Error");
-                            builder.setMessage("该用户名已经被占用，换一个吧");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
+                    buildDialog("Error","该用户名已经被占用，换一个吧",activity_register.this);
                     // System.out.println("repeated");
                 } else if (msg_obj_string.equals("succeeded")) {
                     System.out.println("succeeded");

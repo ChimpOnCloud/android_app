@@ -125,6 +125,10 @@ public class Post implements Parcelable {
         }
         return i;
     }
+    public void setImage(int image,int position){
+        if(position>5||position<0) return;
+        images[position]=image;
+    }
     public void setImages(int[] images) {
         this.images = images;
     }

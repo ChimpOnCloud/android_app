@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="onLocationClicked"
-            android:text="开启地址" />
+            android:text="开启定位" />
 
         <Button
             android:id="@+id/addVideoButton"

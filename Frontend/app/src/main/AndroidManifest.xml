@@ -61,6 +61,9 @@
             android:name=".activity_subscribelist"
             android:exported="false" />
         <activity
+            android:name=".activity_video"
+            android:exported="false" />
+        <activity
             android:name=".activity_postedit"
             android:requestLegacyExternalStorage="true"
             android:grantUriPermissions="true"

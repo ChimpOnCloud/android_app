@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -116,21 +118,7 @@ public class activity_login extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 LoadingDialogUtil.getInstance().closeLoadingDialog();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
-                        builder.setTitle("Error");
-                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        AlertDialog dialog=builder.create();
-                        dialog.show();
-                    }
-                });
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_login.this);
                 // System.out.println("failed");
                 e.printStackTrace();
             }
@@ -144,39 +132,11 @@ public class activity_login extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 // String repeatString = "repeated!";
                 if (msg_obj_string.equals("wrong password")) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
-                            builder.setTitle("Error");
-                            builder.setMessage("输入的密码有误");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
+                    buildDialog("Error", "输入的密码有误", activity_login.this);
                     // System.out.println("password not correct");
                     // notificationText.setText("repeated username. Please choose another one!");
                 } else if (msg_obj_string.equals("not registered yet!")) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_login.this);
-                            builder.setTitle("Info");
-                            builder.setMessage("看起来您还没有注册，请先注册");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
+                    buildDialog("Info","看起来您还没有注册，请先注册",activity_login.this);
                     // System.out.println("please register first");
                 } else {
                     System.out.println("succeeded");
