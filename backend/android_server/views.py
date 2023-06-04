@@ -191,12 +191,19 @@ def add_message_to_chat(request):
         new_msg = message.objects.create(
             msg_content=msg_json['msgContent'], msg_ID=chat_msg_cnt)
 
+        potential_chat = chat.objects.filter(
+            from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+        potential_chat.update(msg_cnt=chat_msg_cnt + 1)
+
+        m_chat = chat.objects.get(
+            from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+        m_chat.msg_contain.add(new_msg)
+
+        potential_chat_list = potential_chat_list.first()
+        potential_chat_list.chat_contain.add(m_chat)
+        print(potential_chat_list)
         # for i, obj in enumerate(chat.objects.all()):
         #     obj.delete()
         # for i, obj in enumerate(message.objects.all()):
         #     obj.delete()
-        potential_chat = chat.objects.filter(
-            from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
-        potential_chat.update(msg_cnt=chat_msg_cnt + 1)
-        print(new_msg.__dict__)
         return HttpResponse('success')
