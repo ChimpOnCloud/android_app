@@ -68,6 +68,7 @@ def change_userinfo(request):
                 username=full_user_data['newUsername'], password=full_user_data['newPassword'], nickname=full_user_data['newNickname'], introduction=full_user_data['newIntroduction'])
             return HttpResponse('ok')
 
+
 def upload_avatar(request):
     avatar_file = request.FILES.get('image')
     oldusername = request.POST.get('oldUsername')
@@ -82,6 +83,7 @@ def upload_avatar(request):
     target_user.save()
     return HttpResponse('ok')
 
+
 def get_avatar(request, targetName):
     # 根据用户ID获取用户对象
     try:
@@ -92,19 +94,21 @@ def get_avatar(request, targetName):
     # 获取头像文件路径
     avatar_relative_path = target_user.avatar.url
     media_index = avatar_relative_path.rfind('media/') + len('media/')
-    avatar_path = os.path.join(settings.MEDIA_ROOT, avatar_relative_path[media_index:])
+    avatar_path = os.path.join(
+        settings.MEDIA_ROOT, avatar_relative_path[media_index:])
     # avatar_path = Path(target_user.avatar.path)
 
     # 打印目标用户名和头像路径
     print("Target username:", targetName)
     print("Avatar path:", avatar_path)
-    
+
     # 检查文件是否存在
     if not os.path.exists(avatar_path):
         return HttpResponse('Avatar not found', status=404)
 
     # 返回头像文件
     return FileResponse(open(avatar_path, 'rb'), content_type='')
+
 
 def search_user(request):
     if request.method == 'POST':
@@ -259,7 +263,7 @@ def add_message_to_chat(request):
         # 创建消息和聊天的关系
         send_chat = chat.objects.get(
             from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
-        send_chat.msg_contain.add(new_msg_send)
+        send_chat.msg_contain(new_msg_send)
         rcv_chat = chat.objects.get(
             oppo_id=from_user_dict['ID'], from_id=to_user_dict['ID'])
         rcv_chat.msg_contain.add(new_msg_rcv)
@@ -319,8 +323,19 @@ def get_related_messages(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
         # TODO: return related messages
-        print('hello!')
-        return HttpResponse('hello')
+        src_user_dict = account.objects.filter(
+            username=user_data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=user_data['dstUsername']).first().__dict__
+
+        target_chat = chat.objects.get(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
+        return_dict = {}
+        for i, msg in enumerate(target_chat.msg_contain.all()):
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
+        return HttpResponse(json.dumps(return_dict))
 
 
 def deleteall():

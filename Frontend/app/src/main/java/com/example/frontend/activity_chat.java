@@ -93,7 +93,7 @@ public class activity_chat extends AppCompatActivity {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                getAllMessages(activity_homepage.User.getUsername(), insert_username);
+                                getAllMessages(activity_homepage.User.getUsername(), insert_username, insertUser, msgList);
                             }
                         });
                         chat msgChat=new chat(insertUser,msgList);
@@ -108,7 +108,7 @@ public class activity_chat extends AppCompatActivity {
             }
         });
     }
-    public void getAllMessages(String srcUsername, String dstUsername) {
+    public void getAllMessages(String srcUsername, String dstUsername, user insertUser, ArrayList<message> msgList) {
         String jsonStr = "{\"srcUsername\":\""+ srcUsername + "\",\"dstUsername\":\""+dstUsername+"\"}";
         String requestUrl = getString(R.string.ipv4)+"getRelatedMessages/";
         OkHttpClient client = new OkHttpClient();
@@ -135,7 +135,21 @@ public class activity_chat extends AppCompatActivity {
                 if (msg_obj_string.equals("error")) {
 
                 } else {
-
+                    JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                    System.out.println(msg_json);
+                    int msg_cnt = msg_json.size() / 2;
+                    for (int i = 0; i < msg_cnt; i++) {
+                        String msg_i = msg_json.getString("msg" + i);
+                        String is_send_i_string = msg_json.getString("is_send" + i);
+                        Boolean is_send_i;
+                        if (is_send_i_string.equals("false")) {
+                            is_send_i = false;
+                        } else {
+                            is_send_i = true;
+                        }
+                        System.out.println(is_send_i);
+                        msgList.add(new message(msg_i,insertUser));
+                    }
                 }
             }
         });
