@@ -42,6 +42,7 @@ public class activity_chat extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_chat);
+
         mChatList=new chatList();
         mRecyclerView=findViewById(R.id.recyclerview);
         mAdapter=new chatListAdapter(this,mChatList);
@@ -144,7 +145,8 @@ public class activity_chat extends AppCompatActivity {
                         if (is_send_i == false) {
                             msgList.add(new message(msg_i,insertUser));
                         } else {
-                            msgList.add(new message(msg_i,null));
+                            // msgList.add(new message(msg_i,null));
+                            msgList.add(new message(msg_i, activity_homepage.User));
                         }
                     }
                 }
