@@ -147,8 +147,11 @@ public class activity_chat extends AppCompatActivity {
                         } else {
                             is_send_i = true;
                         }
-                        System.out.println(is_send_i);
-                        msgList.add(new message(msg_i,insertUser));
+                        if (is_send_i == false) {
+                            msgList.add(new message(msg_i,insertUser));
+                        } else {
+                            // TODO: add a sending msg
+                        }
                     }
                 }
             }
