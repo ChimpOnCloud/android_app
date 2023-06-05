@@ -263,7 +263,7 @@ def add_message_to_chat(request):
         # 创建消息和聊天的关系
         send_chat = chat.objects.get(
             from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
-        send_chat.msg_contain(new_msg_send)
+        send_chat.msg_contain.add(new_msg_send)
         rcv_chat = chat.objects.get(
             oppo_id=from_user_dict['ID'], from_id=to_user_dict['ID'])
         rcv_chat.msg_contain.add(new_msg_rcv)
