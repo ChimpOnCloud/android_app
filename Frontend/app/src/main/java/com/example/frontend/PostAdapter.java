@@ -4,23 +4,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> mPosts;
+    ArrayList<Post> mPosts;
     private OnItemClickListener mItemClickListener;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(ArrayList<Post> posts) {
         mPosts = posts;
     }
 
@@ -70,6 +74,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mContent;
         private ImageView[] mImages= new ImageView[6];
         private TextView mSubscribed;
+        private TextView mLocation;
+        private TextView mTag;
+        private TextView mComment;
+        private TextView mThumbs;
+        private TextView mLike;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -78,6 +87,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mTime = itemView.findViewById(R.id.post_time);
             mTitle = itemView.findViewById(R.id.post_title);
             mContent = itemView.findViewById(R.id.post_content);
+            mLocation=itemView.findViewById(R.id.post_location);
+            mTag=itemView.findViewById(R.id.post_topic);
             mImages[0] = itemView.findViewById(R.id.post_image_1);
             mImages[1] = itemView.findViewById(R.id.post_image_2);
             mImages[2] = itemView.findViewById(R.id.post_image_3);
@@ -85,6 +96,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mImages[4] = itemView.findViewById(R.id.post_image_5);
             mImages[5] = itemView.findViewById(R.id.post_image_6);
             mSubscribed=itemView.findViewById(R.id.subscribe);
+            mComment=itemView.findViewById(R.id.commentNumber);
+            mThumbs=itemView.findViewById(R.id.thumbsNumber);
+            mLike=itemView.findViewById(R.id.likeNumber);
 
 //            mTitle.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -114,10 +128,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             // 将数据绑定到ViewHolder中的控件上
             mAvatar.setImageResource(post.getAvatar());
             mAuthor.setText(post.getAuthor());
-            long timestamp = post.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            String formattedTime = sdf.format(new Date(timestamp));
-            mTime.setText(formattedTime);
+            mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());
             mContent.setText(post.getContent());
             if(post.getImages() != null) {
@@ -130,9 +141,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     }
                 }
             }
-
+            mLocation.setText(post.getLocation());
+            mTag.setText(post.getTag());
+            mComment.setText(String.valueOf(post.getCommentNumber()));
+            mThumbs.setText(String.valueOf(post.getThumbsupNumber()));
+            mLike.setText(String.valueOf(post.getLikeNumber()));
         }
-
     }
 }
 

@@ -5,19 +5,39 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-feature android:name="android.hardware.camera" />
+    <!--相机权限-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--写入SD卡的权限：如果你希望保存相机拍照后的照片-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--读取SD卡的权限:打开相册选取图片所必须的权限-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/forumicon"
+        android:label="@string/project_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend"
         tools:targetApi="31">
         <activity
             android:name=".activity_searchuser"
+            android:exported="false" />
+        <activity
+            android:name=".activity_search"
             android:exported="false" />
         <activity
             android:name=".activity_editinfo"
@@ -41,6 +61,17 @@
             android:name=".activity_subscribelist"
             android:exported="false" />
         <activity
+            android:name=".activity_video"
+            android:exported="false" />
+        <activity
+            android:name=".activity_postedit"
+            android:requestLegacyExternalStorage="true"
+            android:grantUriPermissions="true"
+            android:exported="false" />
+        <activity
+            android:name=".activity_newinfo"
+            android:exported="false" />
+        <activity
             android:name=".activity_chatdetail"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -49,7 +80,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

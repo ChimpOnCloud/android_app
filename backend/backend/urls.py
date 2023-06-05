@@ -26,7 +26,13 @@ urlpatterns = [
     path('changeUserinfo/', views.change_userinfo),
     path('uploadAvatar/', views.upload_avatar),
     path('getAvatar/<str:targetName>/', views.get_avatar),
-    path('searchUser/', views.search_user)
+    path('searchUser/', views.search_user),
+    path('handleFollowuser/', views.handle_followuser),
+    path('handleunFollowuser/', views.handle_unfollowuser),
+    path('showSubscribedlist/', views.show_subscribelist),
+    path('addMessageToChat/', views.add_message_to_chat),
+    path('findRelatedChatUsers/', views.find_related_chat_users),
+    path('getRelatedMessages/', views.get_related_messages)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

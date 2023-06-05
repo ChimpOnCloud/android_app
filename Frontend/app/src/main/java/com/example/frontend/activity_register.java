@@ -1,9 +1,14 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
@@ -39,7 +44,10 @@ public class activity_register extends AppCompatActivity {
     EditText passwordAgain;
     private TextView login;
     private TextView backToStart;
-    // TextView notificationText;
+    private String LOGINSTATUS = "loginstatus";
+    private boolean isLogin = false;
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.frontend";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,19 +81,26 @@ public class activity_register extends AppCompatActivity {
         },0,4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         backToStart.setText(spannableStringL2);
         backToStart.setMovementMethod(LinkMovementMethod.getInstance());
+        mPreferences=getSharedPreferences(sharedPrefFile,MODE_PRIVATE);
     }
     public void RegisterAccount(View v) {
-        // notificationText = findViewById(R.id.textView_notification);
         // get the usrname and passwd
         username = usernameText.getText().toString();
         password = passwordText.getText().toString();
         if(!password.equals(passwordAgain.getText().toString())){
-            // todo: tell the user the password entered is wrong
+            buildDialog("Error","两次输入的密码不一致",activity_register.this);
             return;
         }
         if(username.isEmpty()||password.isEmpty()){
+            buildDialog("Info","请输入用户名和密码",activity_register.this);
             return;
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadingDialogUtil.getInstance().showLoadingDialog(activity_register.this, "Loading...");
+            }
+        });
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
         String requestUrl = getString(R.string.ipv4)+"register/";
         OkHttpClient client = new OkHttpClient();
@@ -99,29 +114,40 @@ public class activity_register extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("register failed");
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？致",activity_register.this);
+                // System.out.println("register failed");
                 e.printStackTrace();
             }
 
             @Override
             public void onResponse(Call call, final Response response)
                     throws IOException {
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
                 String repeatString = "repeated!";
                 if (msg_obj_string.equals(repeatString)) {
-                    System.out.println("repeated");
-                    // notificationText.setText("repeated username. Please choose another one!");
+                    buildDialog("Error","该用户名已经被占用，换一个吧",activity_register.this);
+                    // System.out.println("repeated");
                 } else if (msg_obj_string.equals("succeeded")) {
                     System.out.println("succeeded");
                     jumpToHomePage(v);
-                    // notificationText.setText("successfully registered a new account! Now you can login");
                 }
             }
         });
     }
     public void jumpToHomePage(View v) {
+        isLogin = true;
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        preferencesEditor.putBoolean(LOGINSTATUS, isLogin);
+        preferencesEditor.putString("username", username);
+        preferencesEditor.putString("password", password);
+        user mUser=new user();
+        preferencesEditor.putString("nickname", mUser.getNickname());
+        preferencesEditor.putString("introduction", mUser.getIntroduction());
+        preferencesEditor.apply();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_height="70dp"
             android:orientation="horizontal">
 
-            <Button
+            <TextView
                 android:id="@+id/userName"
                 android:layout_height="70dp"
                 android:layout_width="250dp"
@@ -43,6 +43,7 @@
                 android:textColor="@color/black"
                 android:backgroundTint="@color/purple_200"
                 android:text="follow"
+                android:onClick="followUser"
                 android:stateListAnimator="@null"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"/>

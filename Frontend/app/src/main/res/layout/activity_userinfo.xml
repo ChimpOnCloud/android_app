@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activity_userinfo">
 
     <ImageView
@@ -64,79 +65,36 @@
         app:layout_constraintTop_toBottomOf="@+id/userIcon" />
 
     <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:onClick="jumpToHomePage"
-        android:text="return to homepage"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/changeInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="jumpToInfoEditPage"
-        android:text="edit your info"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button5" />
-
-    <TextView
-        android:id="@+id/textView_password_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="8dp"
-        android:text="Password: "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
-
-    <Button
         android:id="@+id/checkSubscribed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="14dp"
-        android:backgroundTint="@color/bottom_nav_item_color"
+        android:layout_marginTop="7dp"
         android:onClick="checkSubscribed"
-        android:stateListAnimator="@null"
         android:text="Subscribed"
-        android:textColor="@color/purple_500"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_password_content" />
-
-    <ImageButton
-        android:id="@+id/subscribe"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/bottom_nav_item_color"
-        android:gravity="center"
-        app:icon="@drawable/bg_corner_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/shield"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp"
-        android:text="aaa"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pyqlist"
         android:layout_width="match_parent"
-        android:layout_height="390dp"
-        android:layout_marginTop="288dp"
+        android:layout_height="350dp"
+        android:layout_marginTop="260dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/moreButton"
+        android:layout_width="53dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="13dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/white"
+        app:srcCompat="@drawable/more" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

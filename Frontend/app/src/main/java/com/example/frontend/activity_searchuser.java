@@ -1,11 +1,13 @@
 package com.example.frontend;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +15,14 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -35,6 +41,7 @@ public class activity_searchuser extends AppCompatActivity {
     private Button searchButton;
     private EditText inputName;
     private final Handler handler = new Handler();
+    user targetUser;
 
     public void userInsert(user u){
         mUserList.add(u);
@@ -54,8 +61,6 @@ public class activity_searchuser extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchButton=findViewById(R.id.buttonSearch);
         inputName=findViewById(R.id.search);
-        /*user VirtualUser=new user();
-        userInsert(VirtualUser);*/
     }
     public void jumpToUserSearchPage(View v) {
         Intent intent = new Intent(this, activity_searchuser.class);
@@ -63,7 +68,6 @@ public class activity_searchuser extends AppCompatActivity {
     }
 
     public void onSearchClicked(View v){
-        // todo: get info from backend and create mUserList properly
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
         String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
@@ -79,7 +83,22 @@ public class activity_searchuser extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("failed");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                        builder.setTitle("Error");
+                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
+                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog dialog=builder.create();
+                        dialog.show();
+                    }
+                });
+                // System.out.println("failed");
                 e.printStackTrace();
             }
 
@@ -90,24 +109,47 @@ public class activity_searchuser extends AppCompatActivity {
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
+                    mAdapter.mUserList.clear();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
+                            builder.setTitle("Info");
+                            builder.setMessage("该用户不存在");
+                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                            AlertDialog dialog=builder.create();
+                            dialog.show();
+                        }
+                    });
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.setAdapter(mAdapter);
+                        }
+                    });
                     System.out.println("no such user");
                 } else {
                     System.out.println("succeeded");
-                    System.out.println(msg_obj_string);
+                    // empty the mUserList
+                    mAdapter.mUserList.clear();
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
                     int id = msg_json.getIntValue("ID");
                     String username = msg_json.getString("username");
                     String password = msg_json.getString("password");
                     String nickname = msg_json.getString("nickname");
                     String introduction = msg_json.getString("introduction");
-                    user targetUser = new user(id, username, password, nickname, introduction);
+                    targetUser = new user(id, username, password, nickname, introduction);
 
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             userInsert(targetUser);
                         }
-                    });// TODO: bug here!
+                    });
                 }
             }
         });

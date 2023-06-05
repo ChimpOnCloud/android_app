@@ -1,8 +1,12 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,7 +23,10 @@ import org.json.*;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,11 +44,9 @@ public class activity_login extends AppCompatActivity {
     String introduction;
     EditText usernameText;
     EditText passwordText;
+    Set<String> followers = new HashSet<>();
     private TextView reg;
     private TextView reg2;
-    // TextView notificationText;
-    private String TESTSTRING1 = "username";
-    private String TESTSTRING2 = "password";
     private String LOGINSTATUS = "loginstatus";
     private boolean isLogin = false;
     private SharedPreferences mPreferences;
@@ -92,6 +97,12 @@ public class activity_login extends AppCompatActivity {
         if(username.isEmpty()||password.isEmpty()){
             return;
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadingDialogUtil.getInstance().showLoadingDialog(activity_login.this, "Loading...");
+            }
+        });
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"";
         jsonStr = jsonStr + ",\"nickname\":\"" + nickname + "\",\"introduction\":\"" + introduction + "\"}";
         String requestUrl = getString(R.string.ipv4)+"login/";
@@ -106,23 +117,27 @@ public class activity_login extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("failed");
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_login.this);
+                // System.out.println("failed");
                 e.printStackTrace();
             }
 
             @Override
             public void onResponse(Call call, final Response response)
                     throws IOException {
+                LoadingDialogUtil.getInstance().closeLoadingDialog();
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
-//                System.out.println("hello" + msg_json.getString("username"));
-                String repeatString = "repeated!";
+                // String repeatString = "repeated!";
                 if (msg_obj_string.equals("wrong password")) {
-                    System.out.println("password not correct");
+                    buildDialog("Error", "输入的密码有误", activity_login.this);
+                    // System.out.println("password not correct");
                     // notificationText.setText("repeated username. Please choose another one!");
                 } else if (msg_obj_string.equals("not registered yet!")) {
-                    System.out.println("please register first");
+                    buildDialog("Info","看起来您还没有注册，请先注册",activity_login.this);
+                    // System.out.println("please register first");
                 } else {
                     System.out.println("succeeded");
                     System.out.println(msg_obj_string);

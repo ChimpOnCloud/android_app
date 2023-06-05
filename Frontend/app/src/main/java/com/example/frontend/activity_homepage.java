@@ -10,6 +10,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.text.SpannableStringBuilder;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +22,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import java.util.concurrent.SynchronousQueue;
 
 public class activity_homepage extends AppCompatActivity {
     String username = "";
@@ -39,12 +40,13 @@ public class activity_homepage extends AppCompatActivity {
     public static user User;
     private RecyclerView mPostRecyclerView;
     private PostAdapter mPostAdapter;
+    private static final int newPost=1;
+    private ArrayList<Post> posts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
-        Bundle bundle = this.getIntent().getExtras();
         username = mPreferences.getString("username", username);
         password = mPreferences.getString("password", password);
         nickname = mPreferences.getString("nickname", nickname);
@@ -52,7 +54,7 @@ public class activity_homepage extends AppCompatActivity {
         isLogin = mPreferences.getBoolean("loginstatus", isLogin);
         // todo: create the User with params
         User=new user(1,username,password,nickname,introduction);
-        Log.d("a",User.getUsername());
+        // Log.d("a",User.getUsername());
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -64,8 +66,8 @@ public class activity_homepage extends AppCompatActivity {
                         jumpToHomePage();
                         return true;
                     case R.id.navigation_topic:
-                        selectedFragment = new BlankFragment();
-                        break;
+                        jumpToSearch();
+                        return true;
                     case R.id.navigation_guide: {
                         jumpToChat();
                         return true;
@@ -85,7 +87,7 @@ public class activity_homepage extends AppCompatActivity {
         mPostRecyclerView.setLayoutManager(layoutManager);
 
         // Create a list of Post objects and set the adapter
-        List<Post> posts = new ArrayList<>();
+        posts = new ArrayList<>();
         // Populate the list with Post objects
         Post post1 = new Post();
         Post post2 = new Post();
@@ -102,34 +104,34 @@ public class activity_homepage extends AppCompatActivity {
         mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String viewType) {
-                if (viewType.equals("title") || viewType.equals("content")) {
-                    Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-                    intent.putExtra("post", posts.get(position));
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
+                intent.putExtra("post", posts.get(position));
+                startActivity(intent);
             }
         });
-
-
-
         FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Post post_new = new Post();
-                post_new.setAuthor("新动态作者");
-                post_new.setTitle("新动态标题");
-                post_new.setContent("1.新动态内容\n2.新动态内容 \n3.新动态内容");
-                int[] images = {R.drawable.image7, R.drawable.image8, R.drawable.image9,
-                        R.drawable.image10, R.drawable.image11, R.drawable.image12};
-                post_new.setImages(images);
-                posts.add(0, post_new);
-                mPostAdapter.notifyDataSetChanged();
-//                Intent intent = new Intent(MainActivity.this, PostEditActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
+                startActivityForResult(intent,newPost);
             }
         });
-
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case newPost:
+                if (resultCode == RESULT_OK) {
+                    Post post=data.getParcelableExtra("newPost");
+                    post.setAuthor(User.getUsername());
+                    // todo: notify backend
+                    posts.add(post);
+                    mPostAdapter.notifyDataSetChanged();
+                }
+                break;
+        }
     }
 
     public void jumpToHomePage(){
@@ -142,20 +144,21 @@ public class activity_homepage extends AppCompatActivity {
     }
 
     public void jumpToChat(){
-        Bundle bundle = new Bundle();
-        bundle.putString("username", username);
-        bundle.putString("password", password);
         Intent intent = new Intent(this, activity_chat.class);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
+
+    public void jumpToSearch(){
+        Intent intent=new Intent(this,activity_search.class);
+        startActivity(intent);
+    }
+
 
     @SuppressLint("ApplySharedPref")
     public void logout(View v) {
         SharedPreferences.Editor preferencesEditor = mPreferences.edit();
         preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
         preferencesEditor.commit();
-        // Log.d("a",String.valueOf(mPreferences.getBoolean(LOGINSTATUS,false)));
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

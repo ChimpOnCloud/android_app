@@ -18,12 +18,18 @@ public class user implements Serializable {
         password=p;
         nickname=n;
         introduction=i;
-        Log.d("user",username);
     }
 
     public user(){
         ID=1;
         username="testuser";
+        password="password";
+        nickname="nickname";
+        introduction="intro bla bla bla...";
+    }
+    public user(String u){
+        ID=1;
+        username=u;
         password="password";
         nickname="nickname";
         introduction="intro bla bla bla...";

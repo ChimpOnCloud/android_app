@@ -119,9 +119,13 @@ public class activity_editinfo extends AppCompatActivity {
                     preferencesEditor.putString("nickname", newNickname);
                     preferencesEditor.putString("introduction", newIntroduction);
                     preferencesEditor.apply();
+                } else if (msg_obj_string.equals("repeated username!")) {
+                    System.out.println("already have this username!");
                 }
             }
         });
+        // change mpreferences
+        System.out.println("shit" + mPreferences.getString("username", newUsername));
         Intent intent = new Intent(this, activity_homepage.class);
         startActivity(intent);
     }

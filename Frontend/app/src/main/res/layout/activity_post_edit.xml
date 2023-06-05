@@ -1,103 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <!-- 导航栏 -->
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <!-- 返回按钮 -->
         <Button
-            android:text="返回"
+            android:id="@+id/backButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:onClick="onBackClicked"
+            android:text="返回" />
 
         <!-- 标题 -->
         <TextView
-            android:text="发布动态"
-            android:textSize="20sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="发布动态"
+            android:layout_gravity="right"
+            android:textSize="20sp" />
 
         <!-- 发布按钮 -->
         <Button
-            android:text="发布"
+            android:id="@+id/confirmButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:onClick="onConfirmClicked"
+            android:text="发布" />
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/post_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/bg_corner_image"
+        android:padding="2dp"
+        android:text="#默认话题"
+        android:clickable="true"
+        android:onClick="onTagChangeClicked"
+        android:textColor="#ffffff"
+        android:focusable="true" />
+
     <!-- 标题输入框 -->
     <EditText
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="请输入标题"/>
+        android:hint="请输入标题" />
 
     <!-- 分割线 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black"/>
+        android:background="@color/black" />
 
     <!-- 正文输入框 -->
     <EditText
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="请输入正文"/>
+        android:hint="请输入正文" />
 
-    <!-- 添加图片按钮 -->
-    <Button
-        android:text="添加图片"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"/>
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/addImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAddImageClicked"
+            android:text="添加图片" />
+
+        <Button
+            android:id="@+id/useLocate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="onLocationClicked"
+            android:text="开启定位" />
+
+        <Button
+            android:id="@+id/addVideoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAddVideoClicked"
+            android:text="添加视频" />
+
+    </LinearLayout>
 
     <!-- 图片容器 -->
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"/>
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"/>
-
-        <ImageView
+            android:id="@+id/image_1"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_2"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
 
         <ImageView
+            android:id="@+id/image_3"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
 
-        <Button
-            android:text="添加图片"
+        <ImageView
+            android:id="@+id/image_4"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginLeft="8dp"
-            android:layout_gravity="center_vertical"/>
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/image_5"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop" />
 
     </LinearLayout>
 
