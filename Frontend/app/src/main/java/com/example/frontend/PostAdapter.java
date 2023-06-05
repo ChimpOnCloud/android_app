@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -51,6 +54,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
         return mPosts.size();
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
@@ -127,6 +131,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         public void bind(Post post) {
             // 将数据绑定到ViewHolder中的控件上
             mAvatar.setImageResource(post.getAvatar());
+
             mAuthor.setText(post.getAuthor());
             mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());

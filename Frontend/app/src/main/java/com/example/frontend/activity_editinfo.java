@@ -7,11 +7,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import com.squareup.picasso.Picasso;
+
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +50,7 @@ public class activity_editinfo extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
 
-    private String currentPhotoPath;
+    private String avatarUrl = "";
 
 
     @Override
@@ -64,12 +68,7 @@ public class activity_editinfo extends AppCompatActivity {
         nicknameEditText = findViewById(R.id.textView_nickname_content);
         introEditText = findViewById(R.id.textView_introduction_content);
         avatarImageView = findViewById(R.id.imageView_avatar);
-
-        String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + oldUsername + "/";
-        Glide.with(this)
-                .load(avatarUrl)
-                .placeholder(R.drawable.ic_default_avatar) // 可选的默认头像
-                .into(avatarImageView);
+        getAvatar();
 
         usrnameEditText.setText(oldUsername);
         passwdEditText.setText(oldPassword);
@@ -78,6 +77,27 @@ public class activity_editinfo extends AppCompatActivity {
 
 
     }
+
+    public void getAvatar() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                avatarUrl = getString(R.string.ipv4) + "getAvatar/" + oldUsername + "/";
+
+                Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.ic_default_avatar)
+                        .resize(200,200)
+                        .centerCrop() // 可选，如果需要将图像裁剪为正方形
+                        .into(avatarImageView);
+                avatarImageView = findViewById(R.id.imageView_avatar);
+
+            }
+        });
+    }
+
+
     public void saveInfo(View v) {
         String newUsername = usrnameEditText.getText().toString();
         String newPassword = passwdEditText.getText().toString();
@@ -209,7 +229,10 @@ public class activity_editinfo extends AppCompatActivity {
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                // 上传成功的处理逻辑
+                // 添加日志输出
+                Log.d("Debug", "Avatar upload successful");
+                // 上传成功后重新加载头像
+                // getAvatar();
             }
         });
     }

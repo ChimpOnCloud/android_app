@@ -93,11 +93,6 @@ def get_avatar(request, targetName):
     avatar_relative_path = target_user.avatar.url
     media_index = avatar_relative_path.rfind('media/') + len('media/')
     avatar_path = os.path.join(settings.MEDIA_ROOT, avatar_relative_path[media_index:])
-    # avatar_path = Path(target_user.avatar.path)
-
-    # 打印目标用户名和头像路径
-    print("Target username:", targetName)
-    print("Avatar path:", avatar_path)
     
     # 检查文件是否存在
     if not os.path.exists(avatar_path):
