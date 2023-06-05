@@ -48,12 +48,6 @@ public class activity_chat extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//        user VirtualUser=new user(2,"username","password","nickname","my introduction");
-//        ArrayList<message> VirtualList=new ArrayList<>();
-//        VirtualList.add(new message("Hello!!",VirtualUser));
-//        chat VirtualChat=new chat(VirtualUser,VirtualList);
-//        chatListInsert(VirtualChat);
-        // System.out.println(activity_homepage.User.getUsername());
         // TODO: find all followed users and add to the chatlist
         String jsonStr = "{\"curUsername\":\""+ activity_homepage.User.getUsername() + "\"}";
         String requestUrl = getString(R.string.ipv4)+"findRelatedChatUsers/";

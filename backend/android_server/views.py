@@ -307,6 +307,15 @@ def find_related_chat_users(request):
                 followedpersonUsername = account.objects.filter(
                     ID=followedpersonID).first().__dict__['username']
                 return_dict[i] = followedpersonUsername
+            # 还要找已经关注了他的人
+            follow_relations = followperson.objects.filter(
+                followedpersonID=potential_user.__dict__['ID'])
+            for i, follow_relation in enumerate(follow_relations):
+                followerID = follow_relation.__dict__[
+                    'followerID']
+                followerUsername = account.objects.filter(
+                    ID=followerID).first().__dict__['username']
+                return_dict[i] = followerUsername
             # for i, obj in enumerate(chat.objects.all()):
             #     obj.delete()
             # for i, obj in enumerate(message.objects.all()):
