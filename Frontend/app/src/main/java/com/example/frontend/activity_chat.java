@@ -145,8 +145,7 @@ public class activity_chat extends AppCompatActivity {
                         if (is_send_i == false) {
                             msgList.add(new message(msg_i,insertUser));
                         } else {
-                            // msgList.add(new message(msg_i,null));
-                            msgList.add(new message(msg_i, activity_homepage.User));
+                            msgList.add(new message(msg_i,activity_homepage.User));
                         }
                     }
                 }
