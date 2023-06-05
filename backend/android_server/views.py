@@ -1,8 +1,11 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from android_server.models import account
+from django.conf import settings
 import json
+import os
+
 # Create your views here.
 
 
@@ -61,6 +64,43 @@ def change_userinfo(request):
             target_user.save()
             return HttpResponse('ok')
 
+def upload_avatar(request):
+    avatar_file = request.FILES.get('image')
+    oldusername = request.POST.get('oldUsername')
+    target_user = account.objects.get(username=oldusername)
+
+    file_path = "media/avatar/" + avatar_file.name
+    with open(file_path, 'wb') as f:
+        for chunk in avatar_file.chunks():
+            f.write(chunk)
+
+    target_user.avatar = file_path
+    target_user.save()
+    return HttpResponse('ok')
+
+def get_avatar(request, targetName):
+    # 根据用户ID获取用户对象
+    try:
+        target_user = account.objects.get(username=targetName)
+    except account.DoesNotExist:
+        return HttpResponse('User not found', status=404)
+
+    # 获取头像文件路径
+    avatar_relative_path = target_user.avatar.url
+    media_index = avatar_relative_path.rfind('media/') + len('media/')
+    avatar_path = os.path.join(settings.MEDIA_ROOT, avatar_relative_path[media_index:])
+    # avatar_path = Path(target_user.avatar.path)
+
+    # 打印目标用户名和头像路径
+    print("Target username:", targetName)
+    print("Avatar path:", avatar_path)
+    
+    # 检查文件是否存在
+    if not os.path.exists(avatar_path):
+        return HttpResponse('Avatar not found', status=404)
+
+    # 返回头像文件
+    return FileResponse(open(avatar_path, 'rb'), content_type='')
 
 def search_user(request):
     if request.method == 'POST':

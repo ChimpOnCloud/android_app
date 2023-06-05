@@ -63,6 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/textView_password"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp" />
+
     <EditText
         android:id="@+id/textView_nickname_content"
         android:layout_width="wrap_content"
@@ -97,6 +98,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_introduction"
         />
+    <TextView
+        android:id="@+id/textView_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New avatar:"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_introduction_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp" />
+
+    <Button
+        android:id="@+id/upload_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="upload"
+        android:onClick="uploadAvatar"
+        app:layout_constraintTop_toTopOf="@id/textView_avatar"
+        app:layout_constraintBottom_toBottomOf="@id/textView_avatar"
+        app:layout_constraintStart_toEndOf="@id/textView_avatar" />
+
+    <ImageView
+        android:id="@+id/imageView_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toEndOf="@id/upload_avatar"
+        app:layout_constraintTop_toTopOf="@id/upload_avatar"
+        app:layout_constraintBottom_toBottomOf="@id/upload_avatar" />
 
     <Button
         android:id="@+id/saveButton"

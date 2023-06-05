@@ -4,7 +4,7 @@ from django.db import models
 
 
 class account(models.Model):
-    avatar = models.IntegerField(default=0, verbose_name='头像')
+    avatar = models.ImageField(upload_to='avatar', default='', verbose_name='头像')
     ID = models.AutoField(primary_key=True)
     username = models.CharField(max_length=25, verbose_name='用户名')
     password = models.CharField(max_length=25, verbose_name='密码')
@@ -24,7 +24,6 @@ class pyq(models.Model):
     title = models.CharField(max_length=25, verbose_name='标题')
     content = models.CharField(max_length=500, verbose_name='内容')
     image_contain = models.ManyToManyField(image)
-
 
 class message(models.Model):
     msg_content = models.CharField(max_length=500, verbose_name='消息内容')
