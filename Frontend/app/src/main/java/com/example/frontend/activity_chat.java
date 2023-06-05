@@ -55,8 +55,8 @@ public class activity_chat extends AppCompatActivity {
 //        chatListInsert(VirtualChat);
         // System.out.println(activity_homepage.User.getUsername());
         // TODO: find all followed users and add to the chatlist
-        String jsonStr = "{\"srcUsername\":\""+ activity_homepage.User.getUsername() + "\"}";
-        String requestUrl = getString(R.string.ipv4)+"showSubscribedlist/";
+        String jsonStr = "{\"curUsername\":\""+ activity_homepage.User.getUsername() + "\"}";
+        String requestUrl = getString(R.string.ipv4)+"findRelatedChatUsers/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
@@ -82,21 +82,60 @@ public class activity_chat extends AppCompatActivity {
 
                 } else {
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                    // System.out.println(msg_json.size());
                     for (int i = 0; i < msg_json.size(); i++) {
                         String insert_username = msg_json.getString(Integer.toString(i));
+                        if (insert_username.equals(activity_homepage.User.getUsername())) {
+                            continue;
+                        }
                         user insertUser = new user(insert_username); // here we only store username, other attributes shouldn't be used!
                         ArrayList<message> msgList=new ArrayList<>();
-                        msgList.add(new message("Hello!!",insertUser));
-                        chat msgChat=new chat(insertUser,msgList);
-                        chatListInsert(msgChat); // overlap??
+                        // msgList.add(new message("Hello!!",insertUser));
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-
+                                getAllMessages(activity_homepage.User.getUsername(), insert_username);
+                            }
+                        });
+                        chat msgChat=new chat(insertUser,msgList);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                chatListInsert(msgChat); // overlap??
                             }
                         });
                     }
+                }
+            }
+        });
+    }
+    public void getAllMessages(String srcUsername, String dstUsername) {
+        String jsonStr = "{\"srcUsername\":\""+ srcUsername + "\",\"dstUsername\":\""+dstUsername+"\"}";
+        String requestUrl = getString(R.string.ipv4)+"getRelatedMessages/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+
                 }
             }
         });

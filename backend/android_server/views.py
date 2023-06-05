@@ -127,6 +127,16 @@ def handle_followuser(request):
 
         followperson.objects.create(
             followerID=src_user_dict['ID'], followedpersonID=dst_user_dict['ID'], ID=follow_relation_cnt)
+
+        # 如果chat没有这两个人的聊天框，创建一个
+        # chat永远成对出现，苦难与鲜花同时盛开
+        potential_chat = chat.objects.filter(
+            from_id=dst_user_dict['ID'], oppo_id=src_user_dict['ID'])
+        if not potential_chat:
+            chat.objects.create(
+                from_id=dst_user_dict['ID'], oppo_id=src_user_dict['ID'], msg_cnt=0)
+            chat.objects.create(
+                oppo_id=dst_user_dict['ID'], from_id=src_user_dict['ID'], msg_cnt=0)
         return HttpResponse('ok')
 
 
@@ -179,31 +189,106 @@ def add_message_to_chat(request):
             potential_chat_list = chats.objects.create(
                 user_ID=from_user_dict['ID'])
 
+        # chat永远是成对出现的
         potential_chat = chat.objects.filter(
             from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
         chat_msg_cnt = 0
         if not potential_chat:
             potential_chat = chat.objects.create(
                 msg_cnt=0, from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
+            chat.objects.create(
+                msg_cnt=0, oppo_id=from_user_dict['ID'], from_id=to_user_dict['ID'])
         else:
             chat_msg_cnt = potential_chat.first().__dict__['msg_cnt']
 
-        new_msg = message.objects.create(
-            msg_content=msg_json['msgContent'], msg_ID=chat_msg_cnt)
+        # 处理新消息
+        # send和rcv各一个新消息
+        new_msg_send = message.objects.create(
+            msg_content=msg_json['msgContent'], msg_ID=chat_msg_cnt, is_send=True)
+        new_msg_rcv = message.objects.create(
+            msg_content=msg_json['msgContent'], msg_ID=chat_msg_cnt, is_send=False)
 
-        potential_chat = chat.objects.filter(
+        # 两个消息所对应的聊天cnt加一
+        potential_send_chat = chat.objects.filter(
             from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
-        potential_chat.update(msg_cnt=chat_msg_cnt + 1)
-
-        m_chat = chat.objects.get(
+        potential_send_chat.update(msg_cnt=chat_msg_cnt + 1)
+        potential_rcv_chat = chat.objects.filter(
+            oppo_id=from_user_dict['ID'], from_id=to_user_dict['ID'])
+        potential_rcv_chat.update(msg_cnt=chat_msg_cnt + 1)
+        # 创建消息和聊天的关系
+        send_chat = chat.objects.get(
             from_id=from_user_dict['ID'], oppo_id=to_user_dict['ID'])
-        m_chat.msg_contain.add(new_msg)
+        send_chat.msg_contain.add(new_msg_send)
+        rcv_chat = chat.objects.get(
+            oppo_id=from_user_dict['ID'], from_id=to_user_dict['ID'])
+        rcv_chat.msg_contain.add(new_msg_rcv)
 
-        potential_chat_list = potential_chat_list.first()
-        potential_chat_list.chat_contain.add(m_chat)
-        print(potential_chat_list)
+        # chats暂时弃用
+        # potential_chat_list = potential_chat_list.first()
+        # potential_chat_list.chat_contain.add(m_chat)
+        # print(potential_chat_list)
         # for i, obj in enumerate(chat.objects.all()):
         #     obj.delete()
         # for i, obj in enumerate(message.objects.all()):
         #     obj.delete()
         return HttpResponse('success')
+
+
+def find_related_chat_users(request):
+    if request.method == 'POST':
+        # first we find subscribers and create certain chats.
+        user_data = json.loads(request.body)
+        potential_user = account.objects.get(
+            username=user_data['curUsername'])
+        if not potential_user:
+            return HttpResponse('error')
+
+        else:
+            # 关注的时候就已经创建了聊天框！！！关注关系足够找到所有需要的聊天框
+            # 找到所有curUser关注的人
+            follow_relations = followperson.objects.filter(
+                followerID=potential_user.__dict__['ID'])
+            return_dict = {}
+            potential_chats = chats.objects.filter(
+                user_ID=potential_user.__dict__['ID'])
+            if not potential_chats:
+                chats.objects.create(user_ID=potential_user.__dict__['ID'])
+            # 对每一个关注的人
+            for i, follow_relation in enumerate(follow_relations):
+                # 被关注者的ID
+                followedpersonID = follow_relation.__dict__[
+                    'followedpersonID']
+                # 通过ID找到这个人的username
+                followedpersonUsername = account.objects.filter(
+                    ID=followedpersonID).first().__dict__['username']
+                return_dict[i] = followedpersonUsername
+            # for i, obj in enumerate(chat.objects.all()):
+            #     obj.delete()
+            # for i, obj in enumerate(message.objects.all()):
+            #     obj.delete()
+            # for i, obj in enumerate(chats.objects.all()):
+            #     obj.delete()
+            # for i, obj in enumerate(followperson.objects.all()):
+            #     obj.delete()
+            # return HttpResponse('error')
+            return HttpResponse(json.dumps(return_dict))
+
+
+def get_related_messages(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        # TODO: return related messages
+        print('hello!')
+        return HttpResponse('hello')
+
+
+def deleteall():
+    for i, obj in enumerate(chat.objects.all()):
+        obj.delete()
+    for i, obj in enumerate(message.objects.all()):
+        obj.delete()
+    for i, obj in enumerate(chats.objects.all()):
+        obj.delete()
+    for i, obj in enumerate(followperson.objects.all()):
+        obj.delete()
+    print('delete!')

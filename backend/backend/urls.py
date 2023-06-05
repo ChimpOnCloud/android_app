@@ -27,4 +27,6 @@ urlpatterns = [
     path('handleunFollowuser/', views.handle_unfollowuser),
     path('showSubscribedlist/', views.show_subscribelist),
     path('addMessageToChat/', views.add_message_to_chat),
+    path('findRelatedChatUsers/', views.find_related_chat_users),
+    path('getRelatedMessages/', views.get_related_messages)
 ]

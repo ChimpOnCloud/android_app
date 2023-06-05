@@ -37,6 +37,7 @@ class message(models.Model):
     msg_content = models.CharField(max_length=500, verbose_name='消息内容')
     msg_ID = models.IntegerField(verbose_name='消息序号')
     msg_time = models.DateTimeField(auto_now_add=True, verbose_name='发表时间')
+    is_send = models.BooleanField(default=True)
 
 
 class chat(models.Model):
