@@ -68,6 +68,7 @@ def change_userinfo(request):
                 username=full_user_data['newUsername'], password=full_user_data['newPassword'], nickname=full_user_data['newNickname'], introduction=full_user_data['newIntroduction'])
             return HttpResponse('ok')
 
+
 def upload_avatar(request):
     avatar_file = request.FILES.get('image')
     oldusername = request.POST.get('oldUsername')
@@ -81,6 +82,7 @@ def upload_avatar(request):
     target_user.avatar = file_path
     target_user.save()
     return HttpResponse('ok')
+
 
 def get_avatar(request, targetName):
     # 根据用户ID获取用户对象
@@ -100,6 +102,7 @@ def get_avatar(request, targetName):
 
     # 返回头像文件
     return FileResponse(open(avatar_path, 'rb'), content_type='')
+
 
 def search_user(request):
     if request.method == 'POST':
@@ -298,6 +301,15 @@ def find_related_chat_users(request):
                 followedpersonUsername = account.objects.filter(
                     ID=followedpersonID).first().__dict__['username']
                 return_dict[i] = followedpersonUsername
+            # 还要找已经关注了他的人
+            follow_relations = followperson.objects.filter(
+                followedpersonID=potential_user.__dict__['ID'])
+            for i, follow_relation in enumerate(follow_relations):
+                followerID = follow_relation.__dict__[
+                    'followerID']
+                followerUsername = account.objects.filter(
+                    ID=followerID).first().__dict__['username']
+                return_dict[i] = followerUsername
             # for i, obj in enumerate(chat.objects.all()):
             #     obj.delete()
             # for i, obj in enumerate(message.objects.all()):
@@ -314,8 +326,19 @@ def get_related_messages(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
         # TODO: return related messages
-        print('hello!')
-        return HttpResponse('hello')
+        src_user_dict = account.objects.filter(
+            username=user_data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=user_data['dstUsername']).first().__dict__
+
+        target_chat = chat.objects.get(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
+        return_dict = {}
+        for i, msg in enumerate(target_chat.msg_contain.all()):
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
+        return HttpResponse(json.dumps(return_dict))
 
 
 def deleteall():
