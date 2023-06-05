@@ -25,7 +25,7 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
     @Override
     public int getItemViewType(int position){
-        if(mChat.getChatContent().get(position).getFrom().equals(activity_homepage.User)) return BY_USER;
+        if(activity_homepage.User.equals(mChat.getChatContent().get(position).getFrom())) return BY_USER;
         else return FROM_OTHER;
     }
     @NonNull

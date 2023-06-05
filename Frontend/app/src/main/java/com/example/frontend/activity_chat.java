@@ -150,7 +150,7 @@ public class activity_chat extends AppCompatActivity {
                         if (is_send_i == false) {
                             msgList.add(new message(msg_i,insertUser));
                         } else {
-                            // TODO: add a sending msg
+                            msgList.add(new message(msg_i,null));
                         }
                     }
                 }
