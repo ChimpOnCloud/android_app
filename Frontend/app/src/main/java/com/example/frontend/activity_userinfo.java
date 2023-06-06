@@ -29,6 +29,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.security.Guard;
 import java.util.ArrayList;
 
@@ -121,6 +123,26 @@ public class activity_userinfo extends AppCompatActivity {
         popupMenu.show();
     }
 
+    public void getAvatar() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 添加日志输出
+                Log.d("Debug", "username: " + mUser.getUsername());
+                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername() + "/";
+
+                Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.ic_default_avatar)
+                        .resize(200, 200)
+                        .centerCrop()
+                        .into(userIcon);
+
+                Log.d("Debug", "url: " + avatarUrl);
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +174,7 @@ public class activity_userinfo extends AppCompatActivity {
         usrnameContent.setText(mUser.getUsername());
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
+        getAvatar();
         // todo: get subscribe pattern
         subscribe=false;
         // todo: get shield pattern
