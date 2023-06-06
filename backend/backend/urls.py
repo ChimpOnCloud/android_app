@@ -32,7 +32,9 @@ urlpatterns = [
     path('showSubscribedlist/', views.show_subscribelist),
     path('addMessageToChat/', views.add_message_to_chat),
     path('findRelatedChatUsers/', views.find_related_chat_users),
-    path('getRelatedMessages/', views.get_related_messages)
+    path('getRelatedMessages/', views.get_related_messages),
+    path('postPublish/', views.post_publish),
+    path('getAllPosts/', views.get_all_posts),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

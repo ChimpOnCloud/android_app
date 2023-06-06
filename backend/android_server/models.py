@@ -24,13 +24,14 @@ class image(models.Model):
 
 
 class pyq(models.Model):
-    avatar = models.IntegerField(verbose_name='头像')
+    # avatar = models.IntegerField(verbose_name='头像')
     tag = models.CharField(verbose_name='tag', max_length=25)
     username = models.CharField(max_length=25, verbose_name='用户名')
     ID = models.AutoField(primary_key=True)
     posttime = models.DateTimeField(auto_now_add=True, verbose_name='发表时间')
     title = models.CharField(max_length=25, verbose_name='标题')
     content = models.CharField(max_length=500, verbose_name='内容')
+    location = models.CharField(max_length=250, verbose_name='地点')
     image_contain = models.ManyToManyField(image)
 
 

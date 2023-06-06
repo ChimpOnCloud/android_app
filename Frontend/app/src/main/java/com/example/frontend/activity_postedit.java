@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract;
@@ -55,6 +56,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.alibaba.fastjson.JSONObject;
+
 import org.w3c.dom.Text;
 
 import java.io.BufferedOutputStream;
@@ -66,8 +69,17 @@ import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.StringTokenizer;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class activity_postedit extends AppCompatActivity implements LocationListener {
     private Button confirmButton;
@@ -144,11 +156,46 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         editor.remove(tagString);
         editor.commit();
 
+
         Intent intent=new Intent();
         post.setTitle(titleText.getText().toString());
         post.setContent(contentText.getText().toString());
+        post.setTag(tagText.getText().toString());
         post.setTime();
         if(useLocation) post.setLocation(mLocation);
+        String jsonStr = "{\"titleString\":\""+ titleText.getText().toString() + "\",\"contentString\":\""+contentText.getText().toString()+"\"";
+        jsonStr = jsonStr + ",\"tagString\":\"" + tagText.getText().toString() + "\",\"locationString\":\"" + mLocation + "\"";
+        jsonStr = jsonStr + ",\"username\":\"" + activity_homepage.User.getUsername() + "\"}";
+        System.out.println(tagString);
+        String requestUrl = getString(R.string.ipv4)+"postPublish/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+
+                }
+            }
+        });
         intent.putExtra("newPost", post);
         setResult(RESULT_OK,intent);
         finish();
@@ -247,6 +294,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             public void onClick(DialogInterface dialogInterface, int which) {
                 tagText.setText(Post.tagList[which]);
                 post.setTag(Post.tagList[which]);
+                SharedPreferences.Editor editor=mPreferences.edit();
+                editor.putString(tagString,tagText.getText().toString());
+                editor.apply();
+                System.out.println(mPreferences.getString(tagString, ""));
             }
         });
         AlertDialog alertDialog=builder.create();

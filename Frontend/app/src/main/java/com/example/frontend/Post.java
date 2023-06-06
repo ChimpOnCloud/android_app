@@ -26,8 +26,8 @@ public class Post implements Parcelable {
     private String[] images; // 帖子图片
     private String location;
     private String tag;
-    private int commentNumber;
-    private int thumbsupNumber;
+    private int commentNumber = 0;
+    private int thumbsupNumber = 0;
     private int likeNumber;
     public static final String[] tagList=new String[]{
         "#默认话题",
@@ -46,6 +46,14 @@ public class Post implements Parcelable {
         this.tag="#默认话题";
         this.commentNumber=this.thumbsupNumber=this.likeNumber=0;
         this.images=new String[]{"","","","","",""};
+    }
+    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag) {
+        this.avatar = mAvatar;
+        this.author = mAuthor;
+        this.time = mTime;
+        this.title = mTitle;
+        this.content = mContent;
+        this.tag = mTag;
     }
 
     protected Post(Parcel in) {

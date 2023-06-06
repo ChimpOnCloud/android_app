@@ -94,8 +94,9 @@ def get_avatar(request, targetName):
     # 获取头像文件路径
     avatar_relative_path = target_user.avatar.url
     media_index = avatar_relative_path.rfind('media/') + len('media/')
-    avatar_path = os.path.join(settings.MEDIA_ROOT, avatar_relative_path[media_index:])
-    
+    avatar_path = os.path.join(
+        settings.MEDIA_ROOT, avatar_relative_path[media_index:])
+
     # 检查文件是否存在
     if not os.path.exists(avatar_path):
         return HttpResponse('Avatar not found', status=404)
@@ -339,6 +340,39 @@ def get_related_messages(request):
             return_dict['msg' + str(i)] = msg_dict['msg_content']
             return_dict['is_send' + str(i)] = msg_dict['is_send']
         return HttpResponse(json.dumps(return_dict))
+
+
+def post_publish(request):
+    if request.method == 'POST':
+        post_data = json.loads(request.body)
+        post_username = post_data['username']
+        post_user_dict = account.objects.filter(
+            username=post_username).first().__dict__
+        pyq.objects.create(title=post_data['titleString'], content=post_data['contentString'],
+                           tag=post_data['tagString'], location=post_data['locationString'],
+                           username=post_user_dict['username'])
+        return HttpResponse('ok')
+
+
+def get_all_posts(request):
+    if request.method == 'POST':
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        return_dict = {}
+        posts = pyq.objects.all()
+        for i, post in enumerate(posts):
+            return_dict['tag' +
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['location' + str(i)] = post.__dict__['location']
+    return HttpResponse(json.dumps(return_dict))
 
 
 def deleteall():
