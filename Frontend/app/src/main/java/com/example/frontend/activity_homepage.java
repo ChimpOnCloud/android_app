@@ -179,14 +179,14 @@ public class activity_homepage extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
-//        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
-//        addPostButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
-//                startActivityForResult(intent,newPost);
-//            }
-//        });
+        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
+        addPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
+                startActivityForResult(intent,newPost);
+            }
+        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
