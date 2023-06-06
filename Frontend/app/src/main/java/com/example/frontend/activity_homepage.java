@@ -139,18 +139,27 @@ public class activity_homepage extends AppCompatActivity {
 //                    System.out.println(post_name_dict);
 //                    System.out.println(msg_obj_string);
                     for (int i = 0; i < msg_json.size() / 6; i++) {
-                        Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
+                        Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i).substring(0,19), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
                         System.out.println(post);
-                        handler.post(new Runnable() {
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//
+//                            }
+//                        });
+                        posts.add(post);
+                    }
+                    handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                posts.add(post);
+                                mPostAdapter = new PostAdapter(posts);
+                                mPostRecyclerView.setAdapter(mPostAdapter);
                             }
                         });
-                    }
                 }
             }
         });
+
 //        Post post1 = new Post();
 //        Post post2 = new Post();
 //        Post post3 = new Post();
@@ -160,25 +169,24 @@ public class activity_homepage extends AppCompatActivity {
 //        posts.add(post3);
 //        posts.add(post4);
 
-        mPostAdapter = new PostAdapter(posts);
-        mPostRecyclerView.setAdapter(mPostAdapter);
-
-        mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, String viewType) {
-                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-                intent.putExtra("post", posts.get(position));
-                startActivity(intent);
-            }
-        });
-        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
-        addPostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
-                startActivityForResult(intent,newPost);
-            }
-        });
+//        mPostAdapter = new PostAdapter(posts);
+//        mPostRecyclerView.setAdapter(mPostAdapter);
+//        mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position, String viewType) {
+//                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
+//                intent.putExtra("post", posts.get(position));
+//                startActivity(intent);
+//            }
+//        });
+//        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
+//        addPostButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
+//                startActivityForResult(intent,newPost);
+//            }
+//        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
