@@ -291,7 +291,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             mImageView[position].setImageBitmap(bitmap);
         }
         // todo: save the images in post
-        post.setImage(1,position);
+        post.setImage(photoVideoUtil.getUri().toString(),position);
     }
 
     public void onAddImageClicked(View v) {

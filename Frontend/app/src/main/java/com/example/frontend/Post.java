@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -16,12 +18,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Post implements Parcelable {
-    private int avatar; // 用户头像
+    private String avatar; // 用户头像
     private String author; // 用户名
     private String time; // 发布时间
     private String title; // 帖子标题
     private String content; // 帖子内容
-    private int[] images; // 帖子图片
+    private String[] images; // 帖子图片
     private String location;
     private String tag;
     private int commentNumber;
@@ -35,25 +37,30 @@ public class Post implements Parcelable {
         "#吐槽盘点"};
 
     public Post() {
-        this.avatar = R.drawable.ic_default_avatar;
+        this.avatar="";
         this.author = "匿名";
         this.setTime();
         this.title = "默认标题";
         this.content = "1.默认内容\n2.默认内容\n3.默认内容";
-        this.images = null;
-        this.location=null;
+        this.location="";
         this.tag="#默认话题";
         this.commentNumber=this.thumbsupNumber=this.likeNumber=0;
-        this.images=new int[]{0,0,0,0,0,0};
+        this.images=new String[]{"","","","","",""};
     }
 
     protected Post(Parcel in) {
-        avatar = in.readInt();
+        avatar = in.readString();
         author = in.readString();
         time = in.readString();
         title=in.readString();
         content=in.readString();
-        images = in.createIntArray();
+        images=new String[6];
+        images[0] = in.readString();
+        images[1] = in.readString();
+        images[2] = in.readString();
+        images[3] = in.readString();
+        images[4] = in.readString();
+        images[5] = in.readString();
         location=in.readString();
         tag=in.readString();
         commentNumber=in.readInt();
@@ -73,11 +80,11 @@ public class Post implements Parcelable {
         }
     };
 
-    public int getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(int avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 
@@ -115,21 +122,21 @@ public class Post implements Parcelable {
         this.content = content;
     }
 
-    public int[] getImages() {
+    public String[] getImages() {
         return images;
     }
     public int getImagesLength(){
         int i=0;
         for(;i<6;i++){
-            if(images[i]==0) break;
+            if(images[i]=="") break;
         }
         return i;
     }
-    public void setImage(int image,int position){
+    public void setImage(String image,int position){
         if(position>5||position<0) return;
         images[position]=image;
     }
-    public void setImages(int[] images) {
+    public void setImages(String[] images) {
         this.images = images;
     }
 
@@ -140,12 +147,17 @@ public class Post implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeInt(avatar);
+        parcel.writeString(avatar);
         parcel.writeString(author);
         parcel.writeString(time);
         parcel.writeString(title);
         parcel.writeString(content);
-        parcel.writeIntArray(images);
+        parcel.writeString(images[0]);
+        parcel.writeString(images[1]);
+        parcel.writeString(images[2]);
+        parcel.writeString(images[3]);
+        parcel.writeString(images[4]);
+        parcel.writeString(images[5]);
         parcel.writeString(location);
         parcel.writeString(tag);
         parcel.writeInt(commentNumber);

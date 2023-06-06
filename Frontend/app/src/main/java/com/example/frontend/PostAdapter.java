@@ -1,5 +1,8 @@
 package com.example.frontend;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +86,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mComment;
         private TextView mThumbs;
         private TextView mLike;
+        private Context context;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -103,6 +107,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mComment=itemView.findViewById(R.id.commentNumber);
             mThumbs=itemView.findViewById(R.id.thumbsNumber);
             mLike=itemView.findViewById(R.id.likeNumber);
+            context=itemView.getContext();
 
 //            mTitle.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -129,18 +134,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         public void bind(Post post) {
-            // 将数据绑定到ViewHolder中的控件上
-            mAvatar.setImageResource(post.getAvatar());
-
+            // todo: 在Avatar中存储String的情况下，将数据绑定到ViewHolder中的控件上
+            // mAvatar.setImageResource(post.getAvatar());
+            // Log.d("a",post.getAvatar());
             mAuthor.setText(post.getAuthor());
             mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());
             mContent.setText(post.getContent());
             if(post.getImages() != null) {
                 for (int i = 0; i < post.getImages().length; i++) {
-                    if (post.getImages()[i] != 0) {
+                    if (post.getImages()[i] != "") {
                         mImages[i].setVisibility(View.VISIBLE);
-                        mImages[i].setImageResource(post.getImages()[i]);
+                        // todo: 类似的
+                        // mImages[i].setImageResource(post.getImages()[i]);
                     } else {
                         mImages[i].setVisibility(View.GONE);
                     }

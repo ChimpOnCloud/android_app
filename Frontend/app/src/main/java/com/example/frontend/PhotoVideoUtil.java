@@ -46,17 +46,22 @@ public class PhotoVideoUtil {
     public static final int VIDEO_REQUEST_CODE = 0x9999;
     public static final int REQUEST_CODE_CAPTURE_VIDEO = 0x99999;
     private Context context;
+    private Uri uri;
+
+    public Uri getUri() {
+        return uri;
+    }
 
     public PhotoVideoUtil(Context c){
         context=c;
     }
     public Bitmap PhotoAlbumRequest(Intent data){
         if(data==null) return null;
-        Uri uri=data.getData();
+        uri=data.getData();
         return handleImageOnKitKat(uri);
     }
     public Bitmap PhotoCameraRequest(Intent data){
-        Uri uri = data.getData();
+        uri = data.getData();
         if(uri == null) {
             Bundle bundle = data.getExtras();
             if (bundle != null) {
@@ -77,7 +82,7 @@ public class PhotoVideoUtil {
         return handleImageOnKitKat(uri);
     }
     public Uri VideoAlbumRequest(Intent data){
-        Uri uri=data.getData();
+        uri=data.getData();
         String[] filePathColumn = {MediaStore.Video.Media.DATA};
         Cursor cursor = context.getContentResolver().query(uri,
                 filePathColumn, null, null, null);
@@ -86,7 +91,6 @@ public class PhotoVideoUtil {
         String videopath = cursor.getString(columnIndex);
         Log.d("a",videopath);
         return uri;
-        // todo: return sth
     }
     public void VideoCameraRequest(Intent data){
         // todo
@@ -143,7 +147,7 @@ public class PhotoVideoUtil {
         }
         return path;
     }
-    private Bitmap handleImageOnKitKat(Uri uri) {
+    public Bitmap handleImageOnKitKat(Uri uri) {
         String imagePath=null;
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // 如果是document类型的Uri，则通过document id处理
@@ -163,6 +167,8 @@ public class PhotoVideoUtil {
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
+        }else{
+            return null;
         }
         // 根据图片路径显示图片
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
