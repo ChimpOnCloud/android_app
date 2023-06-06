@@ -55,12 +55,7 @@ public class activity_editinfo extends AppCompatActivity {
     ImageView avatarImageView;
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
-
-<<<<<<< HEAD
     private PhotoVideoUtil photoVideoUtil;
-=======
-    private String avatarUrl = "";
->>>>>>> e8b3042481b913165673547b09440e78a01846f4
 
 
     @Override
@@ -78,7 +73,6 @@ public class activity_editinfo extends AppCompatActivity {
         nicknameEditText = findViewById(R.id.textView_nickname_content);
         introEditText = findViewById(R.id.textView_introduction_content);
         avatarImageView = findViewById(R.id.imageView_avatar);
-        getAvatar();
 
         usrnameEditText.setText(oldUsername);
         passwdEditText.setText(oldPassword);
@@ -86,28 +80,25 @@ public class activity_editinfo extends AppCompatActivity {
         introEditText.setText(oldIntroduction);
 
         photoVideoUtil=new PhotoVideoUtil(this);
+        getAvatar();
     }
-
     public void getAvatar() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                avatarUrl = getString(R.string.ipv4) + "getAvatar/" + oldUsername + "/";
+                String avatarUri= getString(R.string.ipv4) + "getAvatar/" + oldUsername + "/";
 
                 Picasso.get()
-                        .load(avatarUrl)
+                        .load(avatarUri)
                         .placeholder(R.drawable.ic_default_avatar)
                         .resize(200,200)
                         .centerCrop() // 可选，如果需要将图像裁剪为正方形
                         .into(avatarImageView);
                 avatarImageView = findViewById(R.id.imageView_avatar);
-
             }
         });
     }
-
-
     public void saveInfo(View v) {
         String newUsername = usrnameEditText.getText().toString();
         String newPassword = passwdEditText.getText().toString();
@@ -198,18 +189,17 @@ public class activity_editinfo extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data==null) return;
         if (requestCode == ALBUM_REQUEST_CODE) {
             Bitmap bitmap= photoVideoUtil.PhotoAlbumRequest(data);
-            LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
             photoVideoUtil.uploadBitmap(bitmap,oldUsername);
-            LoadingDialogUtil.getInstance(this).closeLoadingDialog();
+            avatarImageView.setImageBitmap(bitmap);
         }
         else if (requestCode == REQUEST_CODE_CAPTURE_CAMERA) {
             // 从相机拍摄照片
             Bitmap bitmap = photoVideoUtil.PhotoCameraRequest(data);
-            LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
             photoVideoUtil.uploadBitmap(bitmap,oldUsername);
-            LoadingDialogUtil.getInstance(this).closeLoadingDialog();
+            avatarImageView.setImageBitmap(bitmap);
         }
     }
 }

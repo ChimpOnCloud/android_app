@@ -212,6 +212,7 @@ public class PhotoVideoUtil {
     }
 
     public void uploadBitmap(Bitmap bitmap,String oldUsername) {
+        LoadingDialogUtil.getInstance(context).showLoadingDialog("Loading...");
         // 将 Bitmap 转换为字节数组或其他合适的数据格式
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -233,11 +234,14 @@ public class PhotoVideoUtil {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
                 e.printStackTrace();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",(AppCompatActivity)context);
                 // 上传失败的处理逻辑
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
                 // 上传成功的处理逻辑
             }
         });

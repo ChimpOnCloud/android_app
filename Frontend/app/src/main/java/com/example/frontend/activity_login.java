@@ -97,12 +97,7 @@ public class activity_login extends AppCompatActivity {
         if(username.isEmpty()||password.isEmpty()){
             return;
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                LoadingDialogUtil.getInstance(activity_login.this).showLoadingDialog("Loading...");
-            }
-        });
+        LoadingDialogUtil.getInstance(activity_login.this).showLoadingDialog("Loading...");
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"";
         jsonStr = jsonStr + ",\"nickname\":\"" + nickname + "\",\"introduction\":\"" + introduction + "\"}";
         String requestUrl = getString(R.string.ipv4)+"login/";

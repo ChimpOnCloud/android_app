@@ -84,21 +84,6 @@ public class activity_userinfo extends AppCompatActivity {
                 else if("关注/取关".equals(item.getTitle())){
                     subscribe=!subscribe;
                     // todo: notify backend
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_userinfo.this);
-                            builder.setTitle("...");
-                            builder.setMessage("to be finished");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
                 }
                 else if("屏蔽/解除".equals(item.getTitle())){
                     shielded=!shielded;

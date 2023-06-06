@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,21 +85,7 @@ public class activity_searchuser extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
-                        builder.setTitle("Error");
-                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        AlertDialog dialog=builder.create();
-                        dialog.show();
-                    }
-                });
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_searchuser.this);
                 // System.out.println("failed");
                 e.printStackTrace();
             }
@@ -110,21 +98,7 @@ public class activity_searchuser extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mUserList.clear();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_searchuser.this);
-                            builder.setTitle("Info");
-                            builder.setMessage("该用户不存在");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
+                    buildDialog("Error","未找到用户",activity_searchuser.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

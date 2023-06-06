@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -109,21 +111,7 @@ public class activity_search extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder=new AlertDialog.Builder(activity_search.this);
-                        builder.setTitle("Error");
-                        builder.setMessage("无法连接至服务器。。或许网络出错了？");
-                        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        AlertDialog dialog=builder.create();
-                        dialog.show();
-                    }
-                });
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_search.this);
                 // System.out.println("failed");
                 e.printStackTrace();
             }
@@ -136,21 +124,7 @@ public class activity_search extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mPosts.clear();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_search.this);
-                            builder.setTitle("Info");
-                            builder.setMessage("该动态不存在");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
+                    buildDialog("Info","未找到结果",activity_search.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

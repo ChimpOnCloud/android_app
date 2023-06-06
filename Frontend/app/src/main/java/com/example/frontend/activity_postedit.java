@@ -151,21 +151,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, activity_postedit.this);
         String provider = getProvider(locationManager);
         if (provider == null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_postedit.this);
-                    builder.setTitle("Error");
-                    builder.setMessage("定位失败。。可能没有开启位置信息？");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    AlertDialog dialog=builder.create();
-                    dialog.show();
-                }
-            });
+            buildDialog("Error","定位失败。。没有开启位置信息？",this);
             useLocation=false;
             // Toast.makeText(activity_postedit.this, "定位失败", Toast.LENGTH_SHORT).show();
         }
@@ -253,6 +239,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data==null) return;
         if(requestCode== ALBUM_REQUEST_CODE){
             displayImage(photoVideoUtil.PhotoAlbumRequest(data));
         }

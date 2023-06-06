@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
