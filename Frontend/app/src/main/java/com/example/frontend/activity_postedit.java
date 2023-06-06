@@ -90,6 +90,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     private static final String tagString="tag";
     private Uri VideoUri;
     private PhotoVideoUtil photoVideoUtil;
+    private Boolean confirm;
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -112,6 +113,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         contentText.setText(mPreferences.getString(contentString,""));
         tagText.setText(mPreferences.getString(tagString,Post.tagList[0]));
         photoVideoUtil=new PhotoVideoUtil(this);
+        confirm=false;
     }
 
     public void onBackClicked(View v){
@@ -123,7 +125,25 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         setResult(RESULT_CANCELED);
         finish();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(confirm) return;
+        SharedPreferences.Editor editor=mPreferences.edit();
+        editor.putString(titleString,titleText.getText().toString());
+        editor.putString(contentString,contentText.getText().toString());
+        editor.putString(tagString,tagText.getText().toString());
+        editor.apply();
+    }
     public void onConfirmClicked(View v){
+        SharedPreferences.Editor editor=mPreferences.edit();
+        confirm=true;
+        editor.remove(titleString);
+        editor.remove(contentString);
+        editor.remove(tagString);
+        editor.commit();
+
         Intent intent=new Intent();
         post.setTitle(titleText.getText().toString());
         post.setContent(contentText.getText().toString());
