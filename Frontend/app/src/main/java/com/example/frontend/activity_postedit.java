@@ -111,7 +111,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         titleText.setText(mPreferences.getString(titleString,""));
         contentText.setText(mPreferences.getString(contentString,""));
         tagText.setText(mPreferences.getString(tagString,Post.tagList[0]));
-        photoVideoUtil=new PhotoVideoUtil();
+        photoVideoUtil=new PhotoVideoUtil(this);
     }
 
     public void onBackClicked(View v){
@@ -254,14 +254,14 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode== ALBUM_REQUEST_CODE){
-            displayImage(photoVideoUtil.PhotoAlbumRequest(data,this));
+            displayImage(photoVideoUtil.PhotoAlbumRequest(data));
         }
         else if(requestCode==REQUEST_CODE_CAPTURE_CAMERA){
-            displayImage(photoVideoUtil.PhotoCameraRequest(data,this));
+            displayImage(photoVideoUtil.PhotoCameraRequest(data));
         }
         else if(requestCode==VIDEO_REQUEST_CODE){
             Intent intent=new Intent(this,activity_video.class);
-            VideoUri=photoVideoUtil.VideoAlbumRequest(data,this);
+            VideoUri=photoVideoUtil.VideoAlbumRequest(data);
             if(VideoUri==null) return;
             displayVideoPreview(getVideoThumb(getRealPathFromUri(this,VideoUri)));
             intent.putExtra("Uri",VideoUri.toString());
@@ -269,7 +269,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         }
         else if(requestCode==REQUEST_CODE_CAPTURE_VIDEO){
             // todo
-            photoVideoUtil.VideoCameraRequest(data,this);
+            photoVideoUtil.VideoCameraRequest(data);
         }
     }
     private void displayVideoPreview(Bitmap bitmap){
@@ -315,10 +315,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                     return true;
                 }
                 if ("拍照".equals(item.getTitle())) {
-                    photoVideoUtil.getImageFromCamera(activity_postedit.this);
+                    photoVideoUtil.getImageFromCamera();
                 }
                 else {
-                    photoVideoUtil.getImageFromAlbum(activity_postedit.this);
+                    photoVideoUtil.getImageFromAlbum();
                 }
                 return true;
             }
@@ -354,10 +354,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if ("录像".equals(item.getTitle())) {
-                    photoVideoUtil.getVideoFromCamera(activity_postedit.this);
+                    photoVideoUtil.getVideoFromCamera();
                 }
                 else{
-                    photoVideoUtil.getVideoFromAlbum(activity_postedit.this);
+                    photoVideoUtil.getVideoFromAlbum();
                 }
                 return true;
             }
