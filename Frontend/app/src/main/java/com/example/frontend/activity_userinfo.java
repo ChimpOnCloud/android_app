@@ -29,6 +29,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.security.Guard;
 import java.util.ArrayList;
 
@@ -82,21 +84,6 @@ public class activity_userinfo extends AppCompatActivity {
                 else if("关注/取关".equals(item.getTitle())){
                     subscribe=!subscribe;
                     // todo: notify backend
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog.Builder builder=new AlertDialog.Builder(activity_userinfo.this);
-                            builder.setTitle("...");
-                            builder.setMessage("to be finished");
-                            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            AlertDialog dialog=builder.create();
-                            dialog.show();
-                        }
-                    });
                 }
                 else if("屏蔽/解除".equals(item.getTitle())){
                     shielded=!shielded;
@@ -119,6 +106,26 @@ public class activity_userinfo extends AppCompatActivity {
             }
         });
         popupMenu.show();
+    }
+
+    public void getAvatar() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 添加日志输出
+                Log.d("Debug", "username: " + mUser.getUsername());
+                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername() + "/";
+
+                Picasso.get()
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.ic_default_avatar)
+                        .resize(200, 200)
+                        .centerCrop()
+                        .into(userIcon);
+
+                Log.d("Debug", "url: " + avatarUrl);
+            }
+        });
     }
 
     @Override
@@ -152,6 +159,7 @@ public class activity_userinfo extends AppCompatActivity {
         usrnameContent.setText(mUser.getUsername());
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
+        getAvatar();
         // todo: get subscribe pattern
         subscribe=false;
         // todo: get shield pattern

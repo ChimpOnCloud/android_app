@@ -97,12 +97,7 @@ public class activity_login extends AppCompatActivity {
         if(username.isEmpty()||password.isEmpty()){
             return;
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                LoadingDialogUtil.getInstance().showLoadingDialog(activity_login.this, "Loading...");
-            }
-        });
+        LoadingDialogUtil.getInstance(activity_login.this).showLoadingDialog("Loading...");
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"";
         jsonStr = jsonStr + ",\"nickname\":\"" + nickname + "\",\"introduction\":\"" + introduction + "\"}";
         String requestUrl = getString(R.string.ipv4)+"login/";
@@ -117,7 +112,7 @@ public class activity_login extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_login.this).closeLoadingDialog();
                 buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_login.this);
                 // System.out.println("failed");
                 e.printStackTrace();
@@ -126,7 +121,7 @@ public class activity_login extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response)
                     throws IOException {
-                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_login.this).closeLoadingDialog();
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();

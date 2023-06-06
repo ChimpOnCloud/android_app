@@ -98,7 +98,7 @@ public class activity_register extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LoadingDialogUtil.getInstance().showLoadingDialog(activity_register.this, "Loading...");
+                LoadingDialogUtil.getInstance(activity_register.this).showLoadingDialog("Loading...");
             }
         });
         String jsonStr = "{\"username\":\""+ username + "\",\"password\":\""+password+"\"}";
@@ -114,7 +114,7 @@ public class activity_register extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_register.this).closeLoadingDialog();
                 buildDialog("Error","无法连接至服务器。。或许网络出错了？致",activity_register.this);
                 // System.out.println("register failed");
                 e.printStackTrace();
@@ -123,7 +123,7 @@ public class activity_register extends AppCompatActivity {
             @Override
             public void onResponse(Call call, final Response response)
                     throws IOException {
-                LoadingDialogUtil.getInstance().closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_register.this).closeLoadingDialog();
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();

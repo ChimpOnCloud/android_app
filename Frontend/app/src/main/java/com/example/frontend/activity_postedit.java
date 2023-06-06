@@ -111,7 +111,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         titleText.setText(mPreferences.getString(titleString,""));
         contentText.setText(mPreferences.getString(contentString,""));
         tagText.setText(mPreferences.getString(tagString,Post.tagList[0]));
-        photoVideoUtil=new PhotoVideoUtil();
+        photoVideoUtil=new PhotoVideoUtil(this);
     }
 
     public void onBackClicked(View v){
@@ -151,21 +151,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, activity_postedit.this);
         String provider = getProvider(locationManager);
         if (provider == null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder=new AlertDialog.Builder(activity_postedit.this);
-                    builder.setTitle("Error");
-                    builder.setMessage("定位失败。。可能没有开启位置信息？");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    AlertDialog dialog=builder.create();
-                    dialog.show();
-                }
-            });
+            buildDialog("Error","定位失败。。没有开启位置信息？",this);
             useLocation=false;
             // Toast.makeText(activity_postedit.this, "定位失败", Toast.LENGTH_SHORT).show();
         }
@@ -253,15 +239,16 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(data==null) return;
         if(requestCode== ALBUM_REQUEST_CODE){
-            displayImage(photoVideoUtil.PhotoAlbumRequest(data,this));
+            displayImage(photoVideoUtil.PhotoAlbumRequest(data));
         }
         else if(requestCode==REQUEST_CODE_CAPTURE_CAMERA){
-            displayImage(photoVideoUtil.PhotoCameraRequest(data,this));
+            displayImage(photoVideoUtil.PhotoCameraRequest(data));
         }
         else if(requestCode==VIDEO_REQUEST_CODE){
             Intent intent=new Intent(this,activity_video.class);
-            VideoUri=photoVideoUtil.VideoAlbumRequest(data,this);
+            VideoUri=photoVideoUtil.VideoAlbumRequest(data);
             if(VideoUri==null) return;
             displayVideoPreview(getVideoThumb(getRealPathFromUri(this,VideoUri)));
             intent.putExtra("Uri",VideoUri.toString());
@@ -269,7 +256,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         }
         else if(requestCode==REQUEST_CODE_CAPTURE_VIDEO){
             // todo
-            photoVideoUtil.VideoCameraRequest(data,this);
+            photoVideoUtil.VideoCameraRequest(data);
         }
     }
     private void displayVideoPreview(Bitmap bitmap){
@@ -315,10 +302,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                     return true;
                 }
                 if ("拍照".equals(item.getTitle())) {
-                    photoVideoUtil.getImageFromCamera(activity_postedit.this);
+                    photoVideoUtil.getImageFromCamera();
                 }
                 else {
-                    photoVideoUtil.getImageFromAlbum(activity_postedit.this);
+                    photoVideoUtil.getImageFromAlbum();
                 }
                 return true;
             }
@@ -354,10 +341,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if ("录像".equals(item.getTitle())) {
-                    photoVideoUtil.getVideoFromCamera(activity_postedit.this);
+                    photoVideoUtil.getVideoFromCamera();
                 }
                 else{
-                    photoVideoUtil.getVideoFromAlbum(activity_postedit.this);
+                    photoVideoUtil.getVideoFromAlbum();
                 }
                 return true;
             }

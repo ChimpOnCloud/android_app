@@ -44,7 +44,6 @@ class chat implements Serializable {
 class message implements Serializable{
     private String messageString;
     private user From;
-    private user To;
 
     public message(String m,user f){
         messageString=m;
@@ -57,9 +56,5 @@ class message implements Serializable{
 
     public user getFrom() {
         return From;
-    }
-
-    public user getTo() {
-        return To;
     }
 }

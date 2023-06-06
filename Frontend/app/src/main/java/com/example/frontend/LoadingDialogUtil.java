@@ -29,16 +29,11 @@ public class LoadingDialogUtil {
     private static ImageView imageView;
     private static boolean isLoading;
     private static boolean loading=false;
-    private LoadingDialogUtil() {
+    private Context context;
+    private LoadingDialogUtil(Context c) {
+        context=c;
     }
-
-    /**
-     * 加载话框
-     *
-     * @param context
-     * @param msg
-     */
-    public void showLoadingDialog(Context context, String msg) {
+    public void showLoadingDialog(String msg) {
         if(null == context || ((Activity)context).isFinishing())return;
         if(isLoading())return;
         dlg = new AlertDialog.Builder(context, R.style.dialogStyle).create();
@@ -62,13 +57,8 @@ public class LoadingDialogUtil {
         isLoading = true;
     }
 
-    /**
-     * 加载话框
-     *
-     * @param context
-     *
-     */
-    public void showLoadingDialog(Context context) {
+
+    public void showLoadingDialog() {
         if(isLoading()|| null == context)return;
         dlg = new AlertDialog.Builder(context, R.style.dialogStyle).create();
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null);
@@ -144,16 +134,11 @@ public class LoadingDialogUtil {
         void onPressButton(int buttonIndex);
     }
 
-    /**
-     * 单一实例
-     *
-     * @return
-     */
-    public static LoadingDialogUtil getInstance() {
+    public static LoadingDialogUtil getInstance(Context context) {
         if (mInstance == null) {
             synchronized (LoadingDialogUtil.class) {
                 if (mInstance == null) {
-                    mInstance = new LoadingDialogUtil();
+                    mInstance = new LoadingDialogUtil(context);
                     return mInstance;
                 }
             }

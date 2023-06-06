@@ -26,20 +26,36 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PhotoVideoUtil {
     public static final int ALBUM_REQUEST_CODE = 0x99 ;
     public static final int REQUEST_CODE_CAPTURE_CAMERA = 0x999;
     public static final int VIDEO_REQUEST_CODE = 0x9999;
     public static final int REQUEST_CODE_CAPTURE_VIDEO = 0x99999;
-    public Bitmap PhotoAlbumRequest(Intent data, Context context){
+    private Context context;
+
+    public PhotoVideoUtil(Context c){
+        context=c;
+    }
+    public Bitmap PhotoAlbumRequest(Intent data){
         if(data==null) return null;
         Uri uri=data.getData();
-        return handleImageOnKitKat(uri,context);
+        return handleImageOnKitKat(uri);
     }
-    public Bitmap PhotoCameraRequest(Intent data, Context context){
+    public Bitmap PhotoCameraRequest(Intent data){
         Uri uri = data.getData();
         if(uri == null) {
             Bundle bundle = data.getExtras();
@@ -58,9 +74,9 @@ public class PhotoVideoUtil {
                 return null;
             }
         }
-        return handleImageOnKitKat(uri,context);
+        return handleImageOnKitKat(uri);
     }
-    public Uri VideoAlbumRequest(Intent data,Context context){
+    public Uri VideoAlbumRequest(Intent data){
         Uri uri=data.getData();
         String[] filePathColumn = {MediaStore.Video.Media.DATA};
         Cursor cursor = context.getContentResolver().query(uri,
@@ -72,16 +88,16 @@ public class PhotoVideoUtil {
         return uri;
         // todo: return sth
     }
-    public void VideoCameraRequest(Intent data,Context context){
+    public void VideoCameraRequest(Intent data){
         // todo
     }
-    public void getImageFromAlbum(Context context) {
+    public void getImageFromAlbum() {
         Intent albumIntent = new Intent(Intent.ACTION_PICK);
         albumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         ((AppCompatActivity)context).startActivityForResult(albumIntent, ALBUM_REQUEST_CODE);
     }
 
-    public void getImageFromCamera(Context context) {
+    public void getImageFromCamera() {
         String state = Environment.getExternalStorageState();
         if (state.equals(Environment.MEDIA_MOUNTED)) {
             Intent getImageByCamera = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -89,12 +105,12 @@ public class PhotoVideoUtil {
         }
     }
 
-    public void getVideoFromAlbum(Context context) {
+    public void getVideoFromAlbum() {
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         ((AppCompatActivity)context).startActivityForResult(i, VIDEO_REQUEST_CODE);
     }
 
-    public void getVideoFromCamera(Context context){
+    public void getVideoFromCamera(){
         String state = Environment.getExternalStorageState();
         if (state.equals(Environment.MEDIA_MOUNTED)) {
             Intent getImageByCamera = new Intent("android.media.action.VIDEO_CAPTURE");
@@ -116,7 +132,7 @@ public class PhotoVideoUtil {
         return true;
     }
     @SuppressLint("Range")
-    private String getImagePath(Context context, Uri uri, String selection) {
+    private String getImagePath(Uri uri, String selection) {
         String path = null;
         Cursor cursor = context.getContentResolver().query(uri, null, selection, null, null);
         if(cursor != null){
@@ -127,7 +143,7 @@ public class PhotoVideoUtil {
         }
         return path;
     }
-    private Bitmap handleImageOnKitKat(Uri uri, Context context) {
+    private Bitmap handleImageOnKitKat(Uri uri) {
         String imagePath=null;
         if (DocumentsContract.isDocumentUri(context, uri)) {
             // 如果是document类型的Uri，则通过document id处理
@@ -136,14 +152,14 @@ public class PhotoVideoUtil {
                 String id = docId.split(":")[1];
                 // 解析出数字格式的id
                 String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
                 Uri contentUri = ContentUris.withAppendedId(Uri.parse("content: //downloads/public_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(context,contentUri, null);
+                imagePath = getImagePath(contentUri, null);
             }
         } else if ("content".equalsIgnoreCase(uri.getScheme())) {
             // 如果是content类型的Uri，则使用普通方式处理
-            imagePath = getImagePath(context,uri, null);
+            imagePath = getImagePath(uri, null);
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
@@ -193,5 +209,41 @@ public class PhotoVideoUtil {
         MediaMetadataRetriever media = new MediaMetadataRetriever();
         media.setDataSource(path);
         return media.getFrameAtTime();
+    }
+
+    public void uploadBitmap(Bitmap bitmap,String oldUsername) {
+        LoadingDialogUtil.getInstance(context).showLoadingDialog("Loading...");
+        // 将 Bitmap 转换为字节数组或其他合适的数据格式
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] imageData = byteArrayOutputStream.toByteArray();
+        // 构造请求体，包含图片数据和其他参数
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", oldUsername+".jpg", RequestBody.create(MediaType.parse("image/jpeg"), imageData))
+                .addFormDataPart("oldUsername", oldUsername)  // 其他参数
+                .build();
+        // 构造请求
+        String requestUrl = context.getString(R.string.ipv4)+"uploadAvatar/";
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(requestBody)
+                .build();
+        // 发送请求
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
+                e.printStackTrace();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",(AppCompatActivity)context);
+                // 上传失败的处理逻辑
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
+                // 上传成功的处理逻辑
+            }
+        });
     }
 }
