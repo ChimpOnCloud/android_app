@@ -23,6 +23,11 @@ class image(models.Model):
     image_content = models.IntegerField(primary_key=True)
 
 
+class comment(models.Model):
+    comment_username = models.CharField(max_length=250)
+    comment_content = models.CharField(default="", max_length=250)
+
+
 class pyq(models.Model):
     # avatar = models.IntegerField(verbose_name='头像')
     tag = models.CharField(verbose_name='tag', max_length=25)
@@ -33,6 +38,8 @@ class pyq(models.Model):
     content = models.CharField(max_length=500, verbose_name='内容')
     location = models.CharField(max_length=250, verbose_name='地点')
     image_contain = models.ManyToManyField(image)
+    like_account_contain = models.ManyToManyField(account)
+    comment_contain = models.ManyToManyField(comment)
 
 
 class message(models.Model):

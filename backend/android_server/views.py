@@ -375,6 +375,43 @@ def get_all_posts(request):
     return HttpResponse(json.dumps(return_dict))
 
 
+def get_all_posts_with_constraints(request):
+    if request.method == 'POST':
+        post_data = json.loads(request.body)
+        onlyCheckSubscribed = post_data['onlyCheckSubscribed']
+        tag = post_data['tag']
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        return_dict = {}
+        posts = pyq.objects.all()
+        cnt = 0
+        for i, post in enumerate(posts):
+            if onlyCheckSubscribed == "true":
+                srcusername = post_data['srcUsername']
+                dstusername = post.__dict__['username']
+                srcID = account.objects.filter(
+                    username=srcusername).first().__dict__['ID']
+                dstID = account.objects.filter(
+                    username=dstusername).first().__dict__['ID']
+                potential_follow = followperson.objects.filter(
+                    followerID=srcID, followedpersonID=dstID)
+                if not potential_follow:
+                    continue
+            return_dict['tag' +
+                        str(cnt)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(cnt)] = post.__dict__['title']
+            return_dict['content' + str(cnt)] = post.__dict__['content']
+            return_dict['posttime' + str(cnt)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(cnt)] = post.__dict__['username']
+            return_dict['location' + str(cnt)] = post.__dict__['location']
+            cnt = cnt + 1
+    return HttpResponse(json.dumps(return_dict))
+
+
 def get_searched_pyq(request):
     if request.method == 'POST':
         post_name_dict = {}
@@ -409,6 +446,30 @@ def get_searched_pyq(request):
         if len(return_dict) == 0:
             return HttpResponse('notfound')
         return HttpResponse(json.dumps(return_dict))
+
+
+def handle_like(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        username = user_data['username']
+
+
+# def is_follow(request):
+#     if request.method == 'POST':
+#         json_data = json.loads(request.body)
+#         dst_username = json_data['dstUsername']
+#         src_username = json_data['srcUsername']
+#         dst_ID = account.objects.filter(
+#             username=dst_username).first().__dict__['ID']
+#         src_ID = account.objects.filter(
+#             username=src_username).first().__dict__['ID']
+#         potential_follow = followperson.objects.filter(
+#             followerID=src_ID, followedpersonID=dst_ID)
+#         print(dst_ID, src_ID)
+#         if not potential_follow:
+#             return HttpResponse('notfollowed')
+#         else:
+#             return HttpResponse('followed')
 
 
 def deleteall():

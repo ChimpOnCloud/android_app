@@ -35,7 +35,9 @@ urlpatterns = [
     path('getRelatedMessages/', views.get_related_messages),
     path('postPublish/', views.post_publish),
     path('getAllPosts/', views.get_all_posts),
-    path('getSearchedPyq/', views.get_searched_pyq)
+    path('getSearchedPyq/', views.get_searched_pyq),
+    path('getPostsWithConstraints/', views.get_all_posts_with_constraints),
+    # path('isFollow/', views.is_follow),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
