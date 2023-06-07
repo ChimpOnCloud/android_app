@@ -389,6 +389,7 @@ def get_all_posts_with_constraints(request):
         return_dict = {}
         posts = pyq.objects.all()
         cnt = 0
+        # print(post_name_dict[tag])
         for i, post in enumerate(posts):
             if onlyCheckSubscribed == "true":
                 srcusername = post_data['srcUsername']
@@ -400,6 +401,9 @@ def get_all_posts_with_constraints(request):
                 potential_follow = followperson.objects.filter(
                     followerID=srcID, followedpersonID=dstID)
                 if not potential_follow:
+                    continue
+            if str(tag) != '不限':
+                if post_name_dict[post.__dict__['tag']] != post_name_dict[str(tag)]:
                     continue
             return_dict['tag' +
                         str(cnt)] = str(post_name_dict[post.__dict__['tag']])
