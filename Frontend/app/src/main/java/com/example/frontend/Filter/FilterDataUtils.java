@@ -9,7 +9,6 @@ public class FilterDataUtils {
     public static List<FilterGrop> getFilterData() {
         List<FilterGrop> filterGrops = new ArrayList<>();
 
-        //学历要求
         FilterGrop filterGrop = new FilterGrop();
         filterGrop.gropName = "仅显示关注者";
         filterGrop.key="follow";
@@ -19,8 +18,6 @@ public class FilterDataUtils {
         filterGrop.filters.add(new FilterBean("1_1", "开启"));
         filterGrops.add(filterGrop);
 
-
-        //薪资待遇
         FilterGrop filterGrop1 = new FilterGrop();
         filterGrop1.gropName = "排序方式";
         filterGrop1.key="sort";
@@ -31,8 +28,6 @@ public class FilterDataUtils {
         filterGrop1.filters.add(new FilterBean("2_2", "按热度排序"));
         filterGrops.add(filterGrop1);
 
-
-        //经验要求
         FilterGrop filterGrop2 = new FilterGrop();
         filterGrop2.gropName = "标签";
         filterGrop2.key="tag";
@@ -46,6 +41,5 @@ public class FilterDataUtils {
         filterGrop2.filters.add(new FilterBean("3_5", "#吐槽盘点"));
         filterGrops.add(filterGrop2);
         return filterGrops;
-
     }
 }

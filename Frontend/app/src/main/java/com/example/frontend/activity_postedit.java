@@ -163,7 +163,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             //获取GPS定位
             return LocationManager.GPS_PROVIDER;
         }
-        return null;
+        else return LocationManager.PASSIVE_PROVIDER;
     }
     @SuppressLint("MissingPermission")
     private Location getLocation() {
@@ -178,7 +178,6 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         return locationManager.getLastKnownLocation(provider);
     }
     public void onLocationClicked(View v){
-        // final todo: add the following part
         useLocation=!useLocation;
         if(useLocation){
             if (ActivityCompat.checkSelfPermission(activity_postedit.this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {

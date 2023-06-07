@@ -157,8 +157,8 @@ public class activity_homepage extends AppCompatActivity {
     }
 
     public void jumpToHomePage(){
-        // Intent intent=new Intent(this,activity_homepage.class);
-        // startActivity(intent);
+        Intent intent=new Intent(this,activity_homepage.class);
+        startActivity(intent);
     }
     public void jumpToUserInfo() {
         Intent intent = new Intent(this, activity_userinfo.class);
