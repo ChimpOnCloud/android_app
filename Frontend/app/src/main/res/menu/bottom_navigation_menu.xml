@@ -5,22 +5,22 @@
         android:id="@+id/navigation_home"
         android:title="首页"
         app:showAsAction="always"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/homepage" />
     <item
         android:id="@+id/navigation_topic"
-        android:title="话题"
+        android:title="搜索"
         app:showAsAction="always"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/search" />
     <item
         android:id="@+id/navigation_guide"
         android:title="私聊"
         app:showAsAction="always"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/chat" />
     <item
         android:id="@+id/navigation_me"
         android:title="我的"
         app:showAsAction="always"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/userinfo" />
 </menu>
 
 

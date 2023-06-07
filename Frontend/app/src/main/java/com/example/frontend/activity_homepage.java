@@ -17,8 +17,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.frontend.Filter.FilterActivity;
+import com.example.frontend.Filter.FilterBean;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,7 @@ public class activity_homepage extends AppCompatActivity {
     private RecyclerView mPostRecyclerView;
     private PostAdapter mPostAdapter;
     private static final int newPost=1;
+    private static final int filter=0;
     private ArrayList<Post> posts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class activity_homepage extends AppCompatActivity {
         // Log.d("a",User.getUsername());
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setLabelVisibilityMode(NavigationBarView.LABEL_VISIBILITY_LABELED);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -117,6 +122,11 @@ public class activity_homepage extends AppCompatActivity {
                 startActivityForResult(intent,newPost);
             }
         });
+        FloatingActionButton filterButton=findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(view -> {
+            Intent intent=new Intent(activity_homepage.this, FilterActivity.class);
+            startActivityForResult(intent,filter);
+        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -131,12 +141,24 @@ public class activity_homepage extends AppCompatActivity {
                     mPostAdapter.notifyDataSetChanged();
                 }
                 break;
+            case filter:
+                if(resultCode==RESULT_OK){
+                    ArrayList<FilterBean> arrayList= (ArrayList<FilterBean>) data.getSerializableExtra("result");
+                    Log.d("a",arrayList.toString());
+                    Boolean onlyCheckSubscribed=false;
+                    if(arrayList.get(0).name.equals("开启")) onlyCheckSubscribed=true;
+                    int sorting=0; // 0: 未指定 1:按时间 2:按热度
+                    if(arrayList.get(1).name.equals("按时间排序")) sorting=1;
+                    else if(arrayList.get(1).name.equals("按热度排序")) sorting=2;
+                    String tag=arrayList.get(2).name;
+                    // todo: reset pyq in posts while connecting backend
+                }
         }
     }
 
     public void jumpToHomePage(){
-        Intent intent=new Intent(this,activity_homepage.class);
-        startActivity(intent);
+        // Intent intent=new Intent(this,activity_homepage.class);
+        // startActivity(intent);
     }
     public void jumpToUserInfo() {
         Intent intent = new Intent(this, activity_userinfo.class);
