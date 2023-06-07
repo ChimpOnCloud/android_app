@@ -142,17 +142,8 @@ public class activity_homepage extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-//                    System.out.println(post_name_dict);
-//                    System.out.println(msg_obj_string);
                     for (int i = 0; i < msg_json.size() / 6; i++) {
                         Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i).substring(0,19), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
-                        System.out.println(post);
-//                        handler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                            }
-//                        });
                         posts.add(post);
                     }
                     handler.post(new Runnable() {
@@ -161,7 +152,7 @@ public class activity_homepage extends AppCompatActivity {
                                 mPostAdapter = new PostAdapter(posts);
                                 mPostRecyclerView.setAdapter(mPostAdapter);
                             }
-                        });
+                    });
                 }
             }
         });

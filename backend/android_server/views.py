@@ -375,6 +375,42 @@ def get_all_posts(request):
     return HttpResponse(json.dumps(return_dict))
 
 
+def get_searched_pyq(request):
+    if request.method == 'POST':
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        post_data = json.loads(request.body)
+        target_name = post_data['targetName']
+        target_kind = post_data['targetKind']
+        print(target_name)
+        return_dict = {}
+        # 模糊搜索
+        if target_kind == 'title':
+            return_posts = pyq.objects.filter(title__icontains=target_name)
+        elif target_kind == 'content':
+            return_posts = pyq.objects.filter(content__icontains=target_name)
+        elif target_kind == 'username':
+            return_posts = pyq.objects.filter(username__icontains=target_name)
+        elif target_kind == 'tag':
+            return_posts = pyq.objects.filter(tag__icontains=target_name)
+        for i, post in enumerate(return_posts):
+            return_dict['tag' +
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' +
+                        str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['location' + str(i)] = post.__dict__['location']
+        if len(return_dict) == 0:
+            return HttpResponse('notfound')
+        return HttpResponse(json.dumps(return_dict))
+
+
 def deleteall():
     for i, obj in enumerate(chat.objects.all()):
         obj.delete()

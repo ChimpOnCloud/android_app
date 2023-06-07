@@ -98,8 +98,9 @@ public class activity_search extends AppCompatActivity {
         if(targetName.equals(null)) return;
         // todo: change the searching target to correct pyq
         String searchTarget=targetText.getText().toString(); // todo: use this
-        String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
-        String requestUrl = getString(R.string.ipv4)+"searchUser/";
+        String jsonStr = "{\"targetName\":\""+ targetName + "\",\"targetKind\":\"" + targetText.getText().toString() + "\"}";
+        System.out.println(jsonStr);
+        String requestUrl = getString(R.string.ipv4)+"getSearchedPyq/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
@@ -137,6 +138,17 @@ public class activity_search extends AppCompatActivity {
                     mAdapter.mPosts.clear();
                     // todo: change treatment here
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                    JSONObject post_name_dict = new JSONObject();
+                    post_name_dict.put("0", "#默认话题");
+                    post_name_dict.put("1", "#校园资讯");
+                    post_name_dict.put("2", "#二手交易");
+                    post_name_dict.put("3", "#思绪随笔");
+                    post_name_dict.put("4", "#吐槽盘点");
+                    for (int i = 0; i < msg_json.size() / 6; i++) {
+                        Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i).substring(0,19), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
+                        mAdapter.mPosts.add(post);
+                    }
+
 
                     handler.post(new Runnable() {
                         @Override
