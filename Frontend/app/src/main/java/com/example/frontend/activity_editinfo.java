@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;

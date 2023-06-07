@@ -10,6 +10,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcel;
 import android.text.SpannableStringBuilder;
 import android.util.Base64;
@@ -17,16 +19,29 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+
+import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Filter.FilterActivity;
 import com.example.frontend.Filter.FilterBean;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class activity_homepage extends AppCompatActivity {
+    private final Handler handler = new Handler();
     String username = "";
     String password = "";
     String nickname = "";
@@ -94,26 +109,73 @@ public class activity_homepage extends AppCompatActivity {
         // Create a list of Post objects and set the adapter
         posts = new ArrayList<>();
         // Populate the list with Post objects
-        Post post1 = new Post();
-        Post post2 = new Post();
-        Post post3 = new Post();
-        Post post4 = new Post();
-        posts.add(post1);
-        posts.add(post2);
-        posts.add(post3);
-        posts.add(post4);
-
-        mPostAdapter = new PostAdapter(posts);
-        mPostRecyclerView.setAdapter(mPostAdapter);
-
-        mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
+        String jsonStr = "";
+        String requestUrl = getString(R.string.ipv4)+"getAllPosts/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onItemClick(int position, String viewType) {
-                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-                intent.putExtra("post", posts.get(position));
-                startActivity(intent);
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+                    JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                    JSONObject post_name_dict = new JSONObject();
+                    post_name_dict.put("0", "#默认话题");
+                    post_name_dict.put("1", "#校园资讯");
+                    post_name_dict.put("2", "#二手交易");
+                    post_name_dict.put("3", "#思绪随笔");
+                    post_name_dict.put("4", "#吐槽盘点");
+                    for (int i = 0; i < msg_json.size() / 6; i++) {
+                        Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i).substring(0,19), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
+                        posts.add(post);
+                    }
+                    handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPostAdapter = new PostAdapter(posts);
+                                mPostRecyclerView.setAdapter(mPostAdapter);
+                            }
+                    });
+                }
             }
         });
+
+//        Post post1 = new Post();
+//        Post post2 = new Post();
+//        Post post3 = new Post();
+//        Post post4 = new Post();
+//        posts.add(post1);
+//        posts.add(post2);
+//        posts.add(post3);
+//        posts.add(post4);
+
+//        mPostAdapter = new PostAdapter(posts);
+//        mPostRecyclerView.setAdapter(mPostAdapter);
+//        mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position, String viewType) {
+//                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
+//                intent.putExtra("post", posts.get(position));
+//                startActivity(intent);
+//            }
+//        });
         FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
