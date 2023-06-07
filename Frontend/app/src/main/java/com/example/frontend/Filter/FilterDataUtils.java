@@ -36,6 +36,7 @@ public class FilterDataUtils {
         FilterGrop filterGrop2 = new FilterGrop();
         filterGrop2.gropName = "标签";
         filterGrop2.key="tag";
+        filterGrop2.filterType=TagFlowLayout.TAG_MODE_SINGLE;
         filterGrop2.filters = new ArrayList<>();
         filterGrop2.filters.add(new FilterBean(FilterBean.UNLIMITED, "不限"));
         filterGrop2.filters.add(new FilterBean("3_1", "#默认话题"));

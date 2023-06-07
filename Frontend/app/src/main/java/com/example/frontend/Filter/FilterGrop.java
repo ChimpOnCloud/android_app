@@ -4,11 +4,6 @@ import com.example.frontend.Filter.Flow.TagFlowLayout;
 
 import java.util.List;
 
-/**
- * @author zwl
- * @describe 筛选 组
- * @date on 2020/7/17
- */
 public class FilterGrop {
     public String gropName;
     public String key;//请求数据的key

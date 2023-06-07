@@ -36,10 +36,8 @@ public class FilterActivity extends AppCompatActivity {
             public void result(Map<String, List<FilterBean>> result) {
                 if (result != null) {
                     Iterator<Map.Entry<String, List<FilterBean>>> iterator = result.entrySet().iterator();
-                    int num = 0;
                     while (iterator.hasNext()) {
                         List<FilterBean> value = iterator.next().getValue();
-                        num += value.size();
                     }
                     mFilterResultTV.setText("筛选");
                     mFilterResultNum.setVisibility(View.GONE);
