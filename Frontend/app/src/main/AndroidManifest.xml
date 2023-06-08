@@ -14,6 +14,9 @@
     <!-- 用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
     <!--相机权限-->
     <uses-permission android:name="android.permission.CAMERA" />
     <!--写入SD卡的权限：如果你希望保存相机拍照后的照片-->
@@ -72,6 +75,9 @@
             android:name=".activity_newinfo"
             android:exported="false" />
         <activity
+            android:name=".PostInfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity_chatdetail"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -81,6 +87,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -54,6 +54,7 @@ public class Post implements Parcelable {
         this.title = mTitle;
         this.content = mContent;
         this.tag = mTag;
+        this.images = new String[]{"", "", "", "", "", ""};
     }
 
     protected Post(Parcel in) {

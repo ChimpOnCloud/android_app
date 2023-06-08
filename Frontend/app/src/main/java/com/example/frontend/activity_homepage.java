@@ -180,14 +180,6 @@ public class activity_homepage extends AppCompatActivity {
 
 //        mPostAdapter = new PostAdapter(posts);
 //        mPostRecyclerView.setAdapter(mPostAdapter);
-//        mPostAdapter.setOnItemClickListener(new PostAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position, String viewType) {
-//                Intent intent = new Intent(activity_homepage.this, PostInfoActivity.class);
-//                intent.putExtra("post", posts.get(position));
-//                startActivity(intent);
-//            }
-//        });
         FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
         addPostButton.setOnClickListener(new View.OnClickListener() {
             @Override

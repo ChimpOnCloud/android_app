@@ -1,6 +1,7 @@
 package com.example.frontend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,28 +99,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mLike=itemView.findViewById(R.id.likeNumber);
             context=itemView.getContext();
 
-//            mTitle.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (listener != null) {
-//                        int position = getBindingAdapterPosition();
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            listener.onItemClick(position,"title");
-//                        }
-//                    }
-//                }
-//            });
-//            mContent.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (listener != null) {
-//                        int position = getBindingAdapterPosition();
-//                        if (position != RecyclerView.NO_POSITION) {
-//                            listener.onItemClick(position,"content");
-//                        }
-//                    }
-//                }
-//            });
+            mTitle.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                Intent intent=new Intent(context,PostInfoActivity.class);
+                intent.putExtra("post", mPosts.get(position));
+                context.startActivity(intent);
+            });
+            mContent.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                Intent intent=new Intent(context,PostInfoActivity.class);
+                intent.putExtra("post", mPosts.get(position));
+                context.startActivity(intent);
+            });
         }
 
         public void bind(Post post) {
