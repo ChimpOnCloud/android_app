@@ -243,12 +243,15 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/likeImageView"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_like"
-                    android:layout_marginEnd="4dp"/>
+                    android:layout_marginEnd="4dp"
+                    android:onClick="like"/>
 
                 <TextView
+                    android:id="@+id/likeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="点赞"/>
