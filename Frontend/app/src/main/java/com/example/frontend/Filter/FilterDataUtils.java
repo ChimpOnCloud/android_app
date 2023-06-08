@@ -14,7 +14,7 @@ public class FilterDataUtils {
         filterGrop.key="follow";
         filterGrop.filterType = TagFlowLayout.TAG_MODE_SINGLE;
         filterGrop.filters = new ArrayList<>();
-        filterGrop.filters.add(new FilterBean(FilterBean.UNLIMITED, "不限"));
+        filterGrop.filters.add(new FilterBean(FilterBean.UNLIMITED+"0", "不限"));
         filterGrop.filters.add(new FilterBean("1_1", "开启"));
         filterGrops.add(filterGrop);
 
@@ -23,7 +23,7 @@ public class FilterDataUtils {
         filterGrop1.key="sort";
         filterGrop1.filterType = TagFlowLayout.TAG_MODE_SINGLE;
         filterGrop1.filters = new ArrayList<>();
-        filterGrop1.filters.add(new FilterBean(FilterBean.UNLIMITED, "不限"));
+        filterGrop1.filters.add(new FilterBean(FilterBean.UNLIMITED+"1", "不限"));
         filterGrop1.filters.add(new FilterBean("2_1", "按时间排序"));
         filterGrop1.filters.add(new FilterBean("2_2", "按热度排序"));
         filterGrops.add(filterGrop1);
@@ -33,7 +33,7 @@ public class FilterDataUtils {
         filterGrop2.key="tag";
         filterGrop2.filterType=TagFlowLayout.TAG_MODE_SINGLE;
         filterGrop2.filters = new ArrayList<>();
-        filterGrop2.filters.add(new FilterBean(FilterBean.UNLIMITED, "不限"));
+        filterGrop2.filters.add(new FilterBean(FilterBean.UNLIMITED+"2", "不限"));
         filterGrop2.filters.add(new FilterBean("3_1", "#默认话题"));
         filterGrop2.filters.add(new FilterBean("3_2", "#校园资讯"));
         filterGrop2.filters.add(new FilterBean("3_3", "#二手交易"));

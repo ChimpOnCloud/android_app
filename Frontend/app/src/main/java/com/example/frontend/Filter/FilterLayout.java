@@ -48,7 +48,7 @@ public class FilterLayout extends NestedScrollView {
         addView(parantRoot);
     }
 
-    public void setFilterData(List<FilterGrop> filterData) {
+    public void setFilterData(List<FilterGrop> filterData,String[] filterCheck) {
         parantRoot.removeAllViews();
         filterBeans.clear();
         for (int i = 0; i < filterData.size(); i++) {
@@ -60,7 +60,7 @@ public class FilterLayout extends NestedScrollView {
             if (filterGrop != null) {
                 filterName.setText(filterGrop.gropName);
                 filterList.setTagMode(filterGrop.filterType);
-                filterList.setTagAdapter(new TagFlowAdapter<FilterBean, String>(filterGrop.filters, FilterBean.UNLIMITED, new String[]{FilterBean.UNLIMITED}) {
+                filterList.setTagAdapter(new TagFlowAdapter<FilterBean, String>(filterGrop.filters, FilterBean.UNLIMITED, filterCheck) {
                     @Override
                     public View getView(TagFlowContainer parent, FilterBean item, int position) {
                         TextView textView = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_filter_tag, parent, false);

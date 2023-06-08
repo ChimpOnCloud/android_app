@@ -1,7 +1,9 @@
 package com.example.frontend.Filter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,10 +18,17 @@ import java.util.List;
 import java.util.Map;
 import com.gyf.immersionbar.ImmersionBar;
 
+import javax.sql.StatementEvent;
+
 public class FilterActivity extends AppCompatActivity {
     private FilterLayout mFilterLayout;
     private TextView mFilterResultTV;
     private TextView mFilterResultNum;
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.frontend";
+    public static String checkSubscribeString="checkSubscribe";
+    public static String sortMethodString="sortMethod";
+    public static String tagSelectedString="tagSelected";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +39,12 @@ public class FilterActivity extends AppCompatActivity {
         mFilterLayout = findViewById(R.id.filter_list);
         mFilterResultTV = findViewById(R.id.filter_result_tv);
         mFilterResultNum = findViewById(R.id.filter_result_num);
-        mFilterLayout.setFilterData(FilterDataUtils.getFilterData());
+        mPreferences=getSharedPreferences(sharedPrefFile,MODE_PRIVATE);
+        String[] filterCheck=new String[3];
+        filterCheck[0]=mPreferences.getString(checkSubscribeString,FilterBean.UNLIMITED);
+        filterCheck[1]=mPreferences.getString(sortMethodString,FilterBean.UNLIMITED);
+        filterCheck[2]=mPreferences.getString(tagSelectedString,FilterBean.UNLIMITED);
+        mFilterLayout.setFilterData(FilterDataUtils.getFilterData(),filterCheck);
         mFilterLayout.setOnFilterChangeListener(new FilterLayout.OnFilterChangeListener() {
             @Override
             public void result(Map<String, List<FilterBean>> result) {

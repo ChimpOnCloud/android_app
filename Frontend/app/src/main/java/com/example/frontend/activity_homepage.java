@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -62,6 +64,14 @@ public class activity_homepage extends AppCompatActivity {
     private static final int newPost=1;
     private static final int filter=0;
     private ArrayList<Post> posts;
+
+    private Boolean onlyCheckSubscribed=false;
+    private int sortMethod=0; // 0: 未指定 1:按时间 2:按热度
+    private String tagSelected="";
+    public static String checkSubscribeString="checkSubscribe";
+    public static String sortMethodString="sortMethod";
+    public static String tagSelectedString="tagSelected";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("gello");
@@ -208,18 +218,28 @@ public class activity_homepage extends AppCompatActivity {
             case filter:
                 if(resultCode==RESULT_OK){
                     ArrayList<FilterBean> arrayList= (ArrayList<FilterBean>) data.getSerializableExtra("result");
-                    Log.d("a",arrayList.toString());
-                    Boolean onlyCheckSubscribed=false;
+                    // Log.d("a",arrayList.toString());
+                    if(arrayList.size()<3)
+                    {
+                        buildDialog("Error","确保进行了每项选择！",this);
+                        break;
+                    }
+                    onlyCheckSubscribed=false;
                     if(arrayList.get(0).name.equals("开启")) onlyCheckSubscribed=true;
-                    int sorting=0; // 0: 未指定 1:按时间 2:按热度
-                    if(arrayList.get(1).name.equals("按时间排序")) sorting=1;
-                    else if(arrayList.get(1).name.equals("按热度排序")) sorting=2;
-                    String tag=arrayList.get(2).name;
+                    sortMethod=0;
+                    if(arrayList.get(1).name.equals("按时间排序")) sortMethod=1;
+                    else if(arrayList.get(1).name.equals("按热度排序")) sortMethod=2;
+                    tagSelected=arrayList.get(2).name;
+                    SharedPreferences.Editor editor=mPreferences.edit();
+                    editor.putString(checkSubscribeString,arrayList.get(0).id);
+                    editor.putString(sortMethodString,arrayList.get(1).id);
+                    editor.putString(tagSelectedString,arrayList.get(2).id);
+                    editor.apply();
                     // todo: reset pyq in posts while connecting backend
                     posts.clear();
 
                     String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
-                    JsonStr = JsonStr + ",\"tag\":\"" + tag + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
+                    JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
                     System.out.println(JsonStr);
                     String requestUrl = getString(R.string.ipv4)+"getPostsWithConstraints/";
                     OkHttpClient client = new OkHttpClient();
