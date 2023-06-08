@@ -74,13 +74,6 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_weight="1"
-            android:onClick="reset"
-            android:text="清除" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="45dp"
             android:layout_marginLeft="10dp"
             android:layout_weight="2.5"
             android:onClick="ok"
