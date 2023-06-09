@@ -64,6 +64,8 @@ public class activity_searchuser extends AppCompatActivity {
     }
 
     public void onSearchClicked(View v){
+        mUserList.clear();
+        
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
@@ -107,19 +109,21 @@ public class activity_searchuser extends AppCompatActivity {
                     // empty the mUserList
                     mAdapter.mUserList.clear();
                     JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                    int id = msg_json.getIntValue("ID");
-                    String username = msg_json.getString("username");
-                    String password = msg_json.getString("password");
-                    String nickname = msg_json.getString("nickname");
-                    String introduction = msg_json.getString("introduction");
-                    targetUser = new user(id, username, password, nickname, introduction);
+                    for (int i = 0; i < msg_json.size() / 5; i++) {
+                        int id = msg_json.getIntValue("ID" + i);
+                        String username = msg_json.getString("username" + i);
+                        String password = msg_json.getString("password" + i);
+                        String nickname = msg_json.getString("nickname" + i);
+                        String introduction = msg_json.getString("introduction" + i);
+                        user m_targetUser = new user(id, username, password, nickname, introduction);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                userInsert(m_targetUser);
+                            }
+                        });
+                    }
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            userInsert(targetUser);
-                        }
-                    });
                 }
                 LoadingDialogUtil.getInstance(activity_searchuser.this).closeLoadingDialog();
             }

@@ -29,10 +29,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.Guard;
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
 
 public class activity_userinfo extends AppCompatActivity {
     user mUser;
@@ -116,16 +119,14 @@ public class activity_userinfo extends AppCompatActivity {
             public void run() {
                 // 添加日志输出
                 Log.d("Debug", "username: " + mUser.getUsername());
-                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername() + "/";
+                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername();
 
-                Picasso.get()
-                        .load(avatarUrl)
+                Picasso p = new Picasso.Builder(activity_userinfo.this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+                p.load(avatarUrl)
                         .placeholder(R.drawable.ic_default_avatar)
-                        .resize(200, 200)
-                        .centerCrop()
+                        .resize(200,200)
+                        .centerCrop() // 可选，如果需要将图像裁剪为正方形
                         .into(userIcon);
-
-                Log.d("Debug", "url: " + avatarUrl);
             }
         });
     }

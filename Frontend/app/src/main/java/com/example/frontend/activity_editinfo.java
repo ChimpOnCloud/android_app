@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.example.frontend.Utils.LoadingDialogUtil;
 import com.example.frontend.Utils.PhotoVideoUtil;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AlertDialog;
@@ -47,6 +48,11 @@ public class activity_editinfo extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.frontend";
     private PhotoVideoUtil photoVideoUtil;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getAvatar();
+    }
 
 
     @Override
@@ -77,11 +83,12 @@ public class activity_editinfo extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                System.out.println("run!");
 
-                String avatarUri= getString(R.string.ipv4) + "getAvatar/" + oldUsername + "/";
+                String avatarUri= getString(R.string.ipv4) + "getAvatar/" + activity_homepage.User.getUsername();
 
-                Picasso.get()
-                        .load(avatarUri)
+                Picasso p = new Picasso.Builder(activity_editinfo.this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+                p.load(avatarUri)
                         .placeholder(R.drawable.ic_default_avatar)
                         .resize(200,200)
                         .centerCrop() // 可选，如果需要将图像裁剪为正方形
@@ -195,5 +202,6 @@ public class activity_editinfo extends AppCompatActivity {
             photoVideoUtil.uploadBitmap(bitmap,oldUsername);
             avatarImageView.setImageBitmap(bitmap);
         }
+        getAvatar();
     }
 }

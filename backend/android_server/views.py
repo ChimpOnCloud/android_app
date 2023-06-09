@@ -93,6 +93,7 @@ def get_avatar(request, targetName):
 
     # 获取头像文件路径
     avatar_relative_path = target_user.avatar.url
+    print(avatar_relative_path)
     media_index = avatar_relative_path.rfind('media/') + len('media/')
     avatar_path = os.path.join(
         settings.MEDIA_ROOT, avatar_relative_path[media_index:])
@@ -108,18 +109,19 @@ def get_avatar(request, targetName):
 def search_user(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
-        potential_user = account.objects.filter(
-            username=user_data['targetName'])
-        if not potential_user:
+        potential_users = account.objects.filter(
+            username__icontains=user_data['targetName'])
+        if not potential_users:
             return HttpResponse('notfound')
         else:
-            target_user = account.objects.get(username=user_data['targetName'])
             return_dict = {}
-            return_dict['ID'] = target_user.ID
-            return_dict['username'] = target_user.username
-            return_dict['password'] = target_user.password
-            return_dict['nickname'] = target_user.nickname
-            return_dict['introduction'] = target_user.introduction
+            for i, user in enumerate(potential_users):
+                return_dict['ID' + str(i)] = user.ID
+                return_dict['username' + str(i)] = user.username
+                return_dict['password' + str(i)] = user.password
+                return_dict['nickname' + str(i)] = user.nickname
+                return_dict['introduction' + str(i)] = user.introduction
+            print(return_dict)
             return HttpResponse(json.dumps(return_dict))
 
 
@@ -142,6 +144,22 @@ def show_subscribelist(request):
                     ID=followedpersonID).first().__dict__['username']
                 return_dict[i] = followedpersonUsername
             return HttpResponse(json.dumps(return_dict))
+
+
+def get_followuser(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        dst_user = account.objects.filter(
+            username=user_data['dstusername'])
+        dst_user_dict = dst_user.first().__dict__
+        src_user = account.objects.filter(
+            username=user_data['srcusername'])
+        src_user_dict = src_user.first().__dict__
+        if not followperson.objects.filter(followedpersonID=dst_user_dict["ID"], followerID=src_user_dict['ID']):
+            return HttpResponse('ok')
+        else:
+            print(dst_user_dict['username'])
+            return HttpResponse('followed')
 
 
 def handle_followuser(request):

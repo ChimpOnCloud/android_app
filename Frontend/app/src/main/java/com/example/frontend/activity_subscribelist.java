@@ -51,17 +51,10 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
     @Override
-    public void onCreate(@Nullable Bundle savedInstance) {
-        super.onCreate(savedInstance);
-        setContentView(R.layout.activity_subscribelist);
-        // todo: create mUserList properly with post
-        mUserList=new ArrayList<>();
-        mRecyclerView=findViewById(R.id.recyclerview);
-        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        mAdapter=new userAdapter(this,mUserList);
+    public void onStart() {
+        super.onStart();
+        mUserList.clear();
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String Username = "";
         Username = mPreferences.getString("username", Username);
@@ -110,6 +103,30 @@ public class activity_subscribelist extends AppCompatActivity {
                 LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
             }
         });
+
+//        prompt=findViewById(R.id.promptSearch);
+//        String target="寻找更多用户";
+//        SpannableString spannableString=new SpannableString(target);
+//        spannableString.setSpan(new ClickableSpan() {
+//            @Override
+//            public void onClick(@NonNull View view) {
+//                jumpToUserSearchPage();
+//            }
+//        },0,target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        prompt.setText(spannableString);
+//        prompt.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        setContentView(R.layout.activity_subscribelist);
+        // todo: create mUserList properly with post
+        mUserList=new ArrayList<>();
+        mRecyclerView=findViewById(R.id.recyclerview);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        mAdapter=new userAdapter(this,mUserList);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         prompt=findViewById(R.id.promptSearch);
         String target="寻找更多用户";
