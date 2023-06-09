@@ -372,6 +372,11 @@ def get_all_posts(request):
             return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
             return_dict['username' + str(i)] = post.__dict__['username']
             return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+            # print(return_dict['like_number' +
+            #                   str(i)])
     return HttpResponse(json.dumps(return_dict))
 
 
@@ -454,8 +459,18 @@ def get_searched_pyq(request):
 
 def handle_like(request):
     if request.method == 'POST':
-        user_data = json.loads(request.body)
-        username = user_data['username']
+        pyq_data = json.loads(request.body)
+        pyq_id = pyq_data['pyqID']
+        username = pyq_data['username']
+        like_user = account.objects.filter(username=username).first()
+        m_pyq = pyq.objects.filter(ID=pyq_id).first()
+        if like_user in m_pyq.like_account_contain.all():  # 取消赞
+            m_pyq.like_account_contain.remove(like_user)
+            return HttpResponse('cancellike')
+        else:
+            m_pyq.like_account_contain.add(like_user)
+            print('here')
+            return HttpResponse('addlike')
 
 
 # def is_follow(request):
