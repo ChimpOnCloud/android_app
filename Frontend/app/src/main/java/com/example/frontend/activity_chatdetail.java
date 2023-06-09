@@ -150,22 +150,24 @@ public class activity_chatdetail extends AppCompatActivity {
                 int length=msg_json.size()/2;
                 if(length==mChat.getChatContent().size()) return;
                 else{
-                    String msg_i = msg_json.getString("msg" + (length-1));
-                    String is_send_i_string = msg_json.getString("is_send" + (length-1));
-                    if (is_send_i_string.equals("false")) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                chatInsert(new message(msg_i,mChat.getOpposite()));
-                            }
-                        });
-                    } else {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                chatInsert(new message(msg_i,activity_homepage.User));
-                            }
-                        });
+                    for(int i=mChat.getChatContent().size();i<length;i++){
+                        String msg_i = msg_json.getString("msg" + i);
+                        String is_send_i_string = msg_json.getString("is_send" + i);
+                        if (is_send_i_string.equals("false")) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chatInsert(new message(msg_i,mChat.getOpposite()));
+                                }
+                            });
+                        } else {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chatInsert(new message(msg_i,activity_homepage.User));
+                                }
+                            });
+                        }
                     }
                     handler.post(new Runnable() {
                         @Override
