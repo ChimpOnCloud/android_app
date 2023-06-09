@@ -2,6 +2,7 @@ package com.example.frontend;
 
 import static com.example.frontend.BuildDialogUtil.buildDialog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -124,5 +125,12 @@ public class PostInfoActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+    public void onAvatarClick(View view)
+    {
+        Intent intent = new Intent(this, activity_userinfo.class);
+        // todo
+        // intent.putExtra("user",post.getAuthor());
+        // startActivity(intent);
     }
 }

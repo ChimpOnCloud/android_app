@@ -64,7 +64,6 @@ public class activity_homepage extends AppCompatActivity {
     private static final int newPost=1;
     private static final int filter=0;
     private ArrayList<Post> posts;
-
     private Boolean onlyCheckSubscribed=false;
     private int sortMethod=0; // 0: 未指定 1:按时间 2:按热度
     private String tagSelected="";
@@ -74,7 +73,6 @@ public class activity_homepage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("gello");
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
@@ -355,18 +353,5 @@ public class activity_homepage extends AppCompatActivity {
     public void jumpToSearch(){
         Intent intent=new Intent(this,activity_search.class);
         startActivity(intent);
-    }
-
-
-    @SuppressLint("ApplySharedPref")
-    public void logout(View v) {
-        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
-        preferencesEditor.commit();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-    protected void onPause() {
-        super.onPause();
     }
 }

@@ -34,8 +34,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp" />
 
-
-
     </LinearLayout>
 
     <!-- Post内容 -->
@@ -51,13 +49,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/post_avatar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_default_avatar"
+                android:layout_gravity="center_vertical"
+                android:onClick="onAvatarClick"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"/>
+                android:src="@drawable/ic_default_avatar" />
 
             <LinearLayout
                 android:layout_width="0dp"
