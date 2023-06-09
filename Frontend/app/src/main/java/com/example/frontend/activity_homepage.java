@@ -74,7 +74,6 @@ public class activity_homepage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("gello");
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);

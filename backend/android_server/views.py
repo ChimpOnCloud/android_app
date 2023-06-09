@@ -469,7 +469,6 @@ def handle_like(request):
             return HttpResponse('cancellike')
         else:
             m_pyq.like_account_contain.add(like_user)
-            print('here')
             return HttpResponse('addlike')
 
 
