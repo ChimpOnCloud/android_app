@@ -1,4 +1,4 @@
-package com.example.frontend;
+package com.example.frontend.Utils;
 
 import android.app.Activity;
 import android.content.Context;

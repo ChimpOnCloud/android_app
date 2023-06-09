@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;

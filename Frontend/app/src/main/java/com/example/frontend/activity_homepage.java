@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,17 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcel;
-import android.text.SpannableStringBuilder;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -26,13 +20,13 @@ import android.view.View;
 import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Filter.FilterActivity;
 import com.example.frontend.Filter.FilterBean;
+import com.example.frontend.Utils.LoadingDialogUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;

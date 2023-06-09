@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +14,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -30,7 +27,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PostInfoActivity extends AppCompatActivity {
+public class activity_postinfo extends AppCompatActivity {
     Post post;
     TextView titleTextView;
     TextView contentTextView;
@@ -104,7 +101,8 @@ public class PostInfoActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LoadingDialogUtil.getInstance(PostInfoActivity.this).closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postinfo.this);
             }
 
             @Override
@@ -113,7 +111,6 @@ public class PostInfoActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
-                // String repeatString = "repeated!";
                 if (msg_obj_string.equals("addlike")) {
                     post.setLikeNumber(post.getLikeNumber() + 1);
                 } else {
@@ -125,7 +122,7 @@ public class PostInfoActivity extends AppCompatActivity {
                         likeTextView.setText(Integer.toString(post.getLikeNumber()));
                     }
                 });
-                LoadingDialogUtil.getInstance(PostInfoActivity.this).closeLoadingDialog();
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.example.frontend;
+package com.example.frontend.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,8 +14,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import com.example.frontend.R;
 
 // LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading..."); 开启加载动画
 // LoadingDialogUtil.getInstance(this).closeLoadingDialog(); 关闭动画

@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,6 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.textclassifier.TextClassification;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;

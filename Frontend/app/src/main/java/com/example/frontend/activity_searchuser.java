@@ -1,15 +1,12 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,14 +14,11 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-
-import org.w3c.dom.Text;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.Objects;
 
