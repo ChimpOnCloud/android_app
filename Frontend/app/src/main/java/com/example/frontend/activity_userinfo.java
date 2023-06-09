@@ -50,9 +50,7 @@ public class activity_userinfo extends AppCompatActivity {
     private RecyclerView mRecyclerview;
     private ArrayList<Post> mPostList;
     private PostAdapter mAdapter;
-    private TextView logoutText;
     private final String LOGINSTATUS = "loginstatus";
-
 
     private void postInsert(Post p){
         mPostList.add(p);
@@ -83,10 +81,14 @@ public class activity_userinfo extends AppCompatActivity {
                 }
                 else if("关注/取关".equals(item.getTitle())){
                     subscribe=!subscribe;
+                    if(subscribe) Toast.makeText(activity_userinfo.this,"关注成功",Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(activity_userinfo.this,"取关成功",Toast.LENGTH_SHORT).show();
                     // todo: notify backend
                 }
                 else if("屏蔽/解除".equals(item.getTitle())){
                     shielded=!shielded;
+                    if(shielded) Toast.makeText(activity_userinfo.this,"屏蔽成功",Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(activity_userinfo.this,"解除成功",Toast.LENGTH_SHORT).show();
                     // todo: notify backend
                 }
                 else if("私聊".equals(item.getTitle())){
@@ -185,6 +187,10 @@ public class activity_userinfo extends AppCompatActivity {
     public void checkSubscribed(View v){
         Intent intent=new Intent(this,activity_subscribelist.class);
         intent.putExtra("user",mUser);
+        startActivity(intent);
+    }
+    public void checkLikedPost(View v){
+        Intent intent=new Intent(this,activity_likedpost.class);
         startActivity(intent);
     }
 }

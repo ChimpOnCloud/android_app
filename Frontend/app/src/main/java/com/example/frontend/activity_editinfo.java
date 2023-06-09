@@ -1,42 +1,34 @@
 package com.example.frontend;
 
-import static com.example.frontend.PhotoVideoUtil.ALBUM_REQUEST_CODE;
-import static com.example.frontend.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.PhotoVideoUtil.ALBUM_REQUEST_CODE;
+import static com.example.frontend.Utils.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.example.frontend.Utils.LoadingDialogUtil;
+import com.example.frontend.Utils.PhotoVideoUtil;
 import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.bumptech.glide.Glide;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -103,7 +95,7 @@ public class activity_editinfo extends AppCompatActivity {
         String newPassword = passwdEditText.getText().toString();
         String newNickname = nicknameEditText.getText().toString();
         String newIntroduction = introEditText.getText().toString();
-        // TODO: 传数据给后端，改变用户信息
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"newUsername\":\""+ newUsername + "\",\"newPassword\":\""+newPassword+"\"";
         jsonStr = jsonStr + ",\"newNickname\":\"" + newNickname + "\",\"newIntroduction\":\"" + newIntroduction + "\"";
         jsonStr = jsonStr + ",\"oldUsername\":\"" + oldUsername + "\",\"oldPassword\":\"" + oldPassword + "\"";
@@ -122,7 +114,8 @@ public class activity_editinfo extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
-                // e.printStackTrace();
+                LoadingDialogUtil.getInstance(activity_editinfo.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_editinfo.this);
             }
 
             @Override
@@ -140,12 +133,14 @@ public class activity_editinfo extends AppCompatActivity {
                     preferencesEditor.putString("introduction", newIntroduction);
                     preferencesEditor.apply();
                 } else if (msg_obj_string.equals("repeated username!")) {
+                    buildDialog("Error","该用户名已被占用！",activity_editinfo.this);
                     System.out.println("already have this username!");
                 }
+                LoadingDialogUtil.getInstance(activity_editinfo.this).closeLoadingDialog();
             }
         });
         // change mpreferences
-        System.out.println("shit" + mPreferences.getString("username", newUsername));
+        // System.out.println("shit" + mPreferences.getString("username", newUsername));
         Intent intent = new Intent(this, activity_homepage.class);
         startActivity(intent);
     }

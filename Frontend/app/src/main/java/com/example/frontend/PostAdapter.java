@@ -11,8 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
@@ -101,13 +99,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
             mTitle.setOnClickListener(view -> {
                 int position = getAdapterPosition();
-                Intent intent=new Intent(context,PostInfoActivity.class);
+                Intent intent=new Intent(context, activity_postinfo.class);
                 intent.putExtra("post", mPosts.get(position));
                 context.startActivity(intent);
             });
             mContent.setOnClickListener(view -> {
                 int position = getAdapterPosition();
-                Intent intent=new Intent(context,PostInfoActivity.class);
+                Intent intent=new Intent(context, activity_postinfo.class);
                 intent.putExtra("post", mPosts.get(position));
                 // System.out.println("before" + mPosts.get(position).getID());
                 context.startActivity(intent);

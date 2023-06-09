@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,17 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcel;
-import android.text.SpannableStringBuilder;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -26,13 +20,13 @@ import android.view.View;
 import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Filter.FilterActivity;
 import com.example.frontend.Filter.FilterBean;
+import com.example.frontend.Utils.LoadingDialogUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -64,7 +58,6 @@ public class activity_homepage extends AppCompatActivity {
     private static final int newPost=1;
     private static final int filter=0;
     private ArrayList<Post> posts;
-
     private Boolean onlyCheckSubscribed=false;
     private int sortMethod=0; // 0: 未指定 1:按时间 2:按热度
     private String tagSelected="";
@@ -119,6 +112,7 @@ public class activity_homepage extends AppCompatActivity {
 
         // Create a list of Post objects and set the adapter
         posts = new ArrayList<>();
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         // Populate the list with Post objects
         String jsonStr = "";
         String requestUrl = getString(R.string.ipv4)+"getAllPosts/";
@@ -134,6 +128,8 @@ public class activity_homepage extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
                 e.printStackTrace();
             }
 
@@ -172,6 +168,7 @@ public class activity_homepage extends AppCompatActivity {
                             }
                     });
                 }
+                LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
             }
         });
 
@@ -235,7 +232,7 @@ public class activity_homepage extends AppCompatActivity {
                     editor.apply();
                     // todo: reset pyq in posts while connecting backend
                     posts.clear();
-
+                    LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
                     String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
                     JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
                     System.out.println(JsonStr);
@@ -252,6 +249,8 @@ public class activity_homepage extends AppCompatActivity {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             System.out.println("failed");
+                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                            buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
                             e.printStackTrace();
                         }
 
@@ -279,6 +278,7 @@ public class activity_homepage extends AppCompatActivity {
                                             msg_json.getString("content" + i),
                                             msg_json.getString("tag" + i),
                                             msg_json.getString("id" + i),
+                                            // bug here again
                                             Integer.parseInt(msg_json.getString("like_number" + i)));
                                     posts.add(post);
                                 }
@@ -290,6 +290,7 @@ public class activity_homepage extends AppCompatActivity {
                                     }
                                 });
                             }
+                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
                         }
                     });
 //                        for (Post mPost : posts) {
@@ -354,18 +355,5 @@ public class activity_homepage extends AppCompatActivity {
     public void jumpToSearch(){
         Intent intent=new Intent(this,activity_search.class);
         startActivity(intent);
-    }
-
-
-    @SuppressLint("ApplySharedPref")
-    public void logout(View v) {
-        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        preferencesEditor.putBoolean(LOGINSTATUS, false); // login status should be false
-        preferencesEditor.commit();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-    protected void onPause() {
-        super.onPause();
     }
 }

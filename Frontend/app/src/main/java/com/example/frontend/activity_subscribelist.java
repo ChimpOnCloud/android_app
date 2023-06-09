@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.textclassifier.TextClassification;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +62,7 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String Username = "";
         Username = mPreferences.getString("username", Username);
         // get all the followed users from backend
@@ -77,6 +80,8 @@ public class activity_subscribelist extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_subscribelist.this);
                 e.printStackTrace();
             }
 
@@ -102,6 +107,7 @@ public class activity_subscribelist extends AppCompatActivity {
                         });
                     }
                 }
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
             }
         });
 

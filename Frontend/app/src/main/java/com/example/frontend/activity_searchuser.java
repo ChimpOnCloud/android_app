@@ -1,15 +1,12 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,14 +14,11 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-
-import org.w3c.dom.Text;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -72,6 +66,7 @@ public class activity_searchuser extends AppCompatActivity {
     public void onSearchClicked(View v){
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
         String requestUrl = getString(R.string.ipv4)+"searchUser/";
         OkHttpClient client = new OkHttpClient();
@@ -85,6 +80,7 @@ public class activity_searchuser extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(activity_searchuser.this).closeLoadingDialog();
                 buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_searchuser.this);
                 // System.out.println("failed");
                 e.printStackTrace();
@@ -98,7 +94,7 @@ public class activity_searchuser extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mUserList.clear();
-                    buildDialog("Error","未找到用户",activity_searchuser.this);
+                    buildDialog("Info","未找到用户",activity_searchuser.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -125,6 +121,7 @@ public class activity_searchuser extends AppCompatActivity {
                         }
                     });
                 }
+                LoadingDialogUtil.getInstance(activity_searchuser.this).closeLoadingDialog();
             }
         });
     }

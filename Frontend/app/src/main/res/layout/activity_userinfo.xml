@@ -71,7 +71,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="7dp"
         android:onClick="checkSubscribed"
-        android:text="Subscribed"
+        android:text="关注列表"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
 
@@ -96,5 +96,15 @@
         app:layout_constraintTop_toTopOf="parent"
         android:backgroundTint="@color/white"
         app:srcCompat="@drawable/more" />
+
+    <Button
+        android:id="@+id/likedPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:onClick="checkLikedPost"
+        android:text="收藏动态"
+        app:layout_constraintStart_toEndOf="@+id/checkSubscribed"
+        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
