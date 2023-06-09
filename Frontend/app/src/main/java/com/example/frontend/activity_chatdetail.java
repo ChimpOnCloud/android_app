@@ -31,6 +31,7 @@ import okhttp3.Response;
 
 public class activity_chatdetail extends AppCompatActivity {
     private chat mChat;
+    private final Handler handler = new Handler();
     private RecyclerView mRecyclerView;
     private chatAdapter mAdapter;
     private TextView oppoName;
@@ -173,6 +174,11 @@ public class activity_chatdetail extends AppCompatActivity {
                 }
             }
         });
-        mRecyclerView.setAdapter(mAdapter);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 }
