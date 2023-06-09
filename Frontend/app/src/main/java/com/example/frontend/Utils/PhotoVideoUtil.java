@@ -1,29 +1,31 @@
-package com.example.frontend;
+package com.example.frontend.Utils;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
+import com.example.frontend.R;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,13 +68,13 @@ public class PhotoVideoUtil {
             Bundle bundle = data.getExtras();
             if (bundle != null) {
                 Bitmap photo = (Bitmap) bundle.get("data"); //get bitmap
-                //spath :生成图片取个名字和路径包含类型
-                String spath =context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ File.separator+ String.valueOf(System.currentTimeMillis()) + ".jpg";
-                if(!saveImage(photo,spath)){
-                    buildDialog("Error","无法保存图片！",(Activity) context);
+                //path :生成图片名字和路径包含类型
+                String path =context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)+ File.separator+ String.valueOf(System.currentTimeMillis()) + ".jpg";
+                if(!saveImage(photo,path)){
+                    buildDialog("Error","保存图片失败！",(Activity) context);
                     return null;
                 }
-                File file=new File(spath);
+                File file=new File(path);
                 uri=Uri.fromFile(file);
             }
             else {
@@ -92,8 +94,9 @@ public class PhotoVideoUtil {
         Log.d("a",videopath);
         return uri;
     }
-    public void VideoCameraRequest(Intent data){
-        // todo
+    public Uri VideoCameraRequest(Intent data){
+        uri=data.getData();
+        return uri;
     }
     public void getImageFromAlbum() {
         Intent albumIntent = new Intent(Intent.ACTION_PICK);
@@ -198,6 +201,7 @@ public class PhotoVideoUtil {
         }
         return filePath;
     }
+
     private static String getFilePathForNonMediaUri(Context context, Uri uri) {
         String filePath = "";
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);

@@ -1,6 +1,6 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -97,6 +97,7 @@ public class activity_search extends AppCompatActivity {
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
         // todo: change the searching target to correct pyq
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String searchTarget=targetText.getText().toString(); // todo: use this
         String jsonStr = "{\"targetName\":\""+ targetName + "\",\"targetKind\":\"" + targetText.getText().toString() + "\"}";
         System.out.println(jsonStr);
@@ -112,6 +113,7 @@ public class activity_search extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(activity_search.this).closeLoadingDialog();
                 buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_search.this);
                 // System.out.println("failed");
                 e.printStackTrace();
@@ -125,7 +127,7 @@ public class activity_search extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mPosts.clear();
-                    buildDialog("Info","未找到结果",activity_search.this);
+                    buildDialog("Info","一个动态都没找到。。",activity_search.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -144,11 +146,18 @@ public class activity_search extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    for (int i = 0; i < msg_json.size() / 6; i++) {
-                        Post post = new Post("", msg_json.getString("username" + i), msg_json.getString("posttime" + i).substring(0,19), msg_json.getString("title" + i), msg_json.getString("content" + i), msg_json.getString("tag" + i));
+                    for (int i = 0; i < msg_json.size() / 8; i++) {
+                        Post post = new Post("",
+                                msg_json.getString("username" + i),
+                                msg_json.getString("posttime" + i).substring(0,19),
+                                msg_json.getString("title" + i),
+                                msg_json.getString("content" + i),
+                                msg_json.getString("tag" + i),
+                                msg_json.getString("id" + i),
+                                // bug here: search an empty content
+                                Integer.parseInt(msg_json.getString("like_number" + i)));
                         mAdapter.mPosts.add(post);
                     }
-
 
                     handler.post(new Runnable() {
                         @Override
@@ -158,6 +167,7 @@ public class activity_search extends AppCompatActivity {
                         }
                     });
                 }
+                LoadingDialogUtil.getInstance(activity_search.this).closeLoadingDialog();
             }
         });
     }

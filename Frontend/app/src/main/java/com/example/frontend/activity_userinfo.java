@@ -29,10 +29,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.security.Guard;
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
 
 public class activity_userinfo extends AppCompatActivity {
     user mUser;
@@ -50,9 +53,7 @@ public class activity_userinfo extends AppCompatActivity {
     private RecyclerView mRecyclerview;
     private ArrayList<Post> mPostList;
     private PostAdapter mAdapter;
-    private TextView logoutText;
     private final String LOGINSTATUS = "loginstatus";
-
 
     private void postInsert(Post p){
         mPostList.add(p);
@@ -83,10 +84,14 @@ public class activity_userinfo extends AppCompatActivity {
                 }
                 else if("关注/取关".equals(item.getTitle())){
                     subscribe=!subscribe;
+                    if(subscribe) Toast.makeText(activity_userinfo.this,"关注成功",Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(activity_userinfo.this,"取关成功",Toast.LENGTH_SHORT).show();
                     // todo: notify backend
                 }
                 else if("屏蔽/解除".equals(item.getTitle())){
                     shielded=!shielded;
+                    if(shielded) Toast.makeText(activity_userinfo.this,"屏蔽成功",Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(activity_userinfo.this,"解除成功",Toast.LENGTH_SHORT).show();
                     // todo: notify backend
                 }
                 else if("私聊".equals(item.getTitle())){
@@ -114,16 +119,14 @@ public class activity_userinfo extends AppCompatActivity {
             public void run() {
                 // 添加日志输出
                 Log.d("Debug", "username: " + mUser.getUsername());
-                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername() + "/";
+                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername();
 
-                Picasso.get()
-                        .load(avatarUrl)
+                Picasso p = new Picasso.Builder(activity_userinfo.this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+                p.load(avatarUrl)
                         .placeholder(R.drawable.ic_default_avatar)
-                        .resize(200, 200)
-                        .centerCrop()
+                        .resize(200,200)
+                        .centerCrop() // 可选，如果需要将图像裁剪为正方形
                         .into(userIcon);
-
-                Log.d("Debug", "url: " + avatarUrl);
             }
         });
     }
@@ -185,6 +188,10 @@ public class activity_userinfo extends AppCompatActivity {
     public void checkSubscribed(View v){
         Intent intent=new Intent(this,activity_subscribelist.class);
         intent.putExtra("user",mUser);
+        startActivity(intent);
+    }
+    public void checkLikedPost(View v){
+        Intent intent=new Intent(this,activity_likedpost.class);
         startActivity(intent);
     }
 }

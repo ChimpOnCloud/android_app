@@ -1,77 +1,49 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
-import static com.example.frontend.PhotoVideoUtil.ALBUM_REQUEST_CODE;
-import static com.example.frontend.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
-import static com.example.frontend.PhotoVideoUtil.REQUEST_CODE_CAPTURE_VIDEO;
-import static com.example.frontend.PhotoVideoUtil.VIDEO_REQUEST_CODE;
-import static com.example.frontend.PhotoVideoUtil.getRealPathFromUri;
-import static com.example.frontend.PhotoVideoUtil.getVideoThumb;
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
+import static com.example.frontend.Utils.PhotoVideoUtil.ALBUM_REQUEST_CODE;
+import static com.example.frontend.Utils.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
+import static com.example.frontend.Utils.PhotoVideoUtil.REQUEST_CODE_CAPTURE_VIDEO;
+import static com.example.frontend.Utils.PhotoVideoUtil.VIDEO_REQUEST_CODE;
+import static com.example.frontend.Utils.PhotoVideoUtil.getRealPathFromUri;
+import static com.example.frontend.Utils.PhotoVideoUtil.getVideoThumb;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Message;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.provider.SyncStateContract;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
+import com.example.frontend.Utils.PhotoVideoUtil;
 
-import org.w3c.dom.Text;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
-import java.security.KeyStore;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
-import java.util.StringTokenizer;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -158,6 +130,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
 
 
         Intent intent=new Intent();
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         post.setTitle(titleText.getText().toString());
         post.setContent(contentText.getText().toString());
         post.setTag(tagText.getText().toString());
@@ -180,6 +153,8 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postedit.this);
                 e.printStackTrace();
             }
 
@@ -194,6 +169,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                 } else {
 
                 }
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
             }
         });
         intent.putExtra("newPost", post);
@@ -325,8 +301,12 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             startActivity(intent);
         }
         else if(requestCode==REQUEST_CODE_CAPTURE_VIDEO){
-            // todo
-            photoVideoUtil.VideoCameraRequest(data);
+            Intent intent=new Intent(this,activity_video.class);
+            VideoUri=photoVideoUtil.VideoCameraRequest(data);
+            if(VideoUri==null) return;
+            displayVideoPreview(getVideoThumb(getRealPathFromUri(this,VideoUri)));
+            intent.putExtra("Uri",VideoUri.toString());
+            startActivity(intent);
         }
     }
     private void displayVideoPreview(Bitmap bitmap){
@@ -425,5 +405,24 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             }
         });
         popupMenu.show();
+    }
+
+    public void onClearClicked(View v){
+        VideoUri=null;
+        SharedPreferences.Editor editor=mPreferences.edit();
+        editor.remove(titleString);
+        editor.remove(contentString);
+        editor.remove(tagString);
+        editor.commit();
+        confirm=false;
+        post=new Post();
+        titleText.setText(mPreferences.getString(titleString,""));
+        contentText.setText(mPreferences.getString(contentString,""));
+        tagText.setText(mPreferences.getString(tagString,Post.tagList[0]));
+        useLocation=false;
+        mLocation="";
+        for(int i=0;i<5;i++){
+            mImageView[i].setImageDrawable(null);
+        }
     }
 }

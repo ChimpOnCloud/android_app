@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.textclassifier.TextClassification;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,17 +51,11 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
     }
     @Override
-    public void onCreate(@Nullable Bundle savedInstance) {
-        super.onCreate(savedInstance);
-        setContentView(R.layout.activity_subscribelist);
-        // todo: create mUserList properly with post
-        mUserList=new ArrayList<>();
-        mRecyclerView=findViewById(R.id.recyclerview);
-        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-        mAdapter=new userAdapter(this,mUserList);
+    public void onStart() {
+        super.onStart();
+        mUserList.clear();
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String Username = "";
         Username = mPreferences.getString("username", Username);
         // get all the followed users from backend
@@ -77,6 +73,8 @@ public class activity_subscribelist extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_subscribelist.this);
                 e.printStackTrace();
             }
 
@@ -102,8 +100,33 @@ public class activity_subscribelist extends AppCompatActivity {
                         });
                     }
                 }
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
             }
         });
+
+//        prompt=findViewById(R.id.promptSearch);
+//        String target="寻找更多用户";
+//        SpannableString spannableString=new SpannableString(target);
+//        spannableString.setSpan(new ClickableSpan() {
+//            @Override
+//            public void onClick(@NonNull View view) {
+//                jumpToUserSearchPage();
+//            }
+//        },0,target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        prompt.setText(spannableString);
+//        prompt.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        setContentView(R.layout.activity_subscribelist);
+        // todo: create mUserList properly with post
+        mUserList=new ArrayList<>();
+        mRecyclerView=findViewById(R.id.recyclerview);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+        mAdapter=new userAdapter(this,mUserList);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         prompt=findViewById(R.id.promptSearch);
         String target="寻找更多用户";

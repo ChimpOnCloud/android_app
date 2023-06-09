@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -19,12 +18,12 @@
         android:required="false" />
     <!--相机权限-->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <!--写入SD卡的权限：如果你希望保存相机拍照后的照片-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--读取SD卡的权限:打开相册选取图片所必须的权限-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE"/>
-
 
     <application
         android:allowBackup="true"
@@ -36,6 +35,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend"
         tools:targetApi="31">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.frontend.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
             android:name=".activity_searchuser"
             android:exported="false" />
@@ -75,7 +84,7 @@
             android:name=".activity_newinfo"
             android:exported="false" />
         <activity
-            android:name=".PostInfoActivity"
+            android:name=".activity_postinfo"
             android:exported="false" />
         <activity
             android:name=".activity_chatdetail"
@@ -83,6 +92,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Filter.FilterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity_likedpost"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,14 +1,12 @@
 package com.example.frontend;
 
-import static com.example.frontend.BuildDialogUtil.buildDialog;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncRequest;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.widget.TintableCheckedTextView;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.alibaba.fastjson.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,7 +86,7 @@ class userViewHolder extends RecyclerView.ViewHolder{
                 mSrcusername = mPreferences.getString("username", mSrcusername);
                 String mJsonStr = "{\"dstusername\":\""+ mUser.getUsername() + "\"";
                 mJsonStr = mJsonStr + ",\"srcusername\":\"" + mSrcusername + "\"}";
-                String mRequestUrl = context.getString(R.string.ipv4)+"handleFollowuser/";
+                String mRequestUrl = context.getString(R.string.ipv4)+"getFollowuser/";
                 OkHttpClient mclient = new OkHttpClient();
                 MediaType mJSON = MediaType.parse("application/json; charset=utf-8");
                 @SuppressWarnings("deprecation")
@@ -114,8 +109,10 @@ class userViewHolder extends RecyclerView.ViewHolder{
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         String msg_obj_string = msg.obj.toString();
                         if (msg_obj_string.equals("ok")) {
-
+//                            followButton.setText("follow");
+//                            followButton.setBackgroundColor(Color.YELLOW);
                         } else if (msg_obj_string.equals("followed")){
+                            Log.d(mUser.getUsername(), "d");
                             followButton.setText("unfollow");
                             followButton.setBackgroundColor(Color.GRAY);
                         }
@@ -164,9 +161,11 @@ class userViewHolder extends RecyclerView.ViewHolder{
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         String msg_obj_string = msg.obj.toString();
                         if (msg_obj_string.equals("ok")) {
+                            Log.d(mUser.getUsername(), "dd");
                             followButton.setText("unfollow");
                             followButton.setBackgroundColor(Color.GRAY);
                         } else if (msg_obj_string.equals("followed")){
+                            Log.d(mUser.getUsername(), "ddd");
                             followButton.setText("unfollow");
                             followButton.setBackgroundColor(Color.GRAY);
                         }

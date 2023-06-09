@@ -100,6 +100,13 @@
             android:onClick="onAddVideoClicked"
             android:text="添加视频" />
 
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClearClicked"
+            android:text="清除所有" />
+
     </LinearLayout>
 
     <!-- 图片容器 -->
