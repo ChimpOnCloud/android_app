@@ -118,6 +118,7 @@ public class activity_homepage extends AppCompatActivity {
 
         // Create a list of Post objects and set the adapter
         posts = new ArrayList<>();
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         // Populate the list with Post objects
         String jsonStr = "";
         String requestUrl = getString(R.string.ipv4)+"getAllPosts/";
@@ -133,6 +134,8 @@ public class activity_homepage extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
                 e.printStackTrace();
             }
 
@@ -171,6 +174,7 @@ public class activity_homepage extends AppCompatActivity {
                             }
                     });
                 }
+                LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
             }
         });
 
@@ -234,7 +238,7 @@ public class activity_homepage extends AppCompatActivity {
                     editor.apply();
                     // todo: reset pyq in posts while connecting backend
                     posts.clear();
-
+                    LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
                     String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
                     JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
                     System.out.println(JsonStr);
@@ -251,6 +255,8 @@ public class activity_homepage extends AppCompatActivity {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             System.out.println("failed");
+                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                            buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
                             e.printStackTrace();
                         }
 
@@ -278,6 +284,7 @@ public class activity_homepage extends AppCompatActivity {
                                             msg_json.getString("content" + i),
                                             msg_json.getString("tag" + i),
                                             msg_json.getString("id" + i),
+                                            // bug here again
                                             Integer.parseInt(msg_json.getString("like_number" + i)));
                                     posts.add(post);
                                 }
@@ -289,6 +296,7 @@ public class activity_homepage extends AppCompatActivity {
                                     }
                                 });
                             }
+                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
                         }
                     });
 //                        for (Post mPost : posts) {

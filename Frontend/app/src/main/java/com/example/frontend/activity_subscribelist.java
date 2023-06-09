@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -60,6 +62,7 @@ public class activity_subscribelist extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String Username = "";
         Username = mPreferences.getString("username", Username);
         // get all the followed users from backend
@@ -77,6 +80,8 @@ public class activity_subscribelist extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_subscribelist.this);
                 e.printStackTrace();
             }
 
@@ -102,6 +107,7 @@ public class activity_subscribelist extends AppCompatActivity {
                         });
                     }
                 }
+                LoadingDialogUtil.getInstance(activity_subscribelist.this).closeLoadingDialog();
             }
         });
 

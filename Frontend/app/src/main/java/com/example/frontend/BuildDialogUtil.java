@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+// usually needed: buildDialog("Error","无法连接至服务器。。或许网络出错了？",this);
 public class BuildDialogUtil {
     public static final void buildDialog(String title, String message, Activity activity){
         activity.runOnUiThread(new Runnable() {

@@ -17,8 +17,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-// LoadingDialogUtil.getInstance().showLoadingDialog(this, "Loading..."); 开启加载动画
-// LoadingDialogUtil.getInstance().closeLoadingDialog(); 关闭动画
+// LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading..."); 开启加载动画
+// LoadingDialogUtil.getInstance(this).closeLoadingDialog(); 关闭动画
 public class LoadingDialogUtil {
     public static LoadingDialogUtil mInstance;
     public static final int BUTTON_OK = 0;

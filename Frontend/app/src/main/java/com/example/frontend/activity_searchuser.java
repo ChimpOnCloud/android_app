@@ -72,6 +72,7 @@ public class activity_searchuser extends AppCompatActivity {
     public void onSearchClicked(View v){
         String targetName=inputName.getText().toString();
         if(targetName.equals(null)) return;
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"targetName\":\""+ targetName + "\"}";
         String requestUrl = getString(R.string.ipv4)+"searchUser/";
         OkHttpClient client = new OkHttpClient();
@@ -85,6 +86,7 @@ public class activity_searchuser extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(activity_searchuser.this).closeLoadingDialog();
                 buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_searchuser.this);
                 // System.out.println("failed");
                 e.printStackTrace();
@@ -98,7 +100,7 @@ public class activity_searchuser extends AppCompatActivity {
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("notfound")) {
                     mAdapter.mUserList.clear();
-                    buildDialog("Error","未找到用户",activity_searchuser.this);
+                    buildDialog("Info","未找到用户",activity_searchuser.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -125,6 +127,7 @@ public class activity_searchuser extends AppCompatActivity {
                         }
                     });
                 }
+                LoadingDialogUtil.getInstance(activity_searchuser.this).closeLoadingDialog();
             }
         });
     }

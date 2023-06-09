@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import static com.example.frontend.BuildDialogUtil.buildDialog;
 import static com.example.frontend.PhotoVideoUtil.ALBUM_REQUEST_CODE;
 import static com.example.frontend.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
 
@@ -103,7 +104,7 @@ public class activity_editinfo extends AppCompatActivity {
         String newPassword = passwdEditText.getText().toString();
         String newNickname = nicknameEditText.getText().toString();
         String newIntroduction = introEditText.getText().toString();
-        // TODO: 传数据给后端，改变用户信息
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"newUsername\":\""+ newUsername + "\",\"newPassword\":\""+newPassword+"\"";
         jsonStr = jsonStr + ",\"newNickname\":\"" + newNickname + "\",\"newIntroduction\":\"" + newIntroduction + "\"";
         jsonStr = jsonStr + ",\"oldUsername\":\"" + oldUsername + "\",\"oldPassword\":\"" + oldPassword + "\"";
@@ -122,7 +123,8 @@ public class activity_editinfo extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
-                // e.printStackTrace();
+                LoadingDialogUtil.getInstance(activity_editinfo.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_editinfo.this);
             }
 
             @Override
@@ -140,12 +142,14 @@ public class activity_editinfo extends AppCompatActivity {
                     preferencesEditor.putString("introduction", newIntroduction);
                     preferencesEditor.apply();
                 } else if (msg_obj_string.equals("repeated username!")) {
+                    buildDialog("Error","该用户名已被占用！",activity_editinfo.this);
                     System.out.println("already have this username!");
                 }
+                LoadingDialogUtil.getInstance(activity_editinfo.this).closeLoadingDialog();
             }
         });
         // change mpreferences
-        System.out.println("shit" + mPreferences.getString("username", newUsername));
+        // System.out.println("shit" + mPreferences.getString("username", newUsername));
         Intent intent = new Intent(this, activity_homepage.class);
         startActivity(intent);
     }

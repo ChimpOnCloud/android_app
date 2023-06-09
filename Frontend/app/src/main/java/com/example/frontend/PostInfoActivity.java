@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -89,6 +90,7 @@ public class PostInfoActivity extends AppCompatActivity {
 
     }
     public void handleLike(View v) {
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"pyqID\":\""+ post.getID() + "\",\"username\":\"" + activity_homepage.User.getUsername() + "\"}";
         String requestUrl = getString(R.string.ipv4)+"handleLike/";
         OkHttpClient client = new OkHttpClient();
@@ -102,7 +104,7 @@ public class PostInfoActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                LoadingDialogUtil.getInstance(PostInfoActivity.this).closeLoadingDialog();
             }
 
             @Override
@@ -123,12 +125,14 @@ public class PostInfoActivity extends AppCompatActivity {
                         likeTextView.setText(Integer.toString(post.getLikeNumber()));
                     }
                 });
+                LoadingDialogUtil.getInstance(PostInfoActivity.this).closeLoadingDialog();
             }
         });
     }
     public void onAvatarClick(View view)
     {
         Intent intent = new Intent(this, activity_userinfo.class);
+        Log.d("a","go to userinfo");
         // todo
         // intent.putExtra("user",post.getAuthor());
         // startActivity(intent);

@@ -158,6 +158,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
 
 
         Intent intent=new Intent();
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         post.setTitle(titleText.getText().toString());
         post.setContent(contentText.getText().toString());
         post.setTag(tagText.getText().toString());
@@ -180,6 +181,8 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             @Override
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postedit.this);
                 e.printStackTrace();
             }
 
@@ -194,6 +197,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
                 } else {
 
                 }
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
             }
         });
         intent.putExtra("newPost", post);
