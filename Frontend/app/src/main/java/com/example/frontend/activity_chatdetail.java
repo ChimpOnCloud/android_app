@@ -167,7 +167,12 @@ public class activity_chatdetail extends AppCompatActivity {
                             }
                         });
                     }
-                    mRecyclerView.scrollToPosition(mChat.getChatContent().size());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.scrollToPosition(mChat.getChatContent().size());
+                        }
+                    });
                 }
             }
         });
