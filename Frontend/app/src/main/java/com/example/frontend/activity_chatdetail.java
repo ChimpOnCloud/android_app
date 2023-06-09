@@ -38,6 +38,7 @@ public class activity_chatdetail extends AppCompatActivity {
     private Button sendButton;
     private Handler updateChatHandler;
     private Runnable task;
+    private final Handler handler = new Handler();
     public void chatInsert(message m){
         mChat.insert(m);
         mRecyclerView.setAdapter(mAdapter);
@@ -153,9 +154,19 @@ public class activity_chatdetail extends AppCompatActivity {
                         String msg_i = msg_json.getString("msg" + i);
                         String is_send_i_string = msg_json.getString("is_send" + i);
                         if (is_send_i_string.equals("false")) {
-                            chatInsert(new message(msg_i,mChat.getOpposite()));
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chatInsert(new message(msg_i,mChat.getOpposite()));
+                                }
+                            });
                         } else {
-                            chatInsert(new message(msg_i,activity_homepage.User));
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chatInsert(new message(msg_i,activity_homepage.User));
+                                }
+                            });
                         }
                     }
                     mRecyclerView.scrollToPosition(mChat.getChatContent().size());
