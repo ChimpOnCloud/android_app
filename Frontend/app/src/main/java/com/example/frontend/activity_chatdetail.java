@@ -96,9 +96,13 @@ public class activity_chatdetail extends AppCompatActivity {
                 }
             });
         });
-
         updateChatHandler=new Handler();
-        int delay=500;  // ms between refreshing chatContent
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int delay=1000;  // ms between refreshing chatContent
         task=new Runnable() {
             @Override
             public void run() {
@@ -107,7 +111,12 @@ public class activity_chatdetail extends AppCompatActivity {
             }
         };
         updateChatHandler.postDelayed(task,delay);
-        // use updateChatHandler.removeCallbacks(runnable); if want to close the handler
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        updateChatHandler.removeCallbacks(task);
     }
 
     public void update(){
@@ -136,8 +145,14 @@ public class activity_chatdetail extends AppCompatActivity {
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString(); // ok
                 JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                for (int i = 0; i < msg_json.size(); i++) {
-//                    System.out.println(msg_json.getString(String.valueOf(i)));
+                for (int i = 0; i < msg_json.size()/2; i++) {
+                    String msg_i = msg_json.getString("msg" + i);
+                    String is_send_i_string = msg_json.getString("is_send" + i);
+                    if (is_send_i_string.equals("false")) {
+                        chatInsert(new message(msg_i,mChat.getOpposite()));
+                    } else {
+                        chatInsert(new message(msg_i,activity_homepage.User));
+                    }
                     //TODO: set to chat detail adapter
                 }
             }

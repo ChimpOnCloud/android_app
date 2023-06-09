@@ -341,25 +341,6 @@ def find_related_chat_users(request):
             return HttpResponse(json.dumps(return_dict))
 
 
-def get_related_messages(request):
-    if request.method == 'POST':
-        user_data = json.loads(request.body)
-        # TODO: return related messages
-        src_user_dict = account.objects.filter(
-            username=user_data['srcUsername']).first().__dict__
-        dst_user_dict = account.objects.filter(
-            username=user_data['dstUsername']).first().__dict__
-
-        target_chat = chat.objects.get(
-            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
-        return_dict = {}
-        for i, msg in enumerate(target_chat.msg_contain.all()):
-            msg_dict = msg.__dict__
-            return_dict['msg' + str(i)] = msg_dict['msg_content']
-            return_dict['is_send' + str(i)] = msg_dict['is_send']
-        return HttpResponse(json.dumps(return_dict))
-
-
 def post_publish(request):
     if request.method == 'POST':
         post_data = json.loads(request.body)
@@ -496,6 +477,25 @@ def handle_like(request):
             return HttpResponse('addlike')
 
 
+def get_related_messages(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        # TODO: return related messages
+        src_user_dict = account.objects.filter(
+            username=user_data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=user_data['dstUsername']).first().__dict__
+
+        target_chat = chat.objects.get(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
+        return_dict = {}
+        for i, msg in enumerate(target_chat.msg_contain.all()):
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
+        return HttpResponse(json.dumps(return_dict))
+    
+
 def get_all_messages(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -508,7 +508,9 @@ def get_all_messages(request):
         messages = target_chat.msg_contain.all()
         return_dict = {}
         for i, msg in enumerate(messages):
-            return_dict[i] = msg.msg_content
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
         return HttpResponse(json.dumps(return_dict))
 
 
