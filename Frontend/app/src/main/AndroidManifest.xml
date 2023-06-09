@@ -85,6 +85,9 @@
             android:name=".Filter.FilterActivity"
             android:exported="false" />
         <activity
+            android:name=".activity_likedpost"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 

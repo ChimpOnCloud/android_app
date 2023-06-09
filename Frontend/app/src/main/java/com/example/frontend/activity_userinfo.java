@@ -52,7 +52,7 @@ public class activity_userinfo extends AppCompatActivity {
     private PostAdapter mAdapter;
     private TextView logoutText;
     private final String LOGINSTATUS = "loginstatus";
-
+    private Button likedPostButton;
 
     private void postInsert(Post p){
         mPostList.add(p);
@@ -171,6 +171,8 @@ public class activity_userinfo extends AppCompatActivity {
         mRecyclerview.setAdapter(mAdapter);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         postInsert(new Post());
+
+        likedPostButton=findViewById(R.id.likedPost);
     }
 
     public void jumpToInfoEditPage() {
@@ -185,6 +187,10 @@ public class activity_userinfo extends AppCompatActivity {
     public void checkSubscribed(View v){
         Intent intent=new Intent(this,activity_subscribelist.class);
         intent.putExtra("user",mUser);
+        startActivity(intent);
+    }
+    public void checkLikedPost(View v){
+        Intent intent=new Intent(this,activity_likedpost.class);
         startActivity(intent);
     }
 }
