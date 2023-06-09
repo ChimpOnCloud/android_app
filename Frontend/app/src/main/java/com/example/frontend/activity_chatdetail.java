@@ -31,6 +31,7 @@ import okhttp3.Response;
 
 public class activity_chatdetail extends AppCompatActivity {
     private chat mChat;
+    private final Handler handler = new Handler();
     private RecyclerView mRecyclerView;
     private chatAdapter mAdapter;
     private TextView oppoName;
@@ -152,14 +153,29 @@ public class activity_chatdetail extends AppCompatActivity {
                     String msg_i = msg_json.getString("msg" + (length-1));
                     String is_send_i_string = msg_json.getString("is_send" + (length-1));
                     if (is_send_i_string.equals("false")) {
-                        chatInsert(new message(msg_i,mChat.getOpposite()));
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                chatInsert(new message(msg_i,mChat.getOpposite()));
+                            }
+                        });
                     } else {
-                        chatInsert(new message(msg_i,activity_homepage.User));
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                chatInsert(new message(msg_i,activity_homepage.User));
+                            }
+                        });
                     }
                     mRecyclerView.scrollToPosition(mChat.getChatContent().size());
                 }
             }
         });
-        mRecyclerView.setAdapter(mAdapter);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 }
