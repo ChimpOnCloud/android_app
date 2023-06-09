@@ -51,7 +51,9 @@ public class activity_chatdetail extends AppCompatActivity {
         mRecyclerView=findViewById(R.id.chatrecyclerview);
         mAdapter=new chatAdapter(this,mChat);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
         oppoName=findViewById(R.id.oppoName);
         oppoName.setText(" "+mChat.getOpposite().getUsername());
         text=findViewById(R.id.chatText);
@@ -120,7 +122,6 @@ public class activity_chatdetail extends AppCompatActivity {
     }
 
     public void update(){
-        // todo: refresh the mChat.chatContent
         String jsonStr = "{\"srcUsername\":\""+ activity_homepage.User.getUsername() + "\",\"dstUsername\":\"" + mChat.getOpposite().getUsername()+"\"}";
         String requestUrl = getString(R.string.ipv4)+"getAllMessages/";
         OkHttpClient client = new OkHttpClient();
@@ -143,17 +144,19 @@ public class activity_chatdetail extends AppCompatActivity {
                     throws IOException {
                 Message msg = new Message();
                 msg.obj = Objects.requireNonNull(response.body()).string();
-                String msg_obj_string = msg.obj.toString(); // ok
+                String msg_obj_string = msg.obj.toString();
                 JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
-                for (int i = 0; i < msg_json.size()/2; i++) {
-                    String msg_i = msg_json.getString("msg" + i);
-                    String is_send_i_string = msg_json.getString("is_send" + i);
+                int length=msg_json.size()/2;
+                if(length==mChat.getChatContent().size()) return;
+                else{
+                    String msg_i = msg_json.getString("msg" + (length-1));
+                    String is_send_i_string = msg_json.getString("is_send" + (length-1));
                     if (is_send_i_string.equals("false")) {
                         chatInsert(new message(msg_i,mChat.getOpposite()));
                     } else {
                         chatInsert(new message(msg_i,activity_homepage.User));
                     }
-                    //TODO: set to chat detail adapter
+                    mRecyclerView.scrollToPosition(mChat.getChatContent().size());
                 }
             }
         });
