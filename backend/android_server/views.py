@@ -435,6 +435,9 @@ def get_all_posts_with_constraints(request):
             return_dict['posttime' + str(cnt)] = str(post.__dict__['posttime'])
             return_dict['username' + str(cnt)] = post.__dict__['username']
             return_dict['location' + str(cnt)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
             cnt = cnt + 1
     return HttpResponse(json.dumps(return_dict))
 
@@ -470,6 +473,9 @@ def get_searched_pyq(request):
                         str(i)] = str(post.__dict__['posttime'])
             return_dict['username' + str(i)] = post.__dict__['username']
             return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
         if len(return_dict) == 0:
             return HttpResponse('notfound')
         return HttpResponse(json.dumps(return_dict))
@@ -488,6 +494,60 @@ def handle_like(request):
         else:
             m_pyq.like_account_contain.add(like_user)
             return HttpResponse('addlike')
+
+
+def get_all_messages(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        src_user_dict = account.objects.filter(
+            username=data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=data['dstUsername']).first().__dict__
+        target_chat = chat.objects.filter(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID']).first()
+        messages = target_chat.msg_contain.all()
+        return_dict = {}
+        for i, msg in enumerate(messages):
+            return_dict[i] = msg.msg_content
+        return HttpResponse(json.dumps(return_dict))
+
+
+def get_user_posts(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        username = data['username']
+        ID = account.objects.filter(username=username).first().__dict__['ID']
+        posts = pyq.objects.filter(ID=ID)
+        return_dict = {}
+        for i, post in enumerate(posts):
+            return_dict['tag' +
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' +
+                        str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+        if not posts:
+            return HttpResponse('error')
+        return HttpResponse(json.dumps(return_dict))
+
+
+def get_author(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data['username']
+        user_dict = account.objects.filter(username=username).first().__dict__
+        return HttpResponse(json.dumps(user_dict))
 
 
 # def is_follow(request):

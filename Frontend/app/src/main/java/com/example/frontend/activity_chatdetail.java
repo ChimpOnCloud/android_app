@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -110,6 +112,36 @@ public class activity_chatdetail extends AppCompatActivity {
 
     public void update(){
         // todo: refresh the mChat.chatContent
+        String jsonStr = "{\"srcUsername\":\""+ activity_homepage.User.getUsername() + "\",\"dstUsername\":\"" + mChat.getOpposite().getUsername()+"\"}";
+        String requestUrl = getString(R.string.ipv4)+"getAllMessages/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                // e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString(); // ok
+                JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                for (int i = 0; i < msg_json.size(); i++) {
+//                    System.out.println(msg_json.getString(String.valueOf(i)));
+                    //TODO: set to chat detail adapter
+                }
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
     }
 }

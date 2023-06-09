@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
@@ -131,6 +132,39 @@ public class activity_postinfo extends AppCompatActivity {
         Intent intent = new Intent(this, activity_userinfo.class);
         Log.d("a","go to userinfo");
         // todo
+        String jsonStr = "{\"username\":\""+ post.getAuthor() + "\"}";
+        System.out.println(jsonStr);
+        String requestUrl = getString(R.string.ipv4)+"getAuthor/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postinfo.this);
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+                    System.out.println(msg_obj_string);
+                }
+            }
+        });
         // intent.putExtra("user",post.getAuthor());
         // startActivity(intent);
     }
