@@ -39,7 +39,6 @@ public class activity_chatdetail extends AppCompatActivity {
     private Button sendButton;
     private Handler updateChatHandler;
     private Runnable task;
-    private final Handler handler = new Handler();
     public void chatInsert(message m){
         mChat.insert(m);
         mRecyclerView.setAdapter(mAdapter);
