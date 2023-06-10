@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.AvatarUtil.getAvatar;
 import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import androidx.annotation.NonNull;
@@ -129,24 +130,6 @@ public class activity_userinfo extends AppCompatActivity {
         popupMenu.show();
     }
 
-    public void getAvatar() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // 添加日志输出
-                Log.d("Debug", "username: " + mUser.getUsername());
-                String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + mUser.getUsername();
-
-                Picasso p = new Picasso.Builder(activity_userinfo.this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
-                p.load(avatarUrl)
-                        .placeholder(R.drawable.ic_default_avatar)
-                        .resize(200,200)
-                        .centerCrop() // 可选，如果需要将图像裁剪为正方形
-                        .into(userIcon);
-            }
-        });
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,7 +161,7 @@ public class activity_userinfo extends AppCompatActivity {
         usrnameContent.setText(mUser.getUsername());
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
-        getAvatar();
+        getAvatar(this,userIcon,mUser.getUsername());
         // todo: get subscribe pattern
         subscribe=false;
         // todo: get shield pattern
