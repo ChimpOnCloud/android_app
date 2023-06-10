@@ -455,6 +455,9 @@ def get_all_posts_with_constraints(request):
         post_data = json.loads(request.body)
         onlyCheckSubscribed = post_data['onlyCheckSubscribed']
         tag = post_data['tag']
+        src_username = post_data['srcUsername']
+        src_ID = account.objects.filter(
+            username=src_username).first().__dict__["ID"]
         post_name_dict = {}
         post_name_dict['#默认话题'] = 0
         post_name_dict['#校园资讯'] = 1
@@ -462,35 +465,46 @@ def get_all_posts_with_constraints(request):
         post_name_dict['#思绪随笔'] = 3
         post_name_dict['#吐槽盘点'] = 4
         return_dict = {}
-        posts = pyq.objects.all()
-        cnt = 0
-        # print(post_name_dict[tag])
-        for i, post in enumerate(posts):
-            if onlyCheckSubscribed == "true":
-                srcusername = post_data['srcUsername']
-                dstusername = post.__dict__['username']
-                srcID = account.objects.filter(
-                    username=srcusername).first().__dict__['ID']
-                dstID = account.objects.filter(
-                    username=dstusername).first().__dict__['ID']
+        m_posts = pyq.objects.all()
+
+        for post in m_posts:
+            if onlyCheckSubscribed == 'true':
+                dst_ID = post.userID
                 potential_follow = followperson.objects.filter(
-                    followerID=srcID, followedpersonID=dstID)
+                    followerID=src_ID, followedpersonID=dst_ID)
                 if not potential_follow:
+                    m_posts = m_posts.exclude(ID=post.ID)
                     continue
-            if str(tag) != '不限':
-                if post_name_dict[post.__dict__['tag']] != post_name_dict[str(tag)]:
+            if tag != '不限':
+                if not post_name_dict[post.tag] == post_name_dict[tag]:
+                    m_posts = m_posts.exclude(ID=post.ID)
                     continue
+        # print(post_name_dict[tag])
+        for i, post in enumerate(m_posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
-                        str(cnt)] = str(post_name_dict[post.__dict__['tag']])
-            return_dict['title' + str(cnt)] = post.__dict__['title']
-            return_dict['content' + str(cnt)] = post.__dict__['content']
-            return_dict['posttime' + str(cnt)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(cnt)] = post.__dict__['username']
-            return_dict['location' + str(cnt)] = post.__dict__['location']
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
+            return_dict['location' + str(i)] = post.__dict__['location']
             return_dict['id' + str(i)] = post.__dict__['ID']
             return_dict['like_number' +
                         str(i)] = len(post.like_account_contain.all())
-            cnt = cnt + 1
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+        return_dict['num'] = len(m_posts)
     return HttpResponse(json.dumps(return_dict))
 
 

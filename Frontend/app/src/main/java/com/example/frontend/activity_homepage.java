@@ -65,6 +65,7 @@ public class activity_homepage extends AppCompatActivity {
     public static String checkSubscribeString="checkSubscribe";
     public static String sortMethodString="sortMethod";
     public static String tagSelectedString="tagSelected";
+    public boolean filtering = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,6 +248,7 @@ public class activity_homepage extends AppCompatActivity {
                     editor.apply();
                     // todo: reset pyq in posts while connecting backend
                     posts.clear();
+                    mPostRecyclerView.setAdapter(mPostAdapter);
                     LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
                     String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
                     JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
@@ -285,6 +287,12 @@ public class activity_homepage extends AppCompatActivity {
                                 post_name_dict.put("2", "#二手交易");
                                 post_name_dict.put("3", "#思绪随笔");
                                 post_name_dict.put("4", "#吐槽盘点");
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        posts.clear();
+                                    }
+                                });
                                 for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                                     Post post = new Post("",
                                             msg_json.getString("username" + i),
@@ -296,7 +304,12 @@ public class activity_homepage extends AppCompatActivity {
                                             Integer.parseInt(msg_json.getString("like_number" + i)),
                                             Integer.parseInt(msg_json.getString("shoucang_number" + i)),
                                             Integer.parseInt(msg_json.getString("comment_number" + i)));
-                                    posts.add(post);
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            posts.add(post);
+                                        }
+                                    });
                                 }
                                 handler.post(new Runnable() {
                                     @Override
@@ -309,8 +322,6 @@ public class activity_homepage extends AppCompatActivity {
                             LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
                         }
                     });
-                    mPostAdapter = new PostAdapter(posts);
-                    mPostRecyclerView.setAdapter(mPostAdapter);
                 }
         }
     }
