@@ -26,13 +26,13 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final LayoutInflater inflater;
     public static final int FROM_OTHER=R.layout.detailitem;
     public static final int BY_USER=R.layout.detailitem_2;
-    public Bitmap oppoIconBitmap;
-    public Drawable selfDrawable;
-    public chatAdapter(Context context, chat ch, Bitmap bitmap,Drawable drawable){
+    public static Bitmap oppoIconBitmap;
+    public static Bitmap selfIconBitmap;
+    public chatAdapter(Context context, chat ch, Bitmap bitmap,Bitmap b2){
         inflater=LayoutInflater.from(context);
         mChat=ch;
         oppoIconBitmap=bitmap;
-        selfDrawable=drawable;
+        selfIconBitmap=b2;
     }
     @Override
     public int getItemViewType(int position){
@@ -56,7 +56,7 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if(getItemViewType(position)==BY_USER){
             detailViewHolder2 dholder=(detailViewHolder2)holder;
             dholder.mMessage.setText(m.getMessageString());
-            dholder.selfImg.setImageDrawable(selfDrawable);
+            getAvatar(holder.itemView.getContext(),((detailViewHolder2) holder).selfImg,activity_homepage.User.getUsername());
         }
         else{
             detailViewHolder dholder=(detailViewHolder)holder;

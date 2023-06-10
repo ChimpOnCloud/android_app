@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -48,9 +49,33 @@ public class activity_chatdetail extends AppCompatActivity {
     private Button sendButton;
     private Handler updateChatHandler;
     private Runnable task;
+    private Bitmap oppoBitmap,selfBitmap;
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.frontend";
     public void chatInsert(message m){
         mChat.insert(m);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private Bitmap drawableToBitmap(Drawable drawable)
+    {
+        //声明将要创建的bitmap
+        Bitmap bitmap = null;
+        //获取图片宽度
+        int width = drawable.getIntrinsicWidth();
+        //获取图片高度
+        int height = drawable.getIntrinsicHeight();
+        //图片位深，PixelFormat.OPAQUE代表没有透明度，RGB_565就是没有透明度的位深，否则就用ARGB_8888。详细见下面图片编码知识。
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
+        //创建一个空的Bitmap
+        bitmap = Bitmap.createBitmap(width,height,config);
+        //在bitmap上创建一个画布
+        Canvas canvas = new Canvas(bitmap);
+        //设置画布的范围
+        drawable.setBounds(0, 0, width, height);
+        //将drawable绘制在canvas上
+        drawable.draw(canvas);
+        return bitmap;
     }
     public static Bitmap getPicFromBytes(byte[] bytes, BitmapFactory.Options opts) {
         if (bytes != null)
@@ -64,17 +89,14 @@ public class activity_chatdetail extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatdetail);
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         Intent intent=this.getIntent();
         mChat=(chat)intent.getSerializableExtra("chat");
         byte[] res = getIntent().getByteArrayExtra("bitmap");
-        Bitmap oppoBitmap=getPicFromBytes(res,null);
-        ImageView imageView=findViewById(R.id.imageView);
-        getAvatar(this,imageView,activity_homepage.User.getUsername());
-        Drawable selfDrawable=imageView.getDrawable();
-        imageView.getLayoutParams().height=0;
+        oppoBitmap=getPicFromBytes(res,null);
 
         mRecyclerView=findViewById(R.id.chatrecyclerview);
-        mAdapter=new chatAdapter(this,mChat,oppoBitmap,selfDrawable);
+        mAdapter=new chatAdapter(this,mChat,oppoBitmap,selfBitmap);
         mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
