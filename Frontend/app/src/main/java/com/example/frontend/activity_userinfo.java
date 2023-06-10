@@ -209,7 +209,7 @@ public class activity_userinfo extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    for (int i = 0; i < msg_json.size() / 9; i++) {
+                    for (int i = 0; i < msg_json.size() / 10; i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
                                 msg_json.getString("posttime" + i).substring(0, 19),
@@ -218,7 +218,8 @@ public class activity_userinfo extends AppCompatActivity {
                                 msg_json.getString("tag" + i),
                                 msg_json.getString("id" + i),
                                 Integer.parseInt(msg_json.getString("like_number" + i)),
-                                Integer.parseInt(msg_json.getString("shoucang_number" + i)));
+                                Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+                                Integer.parseInt(msg_json.getString("comment_number" + i)));
                         handler.post(new Runnable() {
                         @Override
                         public void run() {

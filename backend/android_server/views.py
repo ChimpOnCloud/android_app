@@ -379,6 +379,8 @@ def get_all_posts(request):
                         str(i)] = len(post.like_account_contain.all())
             return_dict['shoucang_number' +
                         str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
             # print(return_dict['like_number' +
             #                   str(i)])
     return HttpResponse(json.dumps(return_dict))
