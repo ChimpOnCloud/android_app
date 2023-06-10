@@ -168,20 +168,14 @@ public class activity_chatdetail extends AppCompatActivity {
                                 }
                             });
                         }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRecyclerView.setAdapter(mAdapter);
+                            }
+                        });
                     }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mRecyclerView.scrollToPosition(mChat.getChatContent().size());
-                        }
-                    });
                 }
-            }
-        });
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.setAdapter(mAdapter);
             }
         });
     }
