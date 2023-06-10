@@ -3,6 +3,7 @@ package com.example.frontend;
 import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
@@ -41,6 +43,7 @@ public class activity_postinfo extends AppCompatActivity {
     LinearLayout commentLayout;
     TextView commemtTextView;
     LinearLayout thumbsLayout;
+    ImageView thumbsImageView;
     TextView thumbsTextView;
     LinearLayout likeLayout;
     TextView likeTextView;
@@ -71,23 +74,67 @@ public class activity_postinfo extends AppCompatActivity {
 
         thumbsLayout=findViewById(R.id.thumbsLayout);
         thumbsTextView = findViewById(R.id.thumbsTextView);
+        thumbsImageView = findViewById(R.id.thumbsImageView);
+        Log.d("hellhe", Integer.toString(post.getThumbsupNumber()));
         thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
-        System.out.println(post.getThumbsupNumber());
+        String jsonStr = "{\"username\":\""+ activity_homepage.User.getUsername() + "\",\"postID\":\""+post.getID()+"\"}";
+        String requestUrl = getString(R.string.ipv4) + "getCertainPost/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                buildDialog("Error", "无法连接至服务器。。或许网络出错了？", activity_postinfo.this);
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                String isThumbsup = msg_json.getString("thumbsup");
+                if (isThumbsup.equals("yes")) {
+                    thumbsTextView.setTextColor(Color.RED);
+                    thumbsImageView.setColorFilter(Color.RED);
+                }
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+            }
+        });
         thumbsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get if it was thumbuped, to change its color
                 handleThumbs(v);
+                if (thumbsTextView.getCurrentTextColor() == Color.RED) {
+                    thumbsTextView.setTextColor(Color.BLACK);
+                    thumbsImageView.setColorFilter(Color.BLACK);
+
+                } else {
+                    thumbsTextView.setTextColor(Color.RED);
+                    thumbsImageView.setColorFilter(Color.RED);
+                }
             }
         });
         likeTextView=findViewById(R.id.likeTextView);
         likeLayout=findViewById(R.id.likeLayout);
-        likeTextView.setText(Integer.toString(post.getLikeNumber()));
+        likeTextView.setText(Integer.toString(post.getThumbsupNumber()));
         likeLayout.setOnClickListener(view -> {
             handleLike(view);
         });
         commentLayout=findViewById(R.id.commentLayout);
         commemtTextView=findViewById(R.id.commentTextView);
-        commemtTextView.setText(post.getCommentNumber());
+        // commemtTextView.setText(post.getCommentNumber());
         // 设置返回按钮的点击事件
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {

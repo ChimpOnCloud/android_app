@@ -49,7 +49,7 @@ public class Post implements Parcelable {
         this.images=new String[]{"","","","","",""};
         this.id = "-1";
     }
-    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int likenumber) {
+    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int thumbsupNumber) {
         this.avatar = mAvatar;
         this.author = mAuthor;
         this.time = mTime;
@@ -58,7 +58,7 @@ public class Post implements Parcelable {
         this.tag = mTag;
         this.images = new String[]{"", "", "", "", "", ""};
         this.id = id;
-        this.likeNumber = likenumber;
+        this.thumbsupNumber = thumbsupNumber;
     }
 
     protected Post(Parcel in) {
