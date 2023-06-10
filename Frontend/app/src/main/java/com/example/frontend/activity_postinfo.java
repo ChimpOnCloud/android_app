@@ -55,6 +55,10 @@ public class activity_postinfo extends AppCompatActivity {
     messageAdapter mAdapter;
     ArrayList<message> messageList;
     private final Handler handler = new Handler();
+    public void messageInsert(message m) {
+        messageList.add(m);
+        recyclerView.setAdapter(mAdapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,6 @@ public class activity_postinfo extends AppCompatActivity {
         thumbsLayout=findViewById(R.id.thumbsLayout);
         thumbsTextView = findViewById(R.id.thumbsTextView);
         thumbsImageView = findViewById(R.id.thumbsImageView);
-        Log.d("hellhe", Integer.toString(post.getThumbsupNumber()));
         thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
         String jsonStr = "{\"username\":\""+ activity_homepage.User.getUsername() + "\",\"postID\":\""+post.getID()+"\"}";
         String requestUrl = getString(R.string.ipv4) + "getCertainPost/";
@@ -181,6 +184,7 @@ public class activity_postinfo extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         mAdapter=new messageAdapter(this,messageList);
         recyclerView.setAdapter(mAdapter);
+        messageInsert(new message("hello", activity_homepage.User));
     }
     public void handleThumbs(View v) {
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
