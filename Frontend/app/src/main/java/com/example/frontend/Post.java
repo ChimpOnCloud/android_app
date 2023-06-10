@@ -84,6 +84,7 @@ public class Post implements Parcelable {
         thumbsupNumber=in.readInt();
         likeNumber=in.readInt();
         id=in.readString();
+        comments= (ArrayList<message>) in.readSerializable();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -183,6 +184,7 @@ public class Post implements Parcelable {
         parcel.writeInt(likeNumber);
         parcel.writeString(id);
         parcel.writeList(comments);
+        parcel.writeSerializable(comments);
     }
 
     public void setLocation(String location) {
