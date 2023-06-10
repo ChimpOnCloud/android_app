@@ -107,4 +107,13 @@
         app:layout_constraintStart_toEndOf="@+id/checkSubscribed"
         app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
 
+    <Button
+        android:id="@+id/subscribeMe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:text="关注我的"
+        app:layout_constraintStart_toEndOf="@+id/likedPost"
+        app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,13 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.AvatarUtil.getAvatar;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +26,13 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final LayoutInflater inflater;
     public static final int FROM_OTHER=R.layout.detailitem;
     public static final int BY_USER=R.layout.detailitem_2;
-    public chatAdapter(Context context, chat ch){
+    public Bitmap oppoIconBitmap;
+    public Drawable selfDrawable;
+    public chatAdapter(Context context, chat ch, Bitmap bitmap,Drawable drawable){
         inflater=LayoutInflater.from(context);
         mChat=ch;
+        oppoIconBitmap=bitmap;
+        selfDrawable=drawable;
     }
     @Override
     public int getItemViewType(int position){
@@ -46,12 +56,14 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if(getItemViewType(position)==BY_USER){
             detailViewHolder2 dholder=(detailViewHolder2)holder;
             dholder.mMessage.setText(m.getMessageString());
+            dholder.selfImg.setImageDrawable(selfDrawable);
         }
         else{
             detailViewHolder dholder=(detailViewHolder)holder;
             dholder.mMessage.setText(m.getMessageString());
+            dholder.oppositeImg.setImageBitmap(oppoIconBitmap);
+            dholder.opposite=mChat.getOpposite();
         }
-        //todo: add a picture transport
     }
 
     @Override
@@ -60,25 +72,26 @@ public class chatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 }
 
-
 class detailViewHolder extends RecyclerView.ViewHolder{
-    public final ImageButton oppositeImg;
-    public final TextView mMessage;
+    public ImageButton oppositeImg;
+    public TextView mMessage;
+    public user opposite;
     public detailViewHolder(@NonNull View itemView, chatAdapter adapter) {
         super(itemView);
         oppositeImg=itemView.findViewById(R.id.oppoIcon);
         mMessage=itemView.findViewById(R.id.oneMessage);
+        opposite=null;
         oppositeImg.setOnClickListener(view -> {
             Intent intent=new Intent(itemView.getContext(),activity_userinfo.class);
-            //todo: call another user's userinfo page
-            //itemView.getContext().startActivity(intent);
+            intent.putExtra("user",opposite);
+            itemView.getContext().startActivity(intent);
         });
     }
 }
 
 class detailViewHolder2 extends RecyclerView.ViewHolder{
-    public final ImageButton selfImg;
-    public final TextView mMessage;
+    public ImageButton selfImg;
+    public TextView mMessage;
     public detailViewHolder2(@NonNull View itemView, chatAdapter adapter) {
         super(itemView);
         selfImg=itemView.findViewById(R.id.selfIcon);

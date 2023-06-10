@@ -56,6 +56,12 @@
 
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/bg_corner_image" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

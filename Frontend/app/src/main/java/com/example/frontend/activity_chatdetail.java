@@ -1,7 +1,15 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.AvatarUtil.getAvatar;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -43,14 +52,29 @@ public class activity_chatdetail extends AppCompatActivity {
         mChat.insert(m);
         mRecyclerView.setAdapter(mAdapter);
     }
+    public static Bitmap getPicFromBytes(byte[] bytes, BitmapFactory.Options opts) {
+        if (bytes != null)
+            if (opts != null)
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length,  opts);
+            else
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return null;
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatdetail);
         Intent intent=this.getIntent();
         mChat=(chat)intent.getSerializableExtra("chat");
+        byte[] res = getIntent().getByteArrayExtra("bitmap");
+        Bitmap oppoBitmap=getPicFromBytes(res,null);
+        ImageView imageView=findViewById(R.id.imageView);
+        getAvatar(this,imageView,activity_homepage.User.getUsername());
+        Drawable selfDrawable=imageView.getDrawable();
+        imageView.setImageDrawable(selfDrawable);
+
         mRecyclerView=findViewById(R.id.chatrecyclerview);
-        mAdapter=new chatAdapter(this,mChat);
+        mAdapter=new chatAdapter(this,mChat,oppoBitmap,selfDrawable);
         mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);

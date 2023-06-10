@@ -2,6 +2,7 @@ package com.example.frontend;
 
 import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +10,13 @@ import android.os.Message;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -87,7 +90,10 @@ public class activity_postinfo extends AppCompatActivity {
         });
         commentLayout=findViewById(R.id.commentLayout);
         commemtTextView=findViewById(R.id.commentTextView);
-        commemtTextView.setText(post.getCommentNumber());
+        commemtTextView.setText(Integer.toString(post.getCommentNumber()));
+        commentLayout.setOnClickListener(view -> {
+            handleComment(view);
+        });
         // 设置返回按钮的点击事件
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +155,24 @@ public class activity_postinfo extends AppCompatActivity {
     public void handleLike(View view){
         // todo: connect backend
     }
+    public void handleComment(View view){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("input");
+        builder.setView(new EditText(this));
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // todo
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        AlertDialog dialog=builder.create();
+        builder.show();
+    }
     public void onAvatarClick(View view)
     {
         Intent intent = new Intent(this, activity_userinfo.class);
@@ -187,7 +211,8 @@ public class activity_postinfo extends AppCompatActivity {
                 }
             }
         });
-        // intent.putExtra("user",post.getAuthor());
-        // startActivity(intent);
+        user tmpUser=new user(post.getAuthor());
+        intent.putExtra("user",tmpUser);
+        startActivity(intent);
     }
 }

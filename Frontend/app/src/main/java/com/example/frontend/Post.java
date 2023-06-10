@@ -28,7 +28,7 @@ public class Post implements Parcelable {
     private String tag;
     private int commentNumber = 0;
     private int thumbsupNumber = 0;
-    private int likeNumber;
+    private int likeNumber=0;
     private String id;
     public static final String[] tagList=new String[]{
         "#默认话题",

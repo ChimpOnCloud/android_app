@@ -58,6 +58,7 @@ public class activity_userinfo extends AppCompatActivity {
     TextView nicknameContent;
     TextView introductionContent;
     Button checkSubButton;
+    Button subscribeMeButton;
     ImageView userIcon;
     Boolean subscribe;
     Boolean shielded;
@@ -142,12 +143,11 @@ public class activity_userinfo extends AppCompatActivity {
             mUser=activity_homepage.User;
             isCurrentUser=true;
         }
-
-        // todo: create userIcon with image
         usrnameContent = findViewById(R.id.textView_usrname_content);
         nicknameContent = findViewById(R.id.textView_nickname_content);
         introductionContent = findViewById(R.id.textView_introduction_content);
         checkSubButton=findViewById(R.id.checkSubscribed);
+        subscribeMeButton=findViewById(R.id.subscribeMe);
         userIcon=findViewById(R.id.userIcon);
         moreButton=findViewById(R.id.moreButton);
         mRecyclerview=findViewById(R.id.pyqlist);
@@ -159,6 +159,7 @@ public class activity_userinfo extends AppCompatActivity {
         });
 
         usrnameContent.setText(mUser.getUsername());
+        // todo: get all user info here..
         nicknameContent.setText(mUser.getNickname());
         introductionContent.setText(mUser.getIntroduction());
         getAvatar(this,userIcon,mUser.getUsername());
