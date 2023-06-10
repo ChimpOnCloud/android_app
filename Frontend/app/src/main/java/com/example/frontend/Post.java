@@ -182,6 +182,7 @@ public class Post implements Parcelable {
         parcel.writeInt(thumbsupNumber);
         parcel.writeInt(likeNumber);
         parcel.writeString(id);
+        parcel.writeList(comments);
     }
 
     public void setLocation(String location) {
