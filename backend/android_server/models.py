@@ -40,6 +40,8 @@ class pyq(models.Model):
     location = models.CharField(max_length=250, verbose_name='地点')
     image_contain = models.ManyToManyField(image)
     like_account_contain = models.ManyToManyField(account)
+    shoucang_account_contain = models.ManyToManyField(
+        account, related_name='shoucang')
     comment_contain = models.ManyToManyField(comment)
 
 
