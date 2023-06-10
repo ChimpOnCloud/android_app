@@ -71,7 +71,7 @@ public class activity_chatdetail extends AppCompatActivity {
         ImageView imageView=findViewById(R.id.imageView);
         getAvatar(this,imageView,activity_homepage.User.getUsername());
         Drawable selfDrawable=imageView.getDrawable();
-        imageView.setImageDrawable(selfDrawable);
+        imageView.getLayoutParams().height=0;
 
         mRecyclerView=findViewById(R.id.chatrecyclerview);
         mAdapter=new chatAdapter(this,mChat,oppoBitmap,selfDrawable);
