@@ -25,6 +25,7 @@ class image(models.Model):
 
 class comment(models.Model):
     comment_username = models.CharField(max_length=250)
+    comment_userid = models.IntegerField(default=0)
     comment_content = models.CharField(default="", max_length=250)
 
 

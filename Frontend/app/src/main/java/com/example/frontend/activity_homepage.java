@@ -206,6 +206,9 @@ public class activity_homepage extends AppCompatActivity {
                     });
                 }
                 LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+//                for (int i = 0; i < posts.size(); i++) {
+//                    System.out.println(posts.get(i).getAuthor());
+//                }
             }
         });
     }

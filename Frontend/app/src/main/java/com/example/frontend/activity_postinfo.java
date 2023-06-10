@@ -178,6 +178,10 @@ public class activity_postinfo extends AppCompatActivity {
 
         // todo: create messageList
         messageList = post.getComments();
+//        for (message msg : messageList) {
+//            System.out.println(msg.getF);
+//        }
+//        System.out.println(post.getAuthor());
 
         recyclerView = findViewById(R.id.comment_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

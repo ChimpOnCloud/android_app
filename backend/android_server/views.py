@@ -355,6 +355,9 @@ def post_publish(request):
 
 def get_all_posts(request):
     if request.method == 'POST':
+        # for i, obj in enumerate(comment.objects.all()):
+        #     obj.delete()
+        # return HttpResponse('ok')
         post_name_dict = {}
         post_name_dict['#默认话题'] = 0
         post_name_dict['#校园资讯'] = 1
@@ -383,11 +386,15 @@ def get_all_posts(request):
                         str(i)] = len(post.comment_contain.all())
             for j, m_comment in enumerate(post.comment_contain.all()):
                 # print(m_comment.__dict__)
+                m_userid = m_comment.__dict__['comment_userid']
+                m_username = account.objects.filter(
+                    ID=m_userid).first().__dict__['username']
                 return_dict['commentcontent' +
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
                 return_dict['commentusername' +
-                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+                            str(i) + 'number' + str(j)] = m_username
             return_dict['num'] = len(posts)
+
     return HttpResponse(json.dumps(return_dict))
 
 
@@ -525,8 +532,11 @@ def handle_comment(request):
         like_user = account.objects.filter(username=username).first()
         m_pyq = pyq.objects.filter(ID=pyq_id).first()
         m_comment = pyq_data['commentString']
+        m_userid = account.objects.filter(
+            username=username).first().__dict__['ID']
         new_comment = comment.objects.create(comment_username=username,
-                                             comment_content=m_comment)
+                                             comment_content=m_comment,
+                                             comment_userid=m_userid)
         m_pyq.comment_contain.add(new_comment)
         return HttpResponse('ok')
 
