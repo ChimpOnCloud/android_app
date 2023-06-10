@@ -6,18 +6,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -34,8 +38,15 @@ public class activity_postinfo extends AppCompatActivity {
     TextView contentTextView;
     TextView authorTextView;
     TextView timeTextView;
-    ImageView likeImageView;
+    LinearLayout commentLayout;
+    TextView commemtTextView;
+    LinearLayout thumbsLayout;
+    TextView thumbsTextView;
+    LinearLayout likeLayout;
     TextView likeTextView;
+    RecyclerView recyclerView;
+    messageAdapter mAdapter;
+    ArrayList<message> messageList;
     private final Handler handler = new Handler();
 
     @Override
@@ -58,25 +69,25 @@ public class activity_postinfo extends AppCompatActivity {
         timeTextView = findViewById(R.id.post_time);
         timeTextView.setText(post.getTime());
 
-        likeImageView = findViewById(R.id.likeImageView);
-        likeTextView = findViewById(R.id.likeTextView);
+        thumbsLayout=findViewById(R.id.thumbsLayout);
+        thumbsTextView = findViewById(R.id.thumbsTextView);
+        thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
+        System.out.println(post.getThumbsupNumber());
+        thumbsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleThumbs(v);
+            }
+        });
+        likeTextView=findViewById(R.id.likeTextView);
+        likeLayout=findViewById(R.id.likeLayout);
         likeTextView.setText(Integer.toString(post.getLikeNumber()));
-        System.out.println(post.getLikeNumber());
-        likeImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleLike(v);
-            }
+        likeLayout.setOnClickListener(view -> {
+            handleLike(view);
         });
-        likeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println(getString(post.getLikeNumber()));
-                handleLike(v);
-            }
-        });
-
-
+        commentLayout=findViewById(R.id.commentLayout);
+        commemtTextView=findViewById(R.id.commentTextView);
+        commemtTextView.setText(post.getCommentNumber());
         // 设置返回按钮的点击事件
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -86,8 +97,16 @@ public class activity_postinfo extends AppCompatActivity {
             }
         });
 
+        // todo: create messageList
+        messageList=new ArrayList<>();
+
+        recyclerView=findViewById(R.id.comment_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter=new messageAdapter(this,messageList);
+        recyclerView.setAdapter(mAdapter);
     }
-    public void handleLike(View v) {
+    public void handleThumbs(View v) {
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         String jsonStr = "{\"pyqID\":\""+ post.getID() + "\",\"username\":\"" + activity_homepage.User.getUsername() + "\"}";
         String requestUrl = getString(R.string.ipv4)+"handleLike/";
@@ -113,19 +132,22 @@ public class activity_postinfo extends AppCompatActivity {
                 msg.obj = Objects.requireNonNull(response.body()).string();
                 String msg_obj_string = msg.obj.toString();
                 if (msg_obj_string.equals("addlike")) {
-                    post.setLikeNumber(post.getLikeNumber() + 1);
+                    post.setThumbsupNumber(post.getThumbsupNumber() + 1);
                 } else {
-                    post.setLikeNumber(post.getLikeNumber() - 1);
+                    post.setThumbsupNumber(post.getThumbsupNumber() - 1);
                 }
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        likeTextView.setText(Integer.toString(post.getLikeNumber()));
+                        thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
                     }
                 });
                 LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
             }
         });
+    }
+    public void handleLike(View view){
+        // todo: connect backend
     }
     public void onAvatarClick(View view)
     {

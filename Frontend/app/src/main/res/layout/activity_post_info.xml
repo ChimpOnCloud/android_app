@@ -217,21 +217,23 @@
             android:gravity="center_vertical">
 
             <LinearLayout
+                android:id="@+id/commentLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_comment"
-                    android:layout_marginEnd="4dp"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                    android:layout_marginEnd="4dp" />
 
                 <TextView
+                    android:id="@+id/commentTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="评论"/>
@@ -239,24 +241,25 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/thumbsLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="like">
 
                 <ImageView
-                    android:id="@+id/likeImageView"
+                    android:id="@+id/thumbsImageView"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_like"
-                    android:layout_marginEnd="4dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="like"/>
+                    android:layout_marginEnd="4dp" />
 
                 <TextView
-                    android:id="@+id/likeTextView"
+                    android:id="@+id/thumbsTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="点赞"/>
@@ -264,21 +267,23 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/likeLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_favorite"
-                    android:layout_marginEnd="4dp"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                    android:layout_marginEnd="4dp" />
 
                 <TextView
+                    android:id="@+id/likeTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="收藏"/>
