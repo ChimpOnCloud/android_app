@@ -381,8 +381,13 @@ def get_all_posts(request):
                         str(i)] = len(post.shoucang_account_contain.all())
             return_dict['comment_number' +
                         str(i)] = len(post.comment_contain.all())
-            # print(return_dict['like_number' +
-            #                   str(i)])
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            return_dict['num'] = len(posts)
     return HttpResponse(json.dumps(return_dict))
 
 
@@ -453,17 +458,30 @@ def get_searched_pyq(request):
         elif target_kind == 'tag':
             return_posts = pyq.objects.filter(tag__icontains=target_name)
         for i, post in enumerate(return_posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
                         str(i)] = str(post_name_dict[post.__dict__['tag']])
             return_dict['title' + str(i)] = post.__dict__['title']
             return_dict['content' + str(i)] = post.__dict__['content']
-            return_dict['posttime' +
-                        str(i)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
             return_dict['location' + str(i)] = post.__dict__['location']
             return_dict['id' + str(i)] = post.__dict__['ID']
             return_dict['like_number' +
                         str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            return_dict['num'] = len(return_posts)
         if len(return_dict) == 0:
             return HttpResponse('notfound')
         return HttpResponse(json.dumps(return_dict))
@@ -497,6 +515,20 @@ def handle_shoucang(request):
         else:
             m_pyq.shoucang_account_contain.add(like_user)
             return HttpResponse('addshoucang')
+
+
+def handle_comment(request):
+    if request.method == 'POST':
+        pyq_data = json.loads(request.body)
+        pyq_id = pyq_data['pyqID']
+        username = pyq_data['username']
+        like_user = account.objects.filter(username=username).first()
+        m_pyq = pyq.objects.filter(ID=pyq_id).first()
+        m_comment = pyq_data['commentString']
+        new_comment = comment.objects.create(comment_username=username,
+                                             comment_content=m_comment)
+        m_pyq.comment_contain.add(new_comment)
+        return HttpResponse('ok')
 
 
 def get_related_messages(request):
@@ -550,17 +582,30 @@ def get_user_posts(request):
         posts = pyq.objects.filter(ID=ID)
         return_dict = {}
         for i, post in enumerate(posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
                         str(i)] = str(post_name_dict[post.__dict__['tag']])
             return_dict['title' + str(i)] = post.__dict__['title']
             return_dict['content' + str(i)] = post.__dict__['content']
-            return_dict['posttime' +
-                        str(i)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
             return_dict['location' + str(i)] = post.__dict__['location']
             return_dict['id' + str(i)] = post.__dict__['ID']
             return_dict['like_number' +
                         str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            return_dict['num'] = len(posts)
         if not posts:
             return HttpResponse('error')
         return HttpResponse(json.dumps(return_dict))

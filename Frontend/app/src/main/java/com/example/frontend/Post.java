@@ -183,7 +183,6 @@ public class Post implements Parcelable {
         parcel.writeInt(thumbsupNumber);
         parcel.writeInt(likeNumber);
         parcel.writeString(id);
-        parcel.writeList(comments);
         parcel.writeSerializable(comments);
     }
 
@@ -215,6 +214,9 @@ public class Post implements Parcelable {
     public void setThumbsupNumber(int thumbsupNumber) {
         this.thumbsupNumber = thumbsupNumber;
     }
+    public void setComments(ArrayList<message> comments) {
+        this.comments = comments;
+    }
 
     public int getCommentNumber() {
         return commentNumber;
@@ -226,5 +228,8 @@ public class Post implements Parcelable {
 
     public int getThumbsupNumber() {
         return thumbsupNumber;
+    }
+    public ArrayList<message> getComments(){
+        return comments;
     }
 }

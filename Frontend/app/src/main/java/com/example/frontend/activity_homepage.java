@@ -166,7 +166,8 @@ public class activity_homepage extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    for (int i = 0; i < msg_json.size() / 10; i++) {
+//                    System.out.println();
+                    for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
                                 msg_json.getString("posttime" + i).substring(0, 19),
@@ -177,6 +178,23 @@ public class activity_homepage extends AppCompatActivity {
                                 Integer.parseInt(msg_json.getString("like_number" + i)),
                                 Integer.parseInt(msg_json.getString("shoucang_number" + i)),
                                 Integer.parseInt(msg_json.getString("comment_number" + i)));
+//                        String t = "like_number" + i;
+//                        String number = msg_json.getString(t);
+//                        System.out.println(number);
+//                        Log.d("shit", String.valueOf(Integer.parseInt(msg_json.getString(t))));
+//                        int tmp = Integer.parseInt(msg_json.getString(t));
+//                        post.setLikeNumber(tmp);
+//                                Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+//                                Integer.parseInt(msg_json.getString("comment_number" + i)));
+                        ArrayList<message> cur_comments = new ArrayList<message>();
+//                        Log.d("hello", msg_json.getString("comment_number" + i));
+                        for (int j = 0; j < Integer.parseInt(msg_json.getString("comment_number" + i)); j++) {
+                            cur_comments.add(new message(msg_json.getString("commentcontent" + i + "number" + j),
+                                    new user(msg_json.getString("commentusername" + i + "number" + j))));
+//                            Log.d("msg", cur_comments.get(j).getMessageString());
+//                            Log.d("usr", cur_comments.get(j).getFrom().getUsername());
+                        }
+                        post.setComments(cur_comments);
                         posts.add(post);
                     }
                     handler.post(new Runnable() {
@@ -264,7 +282,7 @@ public class activity_homepage extends AppCompatActivity {
                                 post_name_dict.put("2", "#二手交易");
                                 post_name_dict.put("3", "#思绪随笔");
                                 post_name_dict.put("4", "#吐槽盘点");
-                                for (int i = 0; i < msg_json.size() / 10; i++) {
+                                for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                                     Post post = new Post("",
                                             msg_json.getString("username" + i),
                                             msg_json.getString("posttime" + i).substring(0, 19),

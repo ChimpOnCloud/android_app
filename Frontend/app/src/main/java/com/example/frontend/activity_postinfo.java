@@ -80,11 +80,11 @@ public class activity_postinfo extends AppCompatActivity {
         timeTextView = findViewById(R.id.post_time);
         timeTextView.setText(post.getTime());
 
-        thumbsLayout=findViewById(R.id.thumbsLayout);
+        thumbsLayout = findViewById(R.id.thumbsLayout);
         thumbsTextView = findViewById(R.id.thumbsTextView);
         thumbsImageView = findViewById(R.id.thumbsImageView);
         thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
-        String jsonStr = "{\"username\":\""+ activity_homepage.User.getUsername() + "\",\"postID\":\""+post.getID()+"\"}";
+        String jsonStr = "{\"username\":\"" + activity_homepage.User.getUsername() + "\",\"postID\":\"" + post.getID() + "\"}";
         String requestUrl = getString(R.string.ipv4) + "getCertainPost/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -139,8 +139,8 @@ public class activity_postinfo extends AppCompatActivity {
             }
         });
 
-        likeTextView=findViewById(R.id.likeTextView);
-        likeLayout=findViewById(R.id.likeLayout);
+        likeTextView = findViewById(R.id.likeTextView);
+        likeLayout = findViewById(R.id.likeLayout);
         likeImageView = findViewById(R.id.likeImageView);
         likeTextView.setText(Integer.toString(post.getLikeNumber()));
         likeLayout.setOnClickListener(view -> {
@@ -161,8 +161,8 @@ public class activity_postinfo extends AppCompatActivity {
                 }
             }
         });
-        commentLayout=findViewById(R.id.commentLayout);
-        commemtTextView=findViewById(R.id.commentTextView);
+        commentLayout = findViewById(R.id.commentLayout);
+        commemtTextView = findViewById(R.id.commentTextView);
         commemtTextView.setText(Integer.toString(post.getCommentNumber()));
         commentLayout.setOnClickListener(view -> {
             handleComment(view);
@@ -177,14 +177,13 @@ public class activity_postinfo extends AppCompatActivity {
         });
 
         // todo: create messageList
-        messageList=new ArrayList<>();
+        messageList = post.getComments();
 
-        recyclerView=findViewById(R.id.comment_list);
+        recyclerView = findViewById(R.id.comment_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter=new messageAdapter(this,messageList);
+        mAdapter = new messageAdapter(this, messageList);
         recyclerView.setAdapter(mAdapter);
-        messageInsert(new message("hello", activity_homepage.User));
     }
     public void handleThumbs(View v) {
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
@@ -276,7 +275,47 @@ public class activity_postinfo extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 // todo
-                editText.getText();
+                String commentString = editText.getText().toString();
+                String jsonStr = "{\"pyqID\":\""+ post.getID() + "\",\"username\":\"" + activity_homepage.User.getUsername() + "\"";
+                jsonStr = jsonStr + ",\"commentString\":\"" + commentString + "\"}";
+                String requestUrl = getString(R.string.ipv4)+"handleComment/";
+                OkHttpClient client = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody body = RequestBody.create(JSON, jsonStr);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postinfo.this);
+                        // System.out.println("failed");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        if (msg_obj_string == "ok") {
+
+                        }
+                    }
+                });
+                post.setCommentNumber(post.getCommentNumber() + 1);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        commemtTextView.setText(Integer.toString(post.getCommentNumber()));
+                        messageInsert(new message(commentString, new user(activity_homepage.User.getUsername())));
+                    }
+                });
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

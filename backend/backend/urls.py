@@ -43,7 +43,8 @@ urlpatterns = [
     path('getUserPosts/', views.get_user_posts),
     path('getAuthor/', views.get_author),
     path('getCertainPost/', views.get_certain_post),
-    path('handleShoucang/', views.handle_shoucang)
+    path('handleShoucang/', views.handle_shoucang),
+    path('handleComment/', views.handle_comment)
     # path('isFollow/', views.is_follow),
 ]
 
