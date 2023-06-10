@@ -4,6 +4,7 @@ import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Utils.LoadingDialogUtil;
 
 import java.io.IOException;
@@ -44,8 +46,10 @@ public class activity_postinfo extends AppCompatActivity {
     LinearLayout commentLayout;
     TextView commemtTextView;
     LinearLayout thumbsLayout;
+    ImageView thumbsImageView;
     TextView thumbsTextView;
     LinearLayout likeLayout;
+    ImageView likeImageView;
     TextView likeTextView;
     RecyclerView recyclerView;
     messageAdapter mAdapter;
@@ -74,19 +78,85 @@ public class activity_postinfo extends AppCompatActivity {
 
         thumbsLayout=findViewById(R.id.thumbsLayout);
         thumbsTextView = findViewById(R.id.thumbsTextView);
+        thumbsImageView = findViewById(R.id.thumbsImageView);
+        Log.d("hellhe", Integer.toString(post.getThumbsupNumber()));
         thumbsTextView.setText(Integer.toString(post.getThumbsupNumber()));
-        System.out.println(post.getThumbsupNumber());
+        String jsonStr = "{\"username\":\""+ activity_homepage.User.getUsername() + "\",\"postID\":\""+post.getID()+"\"}";
+        String requestUrl = getString(R.string.ipv4) + "getCertainPost/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                buildDialog("Error", "无法连接至服务器。。或许网络出错了？", activity_postinfo.this);
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                String isThumbsup = msg_json.getString("thumbsup");
+                String isLike = msg_json.getString("like");
+                if (isThumbsup.equals("yes")) {
+                    thumbsTextView.setTextColor(Color.RED);
+                    thumbsImageView.setColorFilter(Color.RED);
+                }
+                if (isLike.equals("yes")) {
+                    likeTextView.setTextColor(Color.YELLOW);
+                    likeImageView.setColorFilter(Color.YELLOW);
+                }
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+            }
+        });
         thumbsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // get if it was thumbuped, to change its color
                 handleThumbs(v);
+                if (thumbsTextView.getCurrentTextColor() == Color.RED) {
+                    thumbsTextView.setTextColor(Color.BLACK);
+                    thumbsImageView.setColorFilter(Color.BLACK);
+
+                } else {
+                    thumbsTextView.setTextColor(Color.RED);
+                    thumbsImageView.setColorFilter(Color.RED);
+                }
             }
         });
+
         likeTextView=findViewById(R.id.likeTextView);
         likeLayout=findViewById(R.id.likeLayout);
+        likeImageView = findViewById(R.id.likeImageView);
         likeTextView.setText(Integer.toString(post.getLikeNumber()));
         likeLayout.setOnClickListener(view -> {
             handleLike(view);
+        });
+        likeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // get if it was liked, to change its color
+                handleLike(v);
+                if (likeTextView.getCurrentTextColor() == Color.YELLOW) {
+                    likeTextView.setTextColor(Color.BLACK);
+                    likeImageView.setColorFilter(Color.BLACK);
+
+                } else {
+                    likeTextView.setTextColor(Color.YELLOW);
+                    likeImageView.setColorFilter(Color.YELLOW);
+                }
+            }
         });
         commentLayout=findViewById(R.id.commentLayout);
         commemtTextView=findViewById(R.id.commentTextView);
@@ -154,6 +224,44 @@ public class activity_postinfo extends AppCompatActivity {
     }
     public void handleLike(View view){
         // todo: connect backend
+        LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
+        String jsonStr = "{\"pyqID\":\""+ post.getID() + "\",\"username\":\"" + activity_homepage.User.getUsername() + "\"}";
+        String requestUrl = getString(R.string.ipv4)+"handleShoucang/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postinfo.this);
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("addshoucang")) {
+                    post.setLikeNumber(post.getLikeNumber() + 1);
+                } else {
+                    post.setLikeNumber(post.getLikeNumber() - 1);
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        likeTextView.setText(Integer.toString(post.getLikeNumber()));
+                    }
+                });
+                LoadingDialogUtil.getInstance(activity_postinfo.this).closeLoadingDialog();
+            }
+        });
     }
     public void handleComment(View view){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);

@@ -349,7 +349,7 @@ def post_publish(request):
             username=post_username).first().__dict__
         pyq.objects.create(title=post_data['titleString'], content=post_data['contentString'],
                            tag=post_data['tagString'], location=post_data['locationString'],
-                           username=post_user_dict['username'])
+                           username=post_user_dict['username'], userID=post_user_dict['ID'])
         return HttpResponse('ok')
 
 
@@ -364,16 +364,21 @@ def get_all_posts(request):
         return_dict = {}
         posts = pyq.objects.all()
         for i, post in enumerate(posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
                         str(i)] = str(post_name_dict[post.__dict__['tag']])
             return_dict['title' + str(i)] = post.__dict__['title']
             return_dict['content' + str(i)] = post.__dict__['content']
             return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['username' + str(i)] = username
             return_dict['location' + str(i)] = post.__dict__['location']
             return_dict['id' + str(i)] = post.__dict__['ID']
             return_dict['like_number' +
                         str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
             # print(return_dict['like_number' +
             #                   str(i)])
     return HttpResponse(json.dumps(return_dict))
@@ -477,6 +482,21 @@ def handle_like(request):
             return HttpResponse('addlike')
 
 
+def handle_shoucang(request):
+    if request.method == 'POST':
+        pyq_data = json.loads(request.body)
+        pyq_id = pyq_data['pyqID']
+        username = pyq_data['username']
+        like_user = account.objects.filter(username=username).first()
+        m_pyq = pyq.objects.filter(ID=pyq_id).first()
+        if like_user in m_pyq.shoucang_account_contain.all():  # 取消赞
+            m_pyq.shoucang_account_contain.remove(like_user)
+            return HttpResponse('cancelshoucang')
+        else:
+            m_pyq.shoucang_account_contain.add(like_user)
+            return HttpResponse('addshoucang')
+
+
 def get_related_messages(request):
     if request.method == 'POST':
         user_data = json.loads(request.body)
@@ -494,7 +514,7 @@ def get_related_messages(request):
             return_dict['msg' + str(i)] = msg_dict['msg_content']
             return_dict['is_send' + str(i)] = msg_dict['is_send']
         return HttpResponse(json.dumps(return_dict))
-    
+
 
 def get_all_messages(request):
     if request.method == 'POST':
@@ -550,6 +570,30 @@ def get_author(request):
         username = data['username']
         user_dict = account.objects.filter(username=username).first().__dict__
         return HttpResponse(json.dumps(user_dict))
+
+
+def get_certain_post(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data['username']
+        post_ID = data['postID']
+        user_ID = account.objects.filter(
+            username=username).first().__dict__['ID']
+        post = pyq.objects.filter(ID=post_ID).first()
+        post_like_relation = post.like_account_contain.filter(ID=user_ID)
+        post_shoucang_relation = post.shoucang_account_contain.filter(
+            ID=user_ID)
+        return_dict = {}
+        if post_like_relation:
+            return_dict['thumbsup'] = 'yes'
+        else:
+            return_dict['thumbsup'] = 'no'
+        if post_shoucang_relation:
+            return_dict['like'] = 'yes'
+        else:
+            return_dict['like'] = 'no'
+        print(return_dict)
+        return HttpResponse(json.dumps(return_dict))
 
 
 # def is_follow(request):
