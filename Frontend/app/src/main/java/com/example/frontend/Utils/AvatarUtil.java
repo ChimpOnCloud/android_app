@@ -25,7 +25,7 @@ public class AvatarUtil {
                 Picasso p = new Picasso.Builder(context).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
                 p.load(avatarUrl)
                         .placeholder(R.drawable.ic_default_avatar)
-                        .resize(200,200)
+                        .fit()
                         .centerCrop() // 可选，如果需要将图像裁剪为正方形
                         .into(userIcon);
             }
