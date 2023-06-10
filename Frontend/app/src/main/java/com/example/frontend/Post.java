@@ -84,7 +84,6 @@ public class Post implements Parcelable {
         thumbsupNumber=in.readInt();
         likeNumber=in.readInt();
         id=in.readString();
-        comments = in.createTypedArrayList(message.CREATOR);
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
