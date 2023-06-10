@@ -270,11 +270,13 @@ public class activity_postinfo extends AppCompatActivity {
     public void handleComment(View view){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setTitle("input");
-        builder.setView(new EditText(this));
+        EditText editText=new EditText(this);
+        builder.setView(editText);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 // todo
+                editText.getText();
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
