@@ -253,4 +253,18 @@ public class Post implements Parcelable {
             else return -1;
         }
     }
+    public static class PostComparatorComment implements Comparator<Post> {
+        @Override
+        public int compare(Post obj1, Post obj2) {
+            // 获取 obj1 和 obj2 的 attr 属性值
+            int attr1 = obj1.getCommentNumber();
+            int attr2 = obj2.getCommentNumber();
+
+            // 比较 attr 属性值并返回比较结果
+//            return Integer.compare(attr1, attr2);
+            if (attr1 == attr2) return 0;
+            else if (attr1 < attr2) return 1;
+            else return -1;
+        }
+    }
 }

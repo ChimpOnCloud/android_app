@@ -25,7 +25,8 @@ public class FilterDataUtils {
         filterGrop1.filters = new ArrayList<>();
         filterGrop1.filters.add(new FilterBean(FilterBean.UNLIMITED+"1", "不限"));
         filterGrop1.filters.add(new FilterBean("2_1", "按时间排序"));
-        filterGrop1.filters.add(new FilterBean("2_2", "按热度排序"));
+        filterGrop1.filters.add(new FilterBean("2_2", "按点赞量排序"));
+        filterGrop1.filters.add(new FilterBean("2_3", "按评论量排序"));
         filterGrops.add(filterGrop1);
 
         FilterGrop filterGrop2 = new FilterGrop();

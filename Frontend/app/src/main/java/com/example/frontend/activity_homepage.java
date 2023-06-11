@@ -78,7 +78,8 @@ public class activity_homepage extends AppCompatActivity {
         if(mPreferences.getString(checkSubscribeString, "").equals("开启")) onlyCheckSubscribed=true;
         sortMethod=0;
         if(mPreferences.getString(sortMethodString, "").equals("按时间排序")) sortMethod=1;
-        else if(mPreferences.getString(sortMethodString, "").equals("按热度排序")) sortMethod=2;
+        else if(mPreferences.getString(sortMethodString, "").equals("按点赞量排序")) sortMethod=2;
+        else if(mPreferences.getString(sortMethodString, "").equals("按评论量排序")) sortMethod=3;
         tagSelected=mPreferences.getString(tagSelectedString, "");
         username = mPreferences.getString("username", username);
         password = mPreferences.getString("password", password);
@@ -262,7 +263,8 @@ public class activity_homepage extends AppCompatActivity {
                     if(arrayList.get(0).name.equals("开启")) onlyCheckSubscribed=true;
                     sortMethod=0;
                     if(arrayList.get(1).name.equals("按时间排序")) sortMethod=1;
-                    else if(arrayList.get(1).name.equals("按热度排序")) sortMethod=2;
+                    else if(arrayList.get(1).name.equals("按点赞量排序")) sortMethod=2;
+                    else if(arrayList.get(1).name.equals("按评论量排序")) sortMethod=3;
                     tagSelected=arrayList.get(2).name;
                     SharedPreferences.Editor editor=mPreferences.edit();
                     editor.putString(checkSubscribeString,arrayList.get(0).id);
@@ -340,6 +342,9 @@ public class activity_homepage extends AppCompatActivity {
                                         if (sortMethod == 0) {
                                         } else if (sortMethod == 2) {
                                             Post.PostComparatorThumbsup comparator = new Post.PostComparatorThumbsup();
+                                            Collections.sort(posts, comparator);
+                                        }  else if (sortMethod == 3) {
+                                            Post.PostComparatorComment comparator = new Post.PostComparatorComment();
                                             Collections.sort(posts, comparator);
                                         } else {
                                             Post.PosttComparatorTime comparator = new Post.PosttComparatorTime();
