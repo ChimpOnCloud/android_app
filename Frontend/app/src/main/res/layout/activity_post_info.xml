@@ -130,8 +130,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image1"
                     android:scaleType="centerCrop" />
 
                 <View
@@ -143,8 +141,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image2"
                     android:scaleType="centerCrop"/>
 
                 <View
@@ -156,8 +152,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image3"
                     android:scaleType="centerCrop"/>
 
             </LinearLayout>
@@ -173,8 +167,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image4"
                     android:scaleType="centerCrop"/>
 
                 <View
@@ -186,8 +178,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image5"
                     android:scaleType="centerCrop"/>
 
                 <View
@@ -199,8 +189,6 @@
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_corner_image"
-                    android:src="@drawable/image6"
                     android:scaleType="centerCrop"/>
 
             </LinearLayout>

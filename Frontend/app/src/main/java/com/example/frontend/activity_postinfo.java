@@ -11,6 +11,7 @@ import android.os.Message;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.frontend.Utils.LoadingDialogUtil;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +57,7 @@ public class activity_postinfo extends AppCompatActivity {
     RecyclerView recyclerView;
     messageAdapter mAdapter;
     ArrayList<message> messageList;
+    ImageView[] mImages = new ImageView[6];
     private final Handler handler = new Handler();
     public void messageInsert(message m) {
         messageList.add(m);
@@ -178,6 +182,55 @@ public class activity_postinfo extends AppCompatActivity {
 
         // todo: create messageList
         messageList = post.getComments();
+        mImages[0] = findViewById(R.id.post_image_1);
+        mImages[1] = findViewById(R.id.post_image_2);
+        mImages[2] = findViewById(R.id.post_image_3);
+        mImages[3] = findViewById(R.id.post_image_4);
+        mImages[4] = findViewById(R.id.post_image_5);
+        mImages[5] = findViewById(R.id.post_image_6);
+        for (int i = 0; i < post.getImagesLength(); i++) {
+            String imgUrl = getString(R.string.ipv4) + post.getImages().get(i);
+            System.out.println(imgUrl);
+            Picasso tp = new Picasso.Builder(this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+            tp.load(imgUrl)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .fit()
+                    .centerCrop() // 可选，如果需要将图像裁剪为正方形
+                    .into(mImages[i]);
+        }
+        for (int i = 0; i < post.getImages().size(); i++) {
+            if (post.getImages().get(i) != "") {
+                mImages[i].setVisibility(View.VISIBLE);
+                // todo: 类似的
+                // mImages[i].setImageResource(post.getImages()[i]);
+            } else {
+                mImages[i].setVisibility(View.GONE);
+            }
+        }
+        if (post.getImages().size() == 0) {
+            for (int i = 0; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = mImages[i].getLayoutParams();
+                layoutParams.height = 0;
+                mImages[i].setLayoutParams(layoutParams);
+            }
+        } else if (post.getImages().size() >= 1 && post.getImages().size() <= 3) {
+            for (int i = 0; i < 2; i++) {
+                ViewGroup.LayoutParams layoutParams = mImages[i].getLayoutParams();
+                layoutParams.height = 240;
+                mImages[i].setLayoutParams(layoutParams);
+            }
+            for (int i = 3; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = mImages[i].getLayoutParams();
+                layoutParams.height = 0;
+                mImages[i].setLayoutParams(layoutParams);
+            }
+        } else {
+            for (int i = 0; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = mImages[i].getLayoutParams();
+                layoutParams.height = 240;
+                mImages[i].setLayoutParams(layoutParams);
+            }
+        }
 //        for (message msg : messageList) {
 //            System.out.println(msg.getF);
 //        }

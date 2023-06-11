@@ -154,11 +154,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         String msg_obj_string = msg.obj.toString();
                         if (msg_obj_string.equals("ok")) {
+                            holder.handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    holder.mSubscribed.setText("");
+                                }
+                            });
                             Log.d("a","not");
                         } else if (msg_obj_string.equals("followed")){
                             Log.d("a","fol");
                             holder.sub=true;
-                            holder.mSubscribed.setText("已关注");
+                            holder.handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    holder.mSubscribed.setText("已关注");
+                                }
+                            });
                         }
                     }
                 });
