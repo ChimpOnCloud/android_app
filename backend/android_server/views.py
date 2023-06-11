@@ -93,7 +93,7 @@ def get_avatar(request, targetName):
 
     # 获取头像文件路径
     avatar_relative_path = target_user.avatar.url
-    print(avatar_relative_path)
+    # print(avatar_relative_path)
     media_index = avatar_relative_path.rfind('media/') + len('media/')
     avatar_path = os.path.join(
         settings.MEDIA_ROOT, avatar_relative_path[media_index:])
@@ -143,6 +143,28 @@ def show_subscribelist(request):
                 followedpersonUsername = account.objects.filter(
                     ID=followedpersonID).first().__dict__['username']
                 return_dict[i] = followedpersonUsername
+            return HttpResponse(json.dumps(return_dict))
+
+
+def show_followers(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        potential_user = account.objects.filter(
+            username=user_data['srcUsername'])  # a list contains at most 1 element
+        if not potential_user:
+            return HttpResponse('error')
+
+        else:
+            follow_relations = followperson.objects.filter(
+                followedpersonID=potential_user.first().__dict__['ID'])
+            return_dict = {}
+            for i, follow_relation in enumerate(follow_relations):
+                # print(follow_relation.__dict__)
+                followerID = follow_relation.__dict__[
+                    'followerID']
+                followerUsername = account.objects.filter(
+                    ID=followerID).first().__dict__['username']
+                return_dict[i] = followerUsername
             return HttpResponse(json.dumps(return_dict))
 
 

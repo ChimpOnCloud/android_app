@@ -46,6 +46,7 @@ urlpatterns = [
     path('handleShoucang/', views.handle_shoucang),
     path('handleComment/', views.handle_comment),
     path('getLikedPosts/', views.get_liked_posts),
+    path('showFollowers/', views.show_followers),
     # path('isFollow/', views.is_follow),
 ]
 

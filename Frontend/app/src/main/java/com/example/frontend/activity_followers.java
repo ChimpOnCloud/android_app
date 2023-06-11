@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -53,6 +54,9 @@ public class activity_followers extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        Intent intent = getIntent();
+        user mUser = (user)intent.getSerializableExtra("user");
+        Log.d("usrname", mUser.getUsername());
         mUserList.clear();
         mRecyclerView.setAdapter(mAdapter);
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
@@ -60,7 +64,7 @@ public class activity_followers extends AppCompatActivity {
         Username = mPreferences.getString("username", Username);
         // todo: change here to get followers
         String jsonStr = "{\"srcUsername\":\""+ Username + "\"}";
-        String requestUrl = getString(R.string.ipv4)+"showSubscribedlist/"; // todo here
+        String requestUrl = getString(R.string.ipv4)+"showFollowers/"; // todo here
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")

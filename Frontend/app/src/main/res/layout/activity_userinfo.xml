@@ -112,6 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
+        android:onClick="jumpToFollowersPage"
         android:text="关注我的"
         app:layout_constraintStart_toEndOf="@+id/likedPost"
         app:layout_constraintTop_toBottomOf="@+id/textView_introduction_content" />

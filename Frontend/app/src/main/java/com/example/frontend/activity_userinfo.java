@@ -259,4 +259,9 @@ public class activity_userinfo extends AppCompatActivity {
         Intent intent=new Intent(this,activity_likedpost.class);
         startActivity(intent);
     }
+    public void jumpToFollowersPage(View v) {
+        Intent intent=new Intent(this,activity_followers.class);
+        intent.putExtra("user",mUser);
+        startActivity(intent);
+    }
 }

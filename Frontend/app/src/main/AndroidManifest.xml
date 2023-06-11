@@ -97,6 +97,9 @@
             android:name=".activity_likedpost"
             android:exported="false" />
         <activity
+            android:name=".activity_followers"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
 
