@@ -20,7 +20,8 @@ class account(models.Model):
 
 
 class image(models.Model):
-    image_content = models.IntegerField(primary_key=True)
+    ID = models.AutoField(primary_key=True)
+    image_content = models.ImageField(upload_to='images', default='')
 
 
 class comment(models.Model):

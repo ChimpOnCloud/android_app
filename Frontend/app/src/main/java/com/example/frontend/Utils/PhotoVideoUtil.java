@@ -220,6 +220,40 @@ public class PhotoVideoUtil {
         media.setDataSource(path);
         return media.getFrameAtTime();
     }
+    public void uploadBitmap(Bitmap bitmap, int cnt) {
+        LoadingDialogUtil.getInstance(context).showLoadingDialog("Loading...");
+        // 将 Bitmap 转换为字节数组或其他合适的数据格式
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] imageData = byteArrayOutputStream.toByteArray();
+        // 构造请求体，包含图片数据和其他参数
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", cnt + ".jpg", RequestBody.create(MediaType.parse("image/jpeg"), imageData))
+                .build();
+        // 构造请求
+        String requestUrl = context.getString(R.string.ipv4)+"uploadImages/";
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(requestBody)
+                .build();
+        // 发送请求
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
+                e.printStackTrace();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",(AppCompatActivity)context);
+                // 上传失败的处理逻辑
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                LoadingDialogUtil.getInstance(context).closeLoadingDialog();
+                // 上传成功的处理逻辑
+            }
+        });
+    }
 
     public void uploadBitmap(Bitmap bitmap,String oldUsername) {
         LoadingDialogUtil.getInstance(context).showLoadingDialog("Loading...");

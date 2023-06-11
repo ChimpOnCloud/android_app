@@ -47,6 +47,8 @@ urlpatterns = [
     path('handleComment/', views.handle_comment),
     path('getLikedPosts/', views.get_liked_posts),
     path('showFollowers/', views.show_followers),
+    path('uploadImages/', views.upload_images),
+    path('clearTmp/', views.clear_tmp),
     # path('isFollow/', views.is_follow),
 ]
 

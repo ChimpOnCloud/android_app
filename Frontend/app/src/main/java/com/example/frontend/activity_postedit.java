@@ -24,6 +24,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +41,9 @@ import androidx.core.app.ActivityCompat;
 import com.example.frontend.Utils.LoadingDialogUtil;
 import com.example.frontend.Utils.PhotoVideoUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -75,6 +78,7 @@ public class activity_postedit extends AppCompatActivity implements LocationList
     private Uri VideoUri;
     private PhotoVideoUtil photoVideoUtil;
     private Boolean confirm;
+    public ArrayList<Bitmap> bitmaps = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -107,6 +111,39 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         editor.putString(tagString,tagText.getText().toString());
         editor.apply();
         setResult(RESULT_CANCELED);
+        String jsonStr = "";
+        String requestUrl = getString(R.string.ipv4)+"clearTmp/";
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        @SuppressWarnings("deprecation")
+        RequestBody body = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .url(requestUrl)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                System.out.println("failed");
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
+                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_postedit.this);
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response)
+                    throws IOException {
+                Message msg = new Message();
+                msg.obj = Objects.requireNonNull(response.body()).string();
+                String msg_obj_string = msg.obj.toString();
+                if (msg_obj_string.equals("error")) {
+
+                } else {
+
+                }
+                LoadingDialogUtil.getInstance(activity_postedit.this).closeLoadingDialog();
+            }
+        });
         finish();
     }
 
@@ -128,6 +165,10 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         editor.remove(tagString);
         editor.commit();
 
+//        for (int i = 0; i < bitmaps.size(); i++) {
+//            photoVideoUtil.uploadBitmap(bitmaps.get(i), i);
+//        }
+
 
         Intent intent=new Intent();
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
@@ -139,7 +180,13 @@ public class activity_postedit extends AppCompatActivity implements LocationList
         String jsonStr = "{\"titleString\":\""+ titleText.getText().toString() + "\",\"contentString\":\""+contentText.getText().toString()+"\"";
         jsonStr = jsonStr + ",\"tagString\":\"" + tagText.getText().toString() + "\",\"locationString\":\"" + mLocation + "\"";
         jsonStr = jsonStr + ",\"username\":\"" + activity_homepage.User.getUsername() + "\"}";
-        System.out.println(tagString);
+//        for (int i = 0; i < bitmaps.size(); i++) {
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            bitmaps.get(i).compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+//            byte[] imageData = byteArrayOutputStream.toByteArray();
+//            jsonStr = jsonStr + ",\"bitmap" + i + "\":\"" + bitmaps.get(i) + "\"";
+//        }
+//        System.out.println(jsonStr);
         String requestUrl = getString(R.string.ipv4)+"postPublish/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -321,6 +368,9 @@ public class activity_postedit extends AppCompatActivity implements LocationList
             mImageView[position].setImageBitmap(bitmap);
         }
         // todo: save the images in post
+        bitmaps.add(bitmap);
+//        Log.d("bitmap", bitmap.toString());
+        photoVideoUtil.uploadBitmap(bitmap, position);
         post.setImage(photoVideoUtil.getUri().toString(),position);
     }
 

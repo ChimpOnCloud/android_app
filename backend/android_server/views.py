@@ -6,6 +6,7 @@ from django.conf import settings
 
 import json
 import os
+import shutil
 
 # Create your views here.
 
@@ -363,15 +364,48 @@ def find_related_chat_users(request):
             return HttpResponse(json.dumps(return_dict))
 
 
+def upload_images(request):
+    image_file = request.FILES.get('image')
+    file_path = "media/tmp/" + image_file.name
+    with open(file_path, 'wb') as f:
+        for chunk in image_file.chunks():
+            f.write(chunk)
+
+    return HttpResponse('ok')
+
+
+def clear_tmp(request):
+    old_file_path = "media/tmp/"
+    shutil.rmtree('media/tmp')
+    os.mkdir('media/tmp')
+    return HttpResponse('ok')
+
+
 def post_publish(request):
     if request.method == 'POST':
         post_data = json.loads(request.body)
         post_username = post_data['username']
+        tmp_path = os.listdir('media/tmp')
+        images_cnt = len(tmp_path)
+
         post_user_dict = account.objects.filter(
             username=post_username).first().__dict__
-        pyq.objects.create(title=post_data['titleString'], content=post_data['contentString'],
-                           tag=post_data['tagString'], location=post_data['locationString'],
-                           username=post_user_dict['username'], userID=post_user_dict['ID'])
+        new_pyq = pyq.objects.create(title=post_data['titleString'], content=post_data['contentString'],
+                                     tag=post_data['tagString'], location=post_data['locationString'],
+                                     username=post_user_dict['username'], userID=post_user_dict['ID'])
+        new_file_path_name = "media/images/"
+        old_file_path = "media/tmp/"
+        for i, path in enumerate(os.listdir(old_file_path)):
+            # print(path)
+            shutil.copy(old_file_path + path, new_file_path_name +
+                        "pyq_" + str(new_pyq.ID) + "_" + str(i) + ".jpg")
+            new_img = image.objects.create(image_content=new_file_path_name +
+                                           "pyq_" + str(new_pyq.ID) + "_" + str(i) + ".jpg")
+            new_pyq.image_contain.add(new_img)
+
+        shutil.rmtree('media/tmp')
+        os.mkdir('media/tmp')
+
         return HttpResponse('ok')
 
 
