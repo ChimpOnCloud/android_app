@@ -1,7 +1,13 @@
 package com.example.frontend;
 
+import android.app.Activity;
+import android.app.AppComponentFactory;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +15,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -46,22 +63,57 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return mPosts.size();
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
         if (mPosts == null || mPosts.size() <= position) {
             return;
         }
-        // todo: get subscribe info here
-        Boolean sub=true;
-        if(!sub) {
-            holder.mSubscribed.setEnabled(false);
-            holder.mSubscribed.setText("");
-        }
         holder.bind(mPosts.get(position));
+        // todo: get subscribe info here
+        holder.handler.post(new Runnable() {
+            @Override
+            public void run() { // on create, judge if this user was already followed
+                String mSrcusername = mPosts.get(position).getAuthor();
+                String mJsonStr = "{\"dstusername\":\""+ mSrcusername + "\"";
+                mJsonStr = mJsonStr + ",\"srcusername\":\"" + activity_homepage.User.getUsername() + "\"}";
+                String mRequestUrl = holder.itemView.getContext().getString(R.string.ipv4)+"getFollowuser/";
+                OkHttpClient mclient = new OkHttpClient();
+                MediaType mJSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody mbody = RequestBody.create(mJSON, mJsonStr);
+                Request mrequest = new Request.Builder()
+                        .url(mRequestUrl)
+                        .post(mbody)
+                        .build();
+                mclient.newCall(mrequest).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("failed");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        Log.d("a","reached here");
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        if (msg_obj_string.equals("ok")) {
+                            Log.d("a","not");
+                        } else if (msg_obj_string.equals("followed")){
+                            Log.d("a","fol");
+                            holder.sub=true;
+                            holder.mSubscribed.setText("已关注");
+                        }
+                    }
+                });
+            }
+        });
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {
+        public final Handler handler = new Handler();
         private ImageView mAvatar;
         private TextView mAuthor;
         private TextView mTime;
@@ -75,6 +127,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mThumbs;
         private TextView mLike;
         private Context context;
+        private Boolean sub;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -110,6 +163,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 // System.out.println("before" + mPosts.get(position).getID());
                 context.startActivity(intent);
             });
+            sub=false;
         }
 
         public void bind(Post post) {

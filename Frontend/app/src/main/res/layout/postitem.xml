@@ -55,7 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginLeft="10dp"
-                        android:text="已关注"
+                        android:text=""
                         android:textColor="@color/purple_500"/>
 
                 </LinearLayout>
