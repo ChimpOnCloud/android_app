@@ -2,6 +2,7 @@ package com.example.frontend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -59,6 +65,55 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.mSubscribed.setText("");
         }
         holder.bind(mPosts.get(position));
+        Post p = mPosts.get(position);
+        for (int i = 0; i < p.getImagesLength(); i++) {
+            String imgUrl = holder.context.getString(R.string.ipv4) + p.getImages().get(i);
+            System.out.println(imgUrl);
+            Picasso tp = new Picasso.Builder(holder.context).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+            tp.load(imgUrl)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .fit()
+                    .centerCrop() // 可选，如果需要将图像裁剪为正方形
+                    .into(holder.mImages[i]);
+        }
+        for (int i = 0; i < p.getImages().size(); i++) {
+            if (p.getImages().get(i) != "") {
+                holder.mImages[i].setVisibility(View.VISIBLE);
+                // todo: 类似的
+                // mImages[i].setImageResource(post.getImages()[i]);
+            } else {
+                holder.mImages[i].setVisibility(View.GONE);
+            }
+        }
+        if (p.getImages().size() == 0) {
+            for (int i = 0; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = holder.mImages[i].getLayoutParams();
+                layoutParams.height = 0;
+                holder.mImages[i].setLayoutParams(layoutParams);
+            }
+        } else if (p.getImages().size() >= 1 && p.getImages().size() <= 3) {
+            for (int i = 0; i < 2; i++) {
+                ViewGroup.LayoutParams layoutParams = holder.mImages[i].getLayoutParams();
+                layoutParams.height = 240;
+                holder.mImages[i].setLayoutParams(layoutParams);
+            }
+            for (int i = 3; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = holder.mImages[i].getLayoutParams();
+                layoutParams.height = 0;
+                holder.mImages[i].setLayoutParams(layoutParams);
+            }
+        } else {
+            for (int i = 0; i < 6; i++) {
+                ViewGroup.LayoutParams layoutParams = holder.mImages[i].getLayoutParams();
+                layoutParams.height = 240;
+                holder.mImages[i].setLayoutParams(layoutParams);
+            }
+        }
+//        for (int i = 3; i < 6; i++) {
+//            ViewGroup.LayoutParams layoutParams = holder.mImages[i].getLayoutParams();
+//            layoutParams.height = 0;
+//            holder.mImages[i].setLayoutParams(layoutParams);
+//        }
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {
@@ -114,23 +169,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         public void bind(Post post) {
             // todo: 在Avatar中存储String的情况下，将数据绑定到ViewHolder中的控件上
-            // mAvatar.setImageResource(post.getAvatar());
-            // Log.d("a",post.getAvatar());
             mAuthor.setText(post.getAuthor());
             mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());
             mContent.setText(post.getContent());
-            if(post.getImages() != null) {
-                for (int i = 0; i < post.getImages().length; i++) {
-                    if (post.getImages()[i] != "") {
-                        mImages[i].setVisibility(View.VISIBLE);
-                        // todo: 类似的
-                        // mImages[i].setImageResource(post.getImages()[i]);
-                    } else {
-                        mImages[i].setVisibility(View.GONE);
-                    }
-                }
-            }
+//            if(post.getImages() != null) {
+//                for (int i = 0; i < post.getImages().size(); i++) {
+//                    if (post.getImages().get(i) != "") {
+//                        mImages[i].setVisibility(View.VISIBLE);
+//                        // todo: 类似的
+//                        // mImages[i].setImageResource(post.getImages()[i]);
+//                    } else {
+//                        mImages[i].setVisibility(View.GONE);
+//                    }
+//                }
+//            }
             mLocation.setText(post.getLocation());
             mTag.setText(post.getTag());
             mComment.setText(String.valueOf(post.getCommentNumber()));

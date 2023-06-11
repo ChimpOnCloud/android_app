@@ -25,7 +25,7 @@ public class Post implements Parcelable {
     private String time; // 发布时间
     private String title; // 帖子标题
     private String content; // 帖子内容
-    private String[] images; // 帖子图片
+    private ArrayList<String> images = new ArrayList<>(); // 帖子图片
     private String location;
     private String tag;
     private int commentNumber = 0;
@@ -49,21 +49,22 @@ public class Post implements Parcelable {
         this.location="";
         this.tag="#默认话题";
         this.commentNumber=this.thumbsupNumber=this.likeNumber=0;
-        this.images=new String[]{"","","","","",""};
+//        this.images=new String[]{"","","","","",""};
         this.id = "-1";
     }
-    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int thumbsupNumber, int likeNumber, int commentNumber) {
+    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int thumbsupNumber, int likeNumber, int commentNumber, ArrayList<String> imgs) {
         this.avatar = mAvatar;
         this.author = mAuthor;
         this.time = mTime;
         this.title = mTitle;
         this.content = mContent;
         this.tag = mTag;
-        this.images = new String[]{"", "", "", "", "", ""};
+//        this.images = new String[]{"", "", "", "", "", ""};
         this.id = id;
         this.thumbsupNumber = thumbsupNumber;
         this.likeNumber = likeNumber;
         this.commentNumber = commentNumber;
+        this.images = imgs;
     }
 
     protected Post(Parcel in) {
@@ -72,13 +73,14 @@ public class Post implements Parcelable {
         time = in.readString();
         title=in.readString();
         content=in.readString();
-        images=new String[6];
-        images[0] = in.readString();
-        images[1] = in.readString();
-        images[2] = in.readString();
-        images[3] = in.readString();
-        images[4] = in.readString();
-        images[5] = in.readString();
+//        images=new String[6];
+//        images[0] = in.readString();
+//        images[1] = in.readString();
+//        images[2] = in.readString();
+//        images[3] = in.readString();
+//        images[4] = in.readString();
+//        images[5] = in.readString();
+        images = (ArrayList<String>) in.readSerializable();
         location=in.readString();
         tag=in.readString();
         commentNumber=in.readInt();
@@ -142,21 +144,17 @@ public class Post implements Parcelable {
         this.content = content;
     }
 
-    public String[] getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
     public int getImagesLength(){
-        int i=0;
-        for(;i<6;i++){
-            if(images[i]=="") break;
-        }
-        return i;
+        return images.size();
     }
     public void setImage(String image,int position){
         if(position>5||position<0) return;
-        images[position]=image;
+        images.add(image);
     }
-    public void setImages(String[] images) {
+    public void setImages(ArrayList<String> images) {
         this.images = images;
     }
 
@@ -172,12 +170,13 @@ public class Post implements Parcelable {
         parcel.writeString(time);
         parcel.writeString(title);
         parcel.writeString(content);
-        parcel.writeString(images[0]);
-        parcel.writeString(images[1]);
-        parcel.writeString(images[2]);
-        parcel.writeString(images[3]);
-        parcel.writeString(images[4]);
-        parcel.writeString(images[5]);
+//        parcel.writeString(images[0]);
+//        parcel.writeString(images[1]);
+//        parcel.writeString(images[2]);
+//        parcel.writeString(images[3]);
+//        parcel.writeString(images[4]);
+//        parcel.writeString(images[5]);
+        parcel.writeSerializable(images);
         parcel.writeString(location);
         parcel.writeString(tag);
         parcel.writeInt(commentNumber);

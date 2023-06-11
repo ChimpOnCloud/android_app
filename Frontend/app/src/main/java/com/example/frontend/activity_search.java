@@ -146,6 +146,7 @@ public class activity_search extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
+                    ArrayList<String> bitmaps = new ArrayList<>();
                     for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
@@ -156,7 +157,8 @@ public class activity_search extends AppCompatActivity {
                                 msg_json.getString("id" + i),
                                 Integer.parseInt(msg_json.getString("like_number" + i)),
                                 Integer.parseInt(msg_json.getString("shoucang_number" + i)),
-                                Integer.parseInt(msg_json.getString("comment_number" + i)));
+                                Integer.parseInt(msg_json.getString("comment_number" + i)),
+                                bitmaps);
                         mAdapter.mPosts.add(post);
                     }
 

@@ -75,6 +75,9 @@ public class activity_likedpost extends AppCompatActivity {
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
 //                    System.out.println();
+                    ArrayList<String> bitmaps = new ArrayList<>();
+                    // TODO: initializt bitmaps
+//                    System.out.println();
                     for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
@@ -85,7 +88,8 @@ public class activity_likedpost extends AppCompatActivity {
                                 msg_json.getString("id" + i),
                                 Integer.parseInt(msg_json.getString("like_number" + i)),
                                 Integer.parseInt(msg_json.getString("shoucang_number" + i)),
-                                Integer.parseInt(msg_json.getString("comment_number" + i)));
+                                Integer.parseInt(msg_json.getString("comment_number" + i)),
+                                bitmaps);
 //                        String t = "like_number" + i;
 //                        String number = msg_json.getString(t);
 //                        System.out.println(number);

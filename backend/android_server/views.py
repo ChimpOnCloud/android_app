@@ -449,7 +449,14 @@ def get_all_posts(request):
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
                 return_dict['commentusername' +
                             str(i) + 'number' + str(j)] = m_username
+            imgs = post.image_contain.all()
+            for k, img in enumerate(imgs):
+                return_dict['pyq_' + str(i) + '_img' +
+                            str(k)] = str(img.image_content)
+            return_dict['num_imgs' + str(i)] = len(imgs)
+
         return_dict['num'] = len(posts)
+        print(return_dict)
 
     return HttpResponse(json.dumps(return_dict))
 
