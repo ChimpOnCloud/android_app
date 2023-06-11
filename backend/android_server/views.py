@@ -520,8 +520,10 @@ def get_liked_posts(request):
 def get_all_posts_with_constraints(request):
     if request.method == 'POST':
         post_data = json.loads(request.body)
+        print(post_data)
         onlyCheckSubscribed = post_data['onlyCheckSubscribed']
         tag = post_data['tag']
+        m_block = post_data['block']
         src_username = post_data['srcUsername']
         src_ID = account.objects.filter(
             username=src_username).first().__dict__["ID"]
@@ -546,6 +548,13 @@ def get_all_posts_with_constraints(request):
                 if not post_name_dict[post.tag] == post_name_dict[tag]:
                     m_posts = m_posts.exclude(ID=post.ID)
                     continue
+            if m_block == '1':
+                block_object = block.objects.filter(
+                    user_ID=post.userID).first()
+                if block_object:
+                    m_posts = m_posts.exclude(ID=post.ID)
+                    continue
+
         # print(post_name_dict[tag])
         for i, post in enumerate(m_posts):
             userID = post.__dict__['userID']
@@ -799,6 +808,17 @@ def get_certain_post(request):
             return_dict['like'] = 'no'
         print(return_dict)
         return HttpResponse(json.dumps(return_dict))
+
+
+def m_block(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        block.objects.all().delete()
+        blockUsername = data['blockUsername']
+        blockuserID = account.objects.filter(
+            username=blockUsername).first().__dict__['ID']
+        block.objects.create(user_ID=blockuserID)
+        return HttpResponse('ok')
 
 
 # def is_follow(request):

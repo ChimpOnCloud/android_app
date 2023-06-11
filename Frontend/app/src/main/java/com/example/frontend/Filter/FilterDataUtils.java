@@ -41,6 +41,15 @@ public class FilterDataUtils {
         filterGrop2.filters.add(new FilterBean("3_4", "#思绪随笔"));
         filterGrop2.filters.add(new FilterBean("3_5", "#吐槽盘点"));
         filterGrops.add(filterGrop2);
+
+        FilterGrop filterGrop3 = new FilterGrop();
+        filterGrop3.gropName = "屏蔽设置";
+        filterGrop3.key="tag";
+        filterGrop3.filterType=TagFlowLayout.TAG_MODE_SINGLE;
+        filterGrop3.filters = new ArrayList<>();
+        filterGrop3.filters.add(new FilterBean(FilterBean.UNLIMITED+"2", "不限"));
+        filterGrop3.filters.add(new FilterBean("4_1", "屏蔽"));
+        filterGrops.add(filterGrop3);
         return filterGrops;
     }
 }

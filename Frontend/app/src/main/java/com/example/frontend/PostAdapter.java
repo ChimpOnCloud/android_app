@@ -1,5 +1,7 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
+
 import android.app.Activity;
 import android.app.AppComponentFactory;
 import android.content.Context;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,11 +21,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
+import com.example.frontend.Utils.LoadingDialogUtil;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -193,6 +199,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         private TextView mLike;
         private Context context;
         private Boolean sub;
+        public Button blockButton;
 
         public PostViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -213,7 +220,61 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             mComment=itemView.findViewById(R.id.commentNumber);
             mThumbs=itemView.findViewById(R.id.thumbsNumber);
             mLike=itemView.findViewById(R.id.likeNumber);
+            blockButton = itemView.findViewById(R.id.post_block);
             context=itemView.getContext();
+            blockButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                if (blockButton.getText().toString().equals("屏蔽此用户")) {
+//                    for (Post p : mPosts) {
+//                        if mPosts.
+//                    }
+
+
+                    blockButton.setText("解除屏蔽");
+                    blockButton.setBackgroundColor(Color.RED);
+                } else {
+                    blockButton.setText("屏蔽此用户");
+                    blockButton.setBackgroundColor(Color.YELLOW);
+                }
+//                Intent intent=new Intent(context, activity_postinfo.class);
+//                intent.putExtra("post", mPosts.get(position));
+//                context.startActivity(intent);
+                String blockUsername = mPosts.get(position).getAuthor();
+                activity_homepage.blockUsernames.add(blockUsername);
+                System.out.println(activity_homepage.blockUsernames);
+                String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\"}";
+                System.out.println(JsonStr);
+                String requestUrl = context.getString(R.string.ipv4)+"block/";
+                OkHttpClient client = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody body = RequestBody.create(JSON, JsonStr);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        System.out.println("failed");
+//                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+//                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        if (msg_obj_string.equals("ok")) {
+
+                        }
+                    }
+
+                });
+            });
 
             mTitle.setOnClickListener(view -> {
                 int position = getAdapterPosition();

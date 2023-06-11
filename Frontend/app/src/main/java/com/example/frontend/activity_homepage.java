@@ -64,10 +64,14 @@ public class activity_homepage extends AppCompatActivity {
     private Boolean onlyCheckSubscribed=false;
     private int sortMethod=0; // 0: 未指定 1:按时间 2:按热度
     private String tagSelected="";
+    private String blockSelected = "";
+    public int blockMethod = 0; // 0 not block 1 block
+
     public static String checkSubscribeString="checkSubscribe";
     public static String sortMethodString="sortMethod";
     public static String tagSelectedString="tagSelected";
-    public boolean filtering = false;
+    public static String blockSelectedString="blockSelected";
+    public static ArrayList<String> blockUsernames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,7 +269,7 @@ public class activity_homepage extends AppCompatActivity {
                 if(resultCode==RESULT_OK){
                     ArrayList<FilterBean> arrayList= (ArrayList<FilterBean>) data.getSerializableExtra("result");
                     // Log.d("a",arrayList.toString());
-                    if(arrayList.size()<3)
+                    if(arrayList.size()<4)
                     {
                         buildDialog("Error","确保进行了每项选择！",this);
                         break;
@@ -277,6 +281,12 @@ public class activity_homepage extends AppCompatActivity {
                     else if(arrayList.get(1).name.equals("按点赞量排序")) sortMethod=2;
                     else if(arrayList.get(1).name.equals("按评论量排序")) sortMethod=3;
                     tagSelected=arrayList.get(2).name;
+                    blockSelected=arrayList.get(3).name;
+                    if (blockSelected.equals("屏蔽")) {
+                        blockMethod = 1;
+                    } else {
+                        blockMethod = 0;
+                    }
                     SharedPreferences.Editor editor=mPreferences.edit();
                     editor.putString(checkSubscribeString,arrayList.get(0).id);
                     editor.putString(sortMethodString,arrayList.get(1).id);
@@ -286,7 +296,7 @@ public class activity_homepage extends AppCompatActivity {
                     posts.clear();
                     mPostRecyclerView.setAdapter(mPostAdapter);
                     LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
-                    String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
+                    String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\",\"block\":\"" + blockMethod + "\"";
                     JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
                     System.out.println(JsonStr);
                     String requestUrl = getString(R.string.ipv4)+"getPostsWithConstraints/";
@@ -383,6 +393,39 @@ public class activity_homepage extends AppCompatActivity {
                                         }
                                     }
                                 });
+//                                handler.post(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        if (blockSelected.equals("屏蔽")) {
+//                                            for (Post post : posts) {
+//                                                String username = post.getAuthor();
+//                                                if (blockUsernames.contains(username)) {
+//                                                    posts.remove(post);
+//                                                    mPostRecyclerView.setAdapter(mPostAdapter);
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                });
+//                                if (blockSelected.equals("屏蔽")) {
+//                                    posts.clear();
+//                                    for (int i = 0; i < posts.size(); i++) {
+//                                        String username = posts.get(i).getAuthor();
+//                                        for (String usrname : blockUsernames) {
+//                                            if (usrname.equals(username)) {
+//                                                posts.remove(posts.get(i));
+//                                            }
+//                                        }
+//                                    }
+//                                    System.out.println(posts.size());
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mPostAdapter = new PostAdapter(posts);
+                                            mPostRecyclerView.setAdapter(mPostAdapter);
+                                        }
+                                    });
+                                }
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -391,11 +434,13 @@ public class activity_homepage extends AppCompatActivity {
                                     }
                                 });
                             }
-                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
-                        }
-                    });
+//                            LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                        });
+                    }
                 }
         }
+    public void blockUser(View v) {
+
     }
 
     public void jumpToHomePage(){

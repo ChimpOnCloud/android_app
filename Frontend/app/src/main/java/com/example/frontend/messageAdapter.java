@@ -46,19 +46,19 @@ public class messageAdapter extends RecyclerView.Adapter<messageViewHolder> {
 
 
 class messageViewHolder extends RecyclerView.ViewHolder{
-    public final ImageButton userIcon;
+//    public final ImageButton userIcon;
     public final TextView userName;
     public final TextView content;
     public message mMessage;
     public messageViewHolder(@NonNull View itemView, messageAdapter adapter) {
         super(itemView);
-        userIcon=itemView.findViewById(R.id.userIcon);
+//        userIcon=itemView.findViewById(R.id.userIcon);
         userName=itemView.findViewById(R.id.userName);
         content=itemView.findViewById(R.id.content);
-        userIcon.setOnClickListener(view -> {
-            Intent intent=new Intent(itemView.getContext(),activity_userinfo.class);
-            //todo: call another user's userinfo page
-            //itemView.getContext().startActivity(intent);
-        });
+//        userIcon.setOnClickListener(view -> {
+//            Intent intent=new Intent(itemView.getContext(),activity_userinfo.class);
+//            //todo: call another user's userinfo page
+//            //itemView.getContext().startActivity(intent);
+//        });
     }
 }

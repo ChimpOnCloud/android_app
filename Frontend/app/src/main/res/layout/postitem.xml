@@ -69,6 +69,16 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/post_block"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="屏蔽此用户"
+                android:padding="0dp"
+                android:onClick="blockUser"
+                android:textColor="#ffffff"
+                android:background="@drawable/bg_corner_image"
+                android:layout_gravity="center_vertical"/>
             <TextView
                 android:id="@+id/post_topic"
                 android:layout_width="wrap_content"

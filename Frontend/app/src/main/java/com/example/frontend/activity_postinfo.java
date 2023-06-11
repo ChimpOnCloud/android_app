@@ -436,6 +436,10 @@ public class activity_postinfo extends AppCompatActivity {
         startActivity(intent);
     }
     public void share(View v) {
-
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, post.getTitle());
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "选择分享应用"));
     }
 }

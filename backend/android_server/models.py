@@ -65,3 +65,7 @@ class chat(models.Model):
 class chats(models.Model):
     user_ID = models.AutoField(primary_key=True)
     chat_contain = models.ManyToManyField(chat)
+
+
+class block(models.Model):
+    user_ID = models.AutoField(primary_key=True)
