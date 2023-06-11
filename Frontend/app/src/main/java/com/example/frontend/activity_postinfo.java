@@ -42,6 +42,7 @@ import okhttp3.Response;
 
 public class activity_postinfo extends AppCompatActivity {
     Post post;
+    ImageView postAvatar;
     TextView titleTextView;
     TextView contentTextView;
     TextView authorTextView;
@@ -71,6 +72,15 @@ public class activity_postinfo extends AppCompatActivity {
 
         // 获取传递过来的 Post 对象
         post = getIntent().getParcelableExtra("post");
+        postAvatar = findViewById(R.id.post_avatar);
+        String avatarUrl = getString(R.string.ipv4) + "getAvatar/" + post.getAuthor();
+
+        Picasso p = new Picasso.Builder(this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+        p.load(avatarUrl)
+                .placeholder(R.drawable.ic_default_avatar)
+                .fit()
+                .centerCrop() // 可选，如果需要将图像裁剪为正方形
+                .into(postAvatar);
         // 在页面中显示该 Post 的信息
         titleTextView = findViewById(R.id.post_title);
         titleTextView.setText(post.getTitle());
@@ -424,5 +434,8 @@ public class activity_postinfo extends AppCompatActivity {
         user tmpUser=new user(post.getAuthor());
         intent.putExtra("user",tmpUser);
         startActivity(intent);
+    }
+    public void share(View v) {
+
     }
 }

@@ -149,7 +149,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     @Override
                     public void onResponse(Call call, final Response response)
                             throws IOException {
-                        Log.d("a","reached here");
+//                        Log.d("a","reached here");
                         Message msg = new Message();
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         String msg_obj_string = msg.obj.toString();
@@ -160,9 +160,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                                     holder.mSubscribed.setText("");
                                 }
                             });
-                            Log.d("a","not");
+//                            Log.d("a","not");
                         } else if (msg_obj_string.equals("followed")){
-                            Log.d("a","fol");
+//                            Log.d("a","fol");
                             holder.sub=true;
                             holder.handler.post(new Runnable() {
                                 @Override
@@ -232,24 +232,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         public void bind(Post post) {
+            String avatarUrl = context.getString(R.string.ipv4) + "getAvatar/" + post.getAuthor();
+
+            Picasso p = new Picasso.Builder(context).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
+            p.load(avatarUrl)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .fit()
+                    .centerCrop() // 可选，如果需要将图像裁剪为正方形
+                    .into(mAvatar);
             // todo: 在Avatar中存储String的情况下，将数据绑定到ViewHolder中的控件上
             mAuthor.setText(post.getAuthor());
             mTime.setText(post.getTime());
             mTitle.setText(post.getTitle());
             mContent.setText(post.getContent());
-//            if(post.getImages() != null) {
-//                for (int i = 0; i < post.getImages().size(); i++) {
-//                    if (post.getImages().get(i) != "") {
-//                        mImages[i].setVisibility(View.VISIBLE);
-//                        // todo: 类似的
-//                        // mImages[i].setImageResource(post.getImages()[i]);
-//                    } else {
-//                        mImages[i].setVisibility(View.GONE);
-//                    }
-//                }
-//            }
             mLocation.setText(post.getLocation());
-            mTag.setText(post.getTag());
+            mTag.setText(Post.tagList[Integer.parseInt(post.getTag())]);
             mComment.setText(String.valueOf(post.getCommentNumber()));
             mThumbs.setText(String.valueOf(post.getThumbsupNumber()));
             mLike.setText(String.valueOf(post.getLikeNumber()));

@@ -456,7 +456,6 @@ def get_all_posts(request):
             return_dict['num_imgs' + str(i)] = len(imgs)
 
         return_dict['num'] = len(posts)
-        print(return_dict)
 
     return HttpResponse(json.dumps(return_dict))
 
@@ -508,6 +507,11 @@ def get_liked_posts(request):
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
                 return_dict['commentusername' +
                             str(i) + 'number' + str(j)] = m_username
+            imgs = post.image_contain.all()
+            for k, img in enumerate(imgs):
+                return_dict['pyq_' + str(i) + '_img' +
+                            str(k)] = str(img.image_content)
+            return_dict['num_imgs' + str(i)] = len(imgs)
         return_dict['num'] = len(posts)
 
     return HttpResponse(json.dumps(return_dict))
@@ -567,6 +571,11 @@ def get_all_posts_with_constraints(request):
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
                 return_dict['commentusername' +
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            imgs = post.image_contain.all()
+            for k, img in enumerate(imgs):
+                return_dict['pyq_' + str(i) + '_img' +
+                            str(k)] = str(img.image_content)
+            return_dict['num_imgs' + str(i)] = len(imgs)
         return_dict['num'] = len(m_posts)
     return HttpResponse(json.dumps(return_dict))
 
@@ -582,7 +591,6 @@ def get_searched_pyq(request):
         post_data = json.loads(request.body)
         target_name = post_data['targetName']
         target_kind = post_data['targetKind']
-        print(target_name)
         return_dict = {}
         # 模糊搜索
         if target_kind == 'title':
@@ -617,9 +625,15 @@ def get_searched_pyq(request):
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
                 return_dict['commentusername' +
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            imgs = post.image_contain.all()
+            for k, img in enumerate(imgs):
+                return_dict['pyq_' + str(i) + '_img' +
+                            str(k)] = str(img.image_content)
+            return_dict['num_imgs' + str(i)] = len(imgs)
         return_dict['num'] = len(return_posts)
         if len(return_dict) == 0:
             return HttpResponse('notfound')
+        print(return_dict)
         return HttpResponse(json.dumps(return_dict))
 
 
@@ -718,7 +732,7 @@ def get_user_posts(request):
         post_name_dict['#吐槽盘点'] = 4
         username = data['username']
         ID = account.objects.filter(username=username).first().__dict__['ID']
-        posts = pyq.objects.filter(ID=ID)
+        posts = pyq.objects.filter(userID=ID)
         return_dict = {}
         for i, post in enumerate(posts):
             userID = post.__dict__['userID']
@@ -745,6 +759,11 @@ def get_user_posts(request):
                 return_dict['commentusername' +
                             str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
             return_dict['num'] = len(posts)
+            imgs = post.image_contain.all()
+            for k, img in enumerate(imgs):
+                return_dict['pyq_' + str(i) + '_img' +
+                            str(k)] = str(img.image_content)
+            return_dict['num_imgs' + str(i)] = len(imgs)
         if not posts:
             return HttpResponse('error')
         return HttpResponse(json.dumps(return_dict))

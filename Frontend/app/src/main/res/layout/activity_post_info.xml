@@ -84,13 +84,13 @@
                     android:textColor="@android:color/darker_gray"/>
 
             </LinearLayout>
-
             <Button
                 android:id="@+id/follow_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="share"
                 android:background="@drawable/bg_follow_button"
-                android:text="关注"
+                android:text="分享"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
 

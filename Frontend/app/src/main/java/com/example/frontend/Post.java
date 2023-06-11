@@ -235,7 +235,7 @@ public class Post implements Parcelable {
     public static class PosttComparatorTime implements Comparator<Post> {
         @Override
         public int compare(Post obj1, Post obj2) {
-            return obj1.getTime().compareTo(obj2.getTime());
+            return obj2.getTime().compareTo(obj1.getTime());
         }
     }
     public static class PostComparatorThumbsup implements Comparator<Post> {

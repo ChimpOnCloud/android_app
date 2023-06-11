@@ -75,10 +75,16 @@ public class activity_likedpost extends AppCompatActivity {
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
 //                    System.out.println();
-                    ArrayList<String> bitmaps = new ArrayList<>();
+//                    ArrayList<String> bitmaps = new ArrayList<>();
                     // TODO: initializt bitmaps
 //                    System.out.println();
                     for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
+                        ArrayList<String> bitmaps = new ArrayList<>();
+                        int lenImgs = Integer.parseInt(msg_json.getString("num_imgs" + i));
+//                        Log.d("1", String.valueOf(lenImgs));
+                        for (int j = 0; j < lenImgs; j++) {
+                            bitmaps.add(msg_json.getString("pyq_" + i + "_img" + j));
+                        }
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
                                 msg_json.getString("posttime" + i).substring(0, 19),

@@ -42,6 +42,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.security.Guard;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -210,8 +211,14 @@ public class activity_userinfo extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    ArrayList<String> bitmaps = new ArrayList<>();
+//                    ArrayList<String> bitmaps = new ArrayList<>();
                     for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
+                        ArrayList<String> bitmaps = new ArrayList<>();
+                        int lenImgs = Integer.parseInt(msg_json.getString("num_imgs" + i));
+//                        Log.d("1", String.valueOf(lenImgs));
+                        for (int j = 0; j < lenImgs; j++) {
+                            bitmaps.add(msg_json.getString("pyq_" + i + "_img" + j));
+                        }
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
                                 msg_json.getString("posttime" + i).substring(0, 19),
@@ -224,11 +231,20 @@ public class activity_userinfo extends AppCompatActivity {
                                 Integer.parseInt(msg_json.getString("comment_number" + i)),
                                 bitmaps);
                         handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            postInsert(post);
-                        }
-                    });
+                            @Override
+                            public void run() {
+                                postInsert(post);
+                            }
+                        });
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Post.PosttComparatorTime comparator = new Post.PosttComparatorTime();
+                                Collections.sort(mPostList, comparator);
+                                mAdapter = new PostAdapter(mPostList);
+                                mRecyclerview.setAdapter(mAdapter);
+                            }
+                        });
                     }
 //                    handler.post(new Runnable() {
 //                        @Override

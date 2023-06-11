@@ -137,6 +137,7 @@ public class activity_homepage extends AppCompatActivity {
     }
     @Override
     public void onStart() {
+        System.out.println("start");
         super.onStart();
         posts = new ArrayList<>();
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
@@ -328,10 +329,15 @@ public class activity_homepage extends AppCompatActivity {
                                         posts.clear();
                                     }
                                 });
-                                ArrayList<String> bitmaps = new ArrayList<>();
                                 // TODO: initializt bitmaps
 //                    System.out.println();
                                 for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
+                                    ArrayList<String> bitmaps = new ArrayList<>();
+                                    int lenImgs = Integer.parseInt(msg_json.getString("num_imgs" + i));
+//                        Log.d("1", String.valueOf(lenImgs));
+                                    for (int j = 0; j < lenImgs; j++) {
+                                        bitmaps.add(msg_json.getString("pyq_" + i + "_img" + j));
+                                    }
                                     Post post = new Post("",
                                             msg_json.getString("username" + i),
                                             msg_json.getString("posttime" + i).substring(0, 19),
@@ -343,6 +349,15 @@ public class activity_homepage extends AppCompatActivity {
                                             Integer.parseInt(msg_json.getString("shoucang_number" + i)),
                                             Integer.parseInt(msg_json.getString("comment_number" + i)),
                                             bitmaps);
+                                    ArrayList<message> cur_comments = new ArrayList<message>();
+//                        Log.d("hello", msg_json.getString("comment_number" + i));
+                                    for (int j = 0; j < Integer.parseInt(msg_json.getString("comment_number" + i)); j++) {
+                                        cur_comments.add(new message(msg_json.getString("commentcontent" + i + "number" + j),
+                                                new user(msg_json.getString("commentusername" + i + "number" + j))));
+//                            Log.d("msg", cur_comments.get(j).getMessageString());
+//                            Log.d("usr", cur_comments.get(j).getFrom().getUsername());
+                                    }
+                                    post.setComments(cur_comments);
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
