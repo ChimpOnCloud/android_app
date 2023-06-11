@@ -16,6 +16,7 @@ import java.sql.Array;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 public class Post implements Parcelable {
@@ -231,5 +232,25 @@ public class Post implements Parcelable {
     }
     public ArrayList<message> getComments(){
         return comments;
+    }
+    public static class PosttComparatorTime implements Comparator<Post> {
+        @Override
+        public int compare(Post obj1, Post obj2) {
+            return obj1.getTime().compareTo(obj2.getTime());
+        }
+    }
+    public static class PostComparatorThumbsup implements Comparator<Post> {
+        @Override
+        public int compare(Post obj1, Post obj2) {
+            // 获取 obj1 和 obj2 的 attr 属性值
+            int attr1 = obj1.getThumbsupNumber();
+            int attr2 = obj2.getThumbsupNumber();
+
+            // 比较 attr 属性值并返回比较结果
+//            return Integer.compare(attr1, attr2);
+            if (attr1 == attr2) return 0;
+            else if (attr1 < attr2) return 1;
+            else return -1;
+        }
     }
 }

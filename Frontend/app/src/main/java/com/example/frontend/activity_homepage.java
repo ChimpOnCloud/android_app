@@ -19,6 +19,7 @@ import android.view.View;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.CollectionCodec;
 import com.example.frontend.Filter.FilterActivity;
 import com.example.frontend.Filter.FilterBean;
 import com.example.frontend.Utils.LoadingDialogUtil;
@@ -28,6 +29,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -72,6 +74,12 @@ public class activity_homepage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         setContentView(R.layout.activity_homepage);
+        onlyCheckSubscribed=false;
+        if(mPreferences.getString(checkSubscribeString, "").equals("开启")) onlyCheckSubscribed=true;
+        sortMethod=0;
+        if(mPreferences.getString(sortMethodString, "").equals("按时间排序")) sortMethod=1;
+        else if(mPreferences.getString(sortMethodString, "").equals("按热度排序")) sortMethod=2;
+        tagSelected=mPreferences.getString(tagSelectedString, "");
         username = mPreferences.getString("username", username);
         password = mPreferences.getString("password", password);
         nickname = mPreferences.getString("nickname", nickname);
@@ -201,6 +209,21 @@ public class activity_homepage extends AppCompatActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            if (sortMethod == 0) {
+                            } else if (sortMethod == 2) {
+                                Post.PostComparatorThumbsup comparator = new Post.PostComparatorThumbsup();
+                                Collections.sort(posts, comparator);
+                            } else {
+                                Post.PosttComparatorTime comparator = new Post.PosttComparatorTime();
+                                Collections.sort(posts, comparator);
+                                mPostAdapter = new PostAdapter(posts);
+                                mPostRecyclerView.setAdapter(mPostAdapter);
+                            }
+                        }
+                    });
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
                             mPostAdapter = new PostAdapter(posts);
                             mPostRecyclerView.setAdapter(mPostAdapter);
                         }
@@ -311,6 +334,21 @@ public class activity_homepage extends AppCompatActivity {
                                         }
                                     });
                                 }
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (sortMethod == 0) {
+                                        } else if (sortMethod == 2) {
+                                            Post.PostComparatorThumbsup comparator = new Post.PostComparatorThumbsup();
+                                            Collections.sort(posts, comparator);
+                                        } else {
+                                            Post.PosttComparatorTime comparator = new Post.PosttComparatorTime();
+                                            Collections.sort(posts, comparator);
+                                            mPostAdapter = new PostAdapter(posts);
+                                            mPostRecyclerView.setAdapter(mPostAdapter);
+                                        }
+                                    }
+                                });
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
