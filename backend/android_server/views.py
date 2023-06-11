@@ -341,25 +341,6 @@ def find_related_chat_users(request):
             return HttpResponse(json.dumps(return_dict))
 
 
-def get_related_messages(request):
-    if request.method == 'POST':
-        user_data = json.loads(request.body)
-        # TODO: return related messages
-        src_user_dict = account.objects.filter(
-            username=user_data['srcUsername']).first().__dict__
-        dst_user_dict = account.objects.filter(
-            username=user_data['dstUsername']).first().__dict__
-
-        target_chat = chat.objects.get(
-            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
-        return_dict = {}
-        for i, msg in enumerate(target_chat.msg_contain.all()):
-            msg_dict = msg.__dict__
-            return_dict['msg' + str(i)] = msg_dict['msg_content']
-            return_dict['is_send' + str(i)] = msg_dict['is_send']
-        return HttpResponse(json.dumps(return_dict))
-
-
 def post_publish(request):
     if request.method == 'POST':
         post_data = json.loads(request.body)
@@ -368,12 +349,15 @@ def post_publish(request):
             username=post_username).first().__dict__
         pyq.objects.create(title=post_data['titleString'], content=post_data['contentString'],
                            tag=post_data['tagString'], location=post_data['locationString'],
-                           username=post_user_dict['username'])
+                           username=post_user_dict['username'], userID=post_user_dict['ID'])
         return HttpResponse('ok')
 
 
 def get_all_posts(request):
     if request.method == 'POST':
+        # for i, obj in enumerate(comment.objects.all()):
+        #     obj.delete()
+        # return HttpResponse('ok')
         post_name_dict = {}
         post_name_dict['#默认话题'] = 0
         post_name_dict['#校园资讯'] = 1
@@ -383,18 +367,86 @@ def get_all_posts(request):
         return_dict = {}
         posts = pyq.objects.all()
         for i, post in enumerate(posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
                         str(i)] = str(post_name_dict[post.__dict__['tag']])
             return_dict['title' + str(i)] = post.__dict__['title']
             return_dict['content' + str(i)] = post.__dict__['content']
             return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['username' + str(i)] = username
             return_dict['location' + str(i)] = post.__dict__['location']
             return_dict['id' + str(i)] = post.__dict__['ID']
             return_dict['like_number' +
                         str(i)] = len(post.like_account_contain.all())
-            # print(return_dict['like_number' +
-            #                   str(i)])
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                m_userid = m_comment.__dict__['comment_userid']
+                m_username = account.objects.filter(
+                    ID=m_userid).first().__dict__['username']
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_username
+        return_dict['num'] = len(posts)
+
+    return HttpResponse(json.dumps(return_dict))
+
+
+def get_liked_posts(request):
+    if request.method == 'POST':
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        return_dict = {}
+
+        user_data = json.loads(request.body)
+        username = user_data['username']
+        user = account.objects.filter(username=username).first()
+        user_id = user.__dict__['ID']
+        m_posts = pyq.objects.all()
+        posts = []
+        for post in m_posts:
+            # print(post.shoucang_account_contain.all())
+            if user in post.shoucang_account_contain.all():
+                posts.append(post)
+        for i, post in enumerate(posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
+            return_dict['tag' +
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
+            return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                m_userid = m_comment.__dict__['comment_userid']
+                m_username = account.objects.filter(
+                    ID=m_userid).first().__dict__['username']
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_username
+        return_dict['num'] = len(posts)
+
     return HttpResponse(json.dumps(return_dict))
 
 
@@ -403,6 +455,9 @@ def get_all_posts_with_constraints(request):
         post_data = json.loads(request.body)
         onlyCheckSubscribed = post_data['onlyCheckSubscribed']
         tag = post_data['tag']
+        src_username = post_data['srcUsername']
+        src_ID = account.objects.filter(
+            username=src_username).first().__dict__["ID"]
         post_name_dict = {}
         post_name_dict['#默认话题'] = 0
         post_name_dict['#校园资讯'] = 1
@@ -410,32 +465,46 @@ def get_all_posts_with_constraints(request):
         post_name_dict['#思绪随笔'] = 3
         post_name_dict['#吐槽盘点'] = 4
         return_dict = {}
-        posts = pyq.objects.all()
-        cnt = 0
-        # print(post_name_dict[tag])
-        for i, post in enumerate(posts):
-            if onlyCheckSubscribed == "true":
-                srcusername = post_data['srcUsername']
-                dstusername = post.__dict__['username']
-                srcID = account.objects.filter(
-                    username=srcusername).first().__dict__['ID']
-                dstID = account.objects.filter(
-                    username=dstusername).first().__dict__['ID']
+        m_posts = pyq.objects.all()
+
+        for post in m_posts:
+            if onlyCheckSubscribed == 'true':
+                dst_ID = post.userID
                 potential_follow = followperson.objects.filter(
-                    followerID=srcID, followedpersonID=dstID)
+                    followerID=src_ID, followedpersonID=dst_ID)
                 if not potential_follow:
+                    m_posts = m_posts.exclude(ID=post.ID)
                     continue
-            if str(tag) != '不限':
-                if post_name_dict[post.__dict__['tag']] != post_name_dict[str(tag)]:
+            if tag != '不限':
+                if not post_name_dict[post.tag] == post_name_dict[tag]:
+                    m_posts = m_posts.exclude(ID=post.ID)
                     continue
+        # print(post_name_dict[tag])
+        for i, post in enumerate(m_posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
-                        str(cnt)] = str(post_name_dict[post.__dict__['tag']])
-            return_dict['title' + str(cnt)] = post.__dict__['title']
-            return_dict['content' + str(cnt)] = post.__dict__['content']
-            return_dict['posttime' + str(cnt)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(cnt)] = post.__dict__['username']
-            return_dict['location' + str(cnt)] = post.__dict__['location']
-            cnt = cnt + 1
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
+            return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+        return_dict['num'] = len(m_posts)
     return HttpResponse(json.dumps(return_dict))
 
 
@@ -462,14 +531,30 @@ def get_searched_pyq(request):
         elif target_kind == 'tag':
             return_posts = pyq.objects.filter(tag__icontains=target_name)
         for i, post in enumerate(return_posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
             return_dict['tag' +
                         str(i)] = str(post_name_dict[post.__dict__['tag']])
             return_dict['title' + str(i)] = post.__dict__['title']
             return_dict['content' + str(i)] = post.__dict__['content']
-            return_dict['posttime' +
-                        str(i)] = str(post.__dict__['posttime'])
-            return_dict['username' + str(i)] = post.__dict__['username']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
             return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+        return_dict['num'] = len(return_posts)
         if len(return_dict) == 0:
             return HttpResponse('notfound')
         return HttpResponse(json.dumps(return_dict))
@@ -488,6 +573,150 @@ def handle_like(request):
         else:
             m_pyq.like_account_contain.add(like_user)
             return HttpResponse('addlike')
+
+
+def handle_shoucang(request):
+    if request.method == 'POST':
+        pyq_data = json.loads(request.body)
+        pyq_id = pyq_data['pyqID']
+        username = pyq_data['username']
+        like_user = account.objects.filter(username=username).first()
+        m_pyq = pyq.objects.filter(ID=pyq_id).first()
+        if like_user in m_pyq.shoucang_account_contain.all():  # 取消赞
+            m_pyq.shoucang_account_contain.remove(like_user)
+            return HttpResponse('cancelshoucang')
+        else:
+            m_pyq.shoucang_account_contain.add(like_user)
+            return HttpResponse('addshoucang')
+
+
+def handle_comment(request):
+    if request.method == 'POST':
+        pyq_data = json.loads(request.body)
+        pyq_id = pyq_data['pyqID']
+        username = pyq_data['username']
+        like_user = account.objects.filter(username=username).first()
+        m_pyq = pyq.objects.filter(ID=pyq_id).first()
+        m_comment = pyq_data['commentString']
+        m_userid = account.objects.filter(
+            username=username).first().__dict__['ID']
+        new_comment = comment.objects.create(comment_username=username,
+                                             comment_content=m_comment,
+                                             comment_userid=m_userid)
+        m_pyq.comment_contain.add(new_comment)
+        return HttpResponse('ok')
+
+
+def get_related_messages(request):
+    if request.method == 'POST':
+        user_data = json.loads(request.body)
+        # TODO: return related messages
+        src_user_dict = account.objects.filter(
+            username=user_data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=user_data['dstUsername']).first().__dict__
+
+        target_chat = chat.objects.get(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID'])
+        return_dict = {}
+        for i, msg in enumerate(target_chat.msg_contain.all()):
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
+        return HttpResponse(json.dumps(return_dict))
+
+
+def get_all_messages(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        src_user_dict = account.objects.filter(
+            username=data['srcUsername']).first().__dict__
+        dst_user_dict = account.objects.filter(
+            username=data['dstUsername']).first().__dict__
+        target_chat = chat.objects.filter(
+            from_id=src_user_dict['ID'], oppo_id=dst_user_dict['ID']).first()
+        messages = target_chat.msg_contain.all()
+        return_dict = {}
+        for i, msg in enumerate(messages):
+            msg_dict = msg.__dict__
+            return_dict['msg' + str(i)] = msg_dict['msg_content']
+            return_dict['is_send' + str(i)] = msg_dict['is_send']
+        return HttpResponse(json.dumps(return_dict))
+
+
+def get_user_posts(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_name_dict = {}
+        post_name_dict['#默认话题'] = 0
+        post_name_dict['#校园资讯'] = 1
+        post_name_dict['#二手交易'] = 2
+        post_name_dict['#思绪随笔'] = 3
+        post_name_dict['#吐槽盘点'] = 4
+        username = data['username']
+        ID = account.objects.filter(username=username).first().__dict__['ID']
+        posts = pyq.objects.filter(ID=ID)
+        return_dict = {}
+        for i, post in enumerate(posts):
+            userID = post.__dict__['userID']
+            username = account.objects.filter(
+                ID=userID).first().__dict__['username']
+            return_dict['tag' +
+                        str(i)] = str(post_name_dict[post.__dict__['tag']])
+            return_dict['title' + str(i)] = post.__dict__['title']
+            return_dict['content' + str(i)] = post.__dict__['content']
+            return_dict['posttime' + str(i)] = str(post.__dict__['posttime'])
+            return_dict['username' + str(i)] = username
+            return_dict['location' + str(i)] = post.__dict__['location']
+            return_dict['id' + str(i)] = post.__dict__['ID']
+            return_dict['like_number' +
+                        str(i)] = len(post.like_account_contain.all())
+            return_dict['shoucang_number' +
+                        str(i)] = len(post.shoucang_account_contain.all())
+            return_dict['comment_number' +
+                        str(i)] = len(post.comment_contain.all())
+            for j, m_comment in enumerate(post.comment_contain.all()):
+                # print(m_comment.__dict__)
+                return_dict['commentcontent' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_content']
+                return_dict['commentusername' +
+                            str(i) + 'number' + str(j)] = m_comment.__dict__['comment_username']
+            return_dict['num'] = len(posts)
+        if not posts:
+            return HttpResponse('error')
+        return HttpResponse(json.dumps(return_dict))
+
+
+def get_author(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data['username']
+        user_dict = account.objects.filter(username=username).first().__dict__
+        return HttpResponse(json.dumps(user_dict))
+
+
+def get_certain_post(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data['username']
+        post_ID = data['postID']
+        user_ID = account.objects.filter(
+            username=username).first().__dict__['ID']
+        post = pyq.objects.filter(ID=post_ID).first()
+        post_like_relation = post.like_account_contain.filter(ID=user_ID)
+        post_shoucang_relation = post.shoucang_account_contain.filter(
+            ID=user_ID)
+        return_dict = {}
+        if post_like_relation:
+            return_dict['thumbsup'] = 'yes'
+        else:
+            return_dict['thumbsup'] = 'no'
+        if post_shoucang_relation:
+            return_dict['like'] = 'yes'
+        else:
+            return_dict['like'] = 'no'
+        print(return_dict)
+        return HttpResponse(json.dumps(return_dict))
 
 
 # def is_follow(request):

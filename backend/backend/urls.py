@@ -38,7 +38,14 @@ urlpatterns = [
     path('getSearchedPyq/', views.get_searched_pyq),
     path('getPostsWithConstraints/', views.get_all_posts_with_constraints),
     path('handleLike/', views.handle_like),
-    path('getFollowuser/', views.get_followuser)
+    path('getFollowuser/', views.get_followuser),
+    path('getAllMessages/', views.get_all_messages),
+    path('getUserPosts/', views.get_user_posts),
+    path('getAuthor/', views.get_author),
+    path('getCertainPost/', views.get_certain_post),
+    path('handleShoucang/', views.handle_shoucang),
+    path('handleComment/', views.handle_comment),
+    path('getLikedPosts/', views.get_liked_posts),
     # path('isFollow/', views.is_follow),
 ]
 

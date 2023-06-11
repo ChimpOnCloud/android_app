@@ -146,16 +146,17 @@ public class activity_search extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    for (int i = 0; i < msg_json.size() / 8; i++) {
+                    for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
-                                msg_json.getString("posttime" + i).substring(0,19),
+                                msg_json.getString("posttime" + i).substring(0, 19),
                                 msg_json.getString("title" + i),
                                 msg_json.getString("content" + i),
                                 msg_json.getString("tag" + i),
                                 msg_json.getString("id" + i),
-                                // bug here: search an empty content
-                                Integer.parseInt(msg_json.getString("like_number" + i)));
+                                Integer.parseInt(msg_json.getString("like_number" + i)),
+                                Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+                                Integer.parseInt(msg_json.getString("comment_number" + i)));
                         mAdapter.mPosts.add(post);
                     }
 

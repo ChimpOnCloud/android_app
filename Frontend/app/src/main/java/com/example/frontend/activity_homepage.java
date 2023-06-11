@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -64,6 +65,7 @@ public class activity_homepage extends AppCompatActivity {
     public static String checkSubscribeString="checkSubscribe";
     public static String sortMethodString="sortMethod";
     public static String tagSelectedString="tagSelected";
+    public boolean filtering = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +112,28 @@ public class activity_homepage extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mPostRecyclerView.setLayoutManager(layoutManager);
 
-        // Create a list of Post objects and set the adapter
+        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
+        addPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
+                startActivityForResult(intent,newPost);
+            }
+        });
+        FloatingActionButton filterButton=findViewById(R.id.filter_button);
+        filterButton.setOnClickListener(view -> {
+            Intent intent=new Intent(activity_homepage.this, FilterActivity.class);
+            startActivityForResult(intent,filter);
+        });
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
         posts = new ArrayList<>();
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         // Populate the list with Post objects
         String jsonStr = "";
-        String requestUrl = getString(R.string.ipv4)+"getAllPosts/";
+        String requestUrl = getString(R.string.ipv4) + "getAllPosts/";
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         @SuppressWarnings("deprecation")
@@ -129,7 +147,7 @@ public class activity_homepage extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 System.out.println("failed");
                 LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
-                buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+                buildDialog("Error", "无法连接至服务器。。或许网络出错了？", activity_homepage.this);
                 e.printStackTrace();
             }
 
@@ -149,52 +167,50 @@ public class activity_homepage extends AppCompatActivity {
                     post_name_dict.put("2", "#二手交易");
                     post_name_dict.put("3", "#思绪随笔");
                     post_name_dict.put("4", "#吐槽盘点");
-                    for (int i = 0; i < msg_json.size() / 8; i++) {
+//                    System.out.println();
+                    for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                         Post post = new Post("",
                                 msg_json.getString("username" + i),
-                                msg_json.getString("posttime" + i).substring(0,19),
+                                msg_json.getString("posttime" + i).substring(0, 19),
                                 msg_json.getString("title" + i),
                                 msg_json.getString("content" + i),
                                 msg_json.getString("tag" + i),
                                 msg_json.getString("id" + i),
-                                Integer.parseInt(msg_json.getString("like_number" + i)));
+                                Integer.parseInt(msg_json.getString("like_number" + i)),
+                                Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+                                Integer.parseInt(msg_json.getString("comment_number" + i)));
+//                        String t = "like_number" + i;
+//                        String number = msg_json.getString(t);
+//                        System.out.println(number);
+//                        Log.d("shit", String.valueOf(Integer.parseInt(msg_json.getString(t))));
+//                        int tmp = Integer.parseInt(msg_json.getString(t));
+//                        post.setLikeNumber(tmp);
+//                                Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+//                                Integer.parseInt(msg_json.getString("comment_number" + i)));
+                        ArrayList<message> cur_comments = new ArrayList<message>();
+//                        Log.d("hello", msg_json.getString("comment_number" + i));
+                        for (int j = 0; j < Integer.parseInt(msg_json.getString("comment_number" + i)); j++) {
+                            cur_comments.add(new message(msg_json.getString("commentcontent" + i + "number" + j),
+                                    new user(msg_json.getString("commentusername" + i + "number" + j))));
+//                            Log.d("msg", cur_comments.get(j).getMessageString());
+//                            Log.d("usr", cur_comments.get(j).getFrom().getUsername());
+                        }
+                        post.setComments(cur_comments);
                         posts.add(post);
                     }
                     handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPostAdapter = new PostAdapter(posts);
-                                mPostRecyclerView.setAdapter(mPostAdapter);
-                            }
+                        @Override
+                        public void run() {
+                            mPostAdapter = new PostAdapter(posts);
+                            mPostRecyclerView.setAdapter(mPostAdapter);
+                        }
                     });
                 }
                 LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+//                for (int i = 0; i < posts.size(); i++) {
+//                    System.out.println(posts.get(i).getAuthor());
+//                }
             }
-        });
-
-//        Post post1 = new Post();
-//        Post post2 = new Post();
-//        Post post3 = new Post();
-//        Post post4 = new Post();
-//        posts.add(post1);
-//        posts.add(post2);
-//        posts.add(post3);
-//        posts.add(post4);
-
-//        mPostAdapter = new PostAdapter(posts);
-//        mPostRecyclerView.setAdapter(mPostAdapter);
-        FloatingActionButton addPostButton = findViewById(R.id.add_post_button);
-        addPostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(activity_homepage.this, activity_postedit.class);
-                startActivityForResult(intent,newPost);
-            }
-        });
-        FloatingActionButton filterButton=findViewById(R.id.filter_button);
-        filterButton.setOnClickListener(view -> {
-            Intent intent=new Intent(activity_homepage.this, FilterActivity.class);
-            startActivityForResult(intent,filter);
         });
     }
     @Override
@@ -232,6 +248,7 @@ public class activity_homepage extends AppCompatActivity {
                     editor.apply();
                     // todo: reset pyq in posts while connecting backend
                     posts.clear();
+                    mPostRecyclerView.setAdapter(mPostAdapter);
                     LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
                     String JsonStr = "{\"onlyCheckSubscribed\":\""+ onlyCheckSubscribed + "\"";
                     JsonStr = JsonStr + ",\"tag\":\"" + tagSelected + "\",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
@@ -270,17 +287,29 @@ public class activity_homepage extends AppCompatActivity {
                                 post_name_dict.put("2", "#二手交易");
                                 post_name_dict.put("3", "#思绪随笔");
                                 post_name_dict.put("4", "#吐槽盘点");
-                                for (int i = 0; i < msg_json.size() / 8; i++) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        posts.clear();
+                                    }
+                                });
+                                for (int i = 0; i < Integer.parseInt(msg_json.getString("num")); i++) {
                                     Post post = new Post("",
                                             msg_json.getString("username" + i),
-                                            msg_json.getString("posttime" + i).substring(0,19),
+                                            msg_json.getString("posttime" + i).substring(0, 19),
                                             msg_json.getString("title" + i),
                                             msg_json.getString("content" + i),
                                             msg_json.getString("tag" + i),
                                             msg_json.getString("id" + i),
-                                            // bug here again
-                                            Integer.parseInt(msg_json.getString("like_number" + i)));
-                                    posts.add(post);
+                                            Integer.parseInt(msg_json.getString("like_number" + i)),
+                                            Integer.parseInt(msg_json.getString("shoucang_number" + i)),
+                                            Integer.parseInt(msg_json.getString("comment_number" + i)));
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            posts.add(post);
+                                        }
+                                    });
                                 }
                                 handler.post(new Runnable() {
                                     @Override
@@ -293,47 +322,6 @@ public class activity_homepage extends AppCompatActivity {
                             LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
                         }
                     });
-//                        for (Post mPost : posts) {
-//                            String authorUsername = mPost.getAuthor();
-//                            handler.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    String mJsonStr = "{\"dstUsername\":\""+ authorUsername + "\"";
-//                                    mJsonStr = mJsonStr + ",\"srcUsername\":\"" + activity_homepage.User.getUsername() + "\"}";
-//                                    String mRequestUrl = getString(R.string.ipv4)+"isFollow/";
-//                                    OkHttpClient mclient = new OkHttpClient();
-//                                    MediaType mJSON = MediaType.parse("application/json; charset=utf-8");
-//                                    @SuppressWarnings("deprecation")
-//                                    RequestBody mbody = RequestBody.create(mJSON, mJsonStr);
-//                                    Request mrequest = new Request.Builder()
-//                                            .url(mRequestUrl)
-//                                            .post(mbody)
-//                                            .build();
-//                                    mclient.newCall(mrequest).enqueue(new Callback() {
-//                                        @Override
-//                                        public void onFailure(Call call, IOException e) {
-//                                            System.out.println("failed");
-//                                            e.printStackTrace();
-//                                        }
-//
-//                                        @Override
-//                                        public void onResponse(Call call, final Response response)
-//                                                throws IOException {
-//                                            Message msg = new Message();
-//                                            msg.obj = Objects.requireNonNull(response.body()).string();
-//                                            String msg_obj_string = msg.obj.toString();
-//                                            if (msg_obj_string.equals("notfollowed")) {
-//                                                posts.remove(mPost);
-//                                            } else if (msg_obj_string.equals("followed")){
-//
-//                                            }
-//                                        }
-//                                    });
-//                                }
-//                            });
-//
-                    mPostAdapter = new PostAdapter(posts);
-                    mPostRecyclerView.setAdapter(mPostAdapter);
                 }
         }
     }

@@ -6,8 +6,8 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp"
@@ -36,16 +36,12 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/description"
+        <TextView
+            android:id="@+id/content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
             android:textSize="20dp"
-            android:backgroundTint="@color/white"
-            android:stateListAnimator="@null"
-            android:textColor="@color/purple_500"
-            android:textAllCaps="false"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="6dp"/>
     </LinearLayout>

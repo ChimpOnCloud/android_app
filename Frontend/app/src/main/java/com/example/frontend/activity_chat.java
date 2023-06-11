@@ -95,7 +95,7 @@ public class activity_chat extends AppCompatActivity {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                chatListInsert(msgChat); // overlap??
+                                chatListInsert(msgChat);
                             }
                         });
                     }

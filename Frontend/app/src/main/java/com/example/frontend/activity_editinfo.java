@@ -1,5 +1,6 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.AvatarUtil.getAvatar;
 import static com.example.frontend.Utils.BuildDialogUtil.buildDialog;
 import static com.example.frontend.Utils.PhotoVideoUtil.ALBUM_REQUEST_CODE;
 import static com.example.frontend.Utils.PhotoVideoUtil.REQUEST_CODE_CAPTURE_CAMERA;
@@ -51,7 +52,7 @@ public class activity_editinfo extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getAvatar();
+        getAvatar(this,avatarImageView,activity_homepage.User.getUsername());
     }
 
 
@@ -75,27 +76,7 @@ public class activity_editinfo extends AppCompatActivity {
         passwdEditText.setText(oldPassword);
         nicknameEditText.setText(oldNickname);
         introEditText.setText(oldIntroduction);
-
         photoVideoUtil=new PhotoVideoUtil(this);
-        getAvatar();
-    }
-    public void getAvatar() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("run!");
-
-                String avatarUri= getString(R.string.ipv4) + "getAvatar/" + activity_homepage.User.getUsername();
-
-                Picasso p = new Picasso.Builder(activity_editinfo.this).downloader(new OkHttp3Downloader(new OkHttpClient())).build();
-                p.load(avatarUri)
-                        .placeholder(R.drawable.ic_default_avatar)
-                        .resize(200,200)
-                        .centerCrop() // 可选，如果需要将图像裁剪为正方形
-                        .into(avatarImageView);
-                avatarImageView = findViewById(R.id.imageView_avatar);
-            }
-        });
     }
     public void saveInfo(View v) {
         String newUsername = usrnameEditText.getText().toString();
@@ -202,6 +183,6 @@ public class activity_editinfo extends AppCompatActivity {
             photoVideoUtil.uploadBitmap(bitmap,oldUsername);
             avatarImageView.setImageBitmap(bitmap);
         }
-        getAvatar();
+        getAvatar(this,avatarImageView,activity_homepage.User.getUsername());
     }
 }

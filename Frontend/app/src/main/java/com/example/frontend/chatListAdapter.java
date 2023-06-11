@@ -1,7 +1,14 @@
 package com.example.frontend;
 
+import static com.example.frontend.Utils.AvatarUtil.getAvatar;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +24,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NonNls;
 import java.util.zip.Inflater;
@@ -38,11 +46,10 @@ public class chatListAdapter extends RecyclerView.Adapter<chatViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull chatViewHolder holder, int position) {
-        ArrayList<message> History=mChatList.get(position).getChatContent();
-        if(History.size()!=0) holder.lastChat.setText(History.get(History.size() - 1).getMessageString());
-        else holder.lastChat.setText("");
+        holder.lastChat.setText("");
         holder.chatHistory=mChatList.get(position);
         holder.chatName.setText(mChatList.get(position).getOpposite().getUsername());
+        getAvatar(holder.itemView.getContext(),holder.userIcon,mChatList.get(position).getOpposite().getUsername());
     }
 
     @Override
@@ -64,25 +71,38 @@ class chatViewHolder extends RecyclerView.ViewHolder{
         chatName=itemView.findViewById(R.id.chatName);
         lastChat=itemView.findViewById(R.id.lastChat);
         userIcon.setOnClickListener(view -> {
-            Intent intent=new Intent(context, activity_chatdetail.class);
-            Bundle bundle=new Bundle();
-            bundle.putSerializable("chat",chatHistory);
-            intent.putExtras(bundle);
-            context.startActivity(intent);
+            onChatClicked(context);
         });
         chatName.setOnClickListener(view -> {
-            Intent intent=new Intent(context, activity_chatdetail.class);
-            Bundle bundle=new Bundle();
-            bundle.putSerializable("chat",chatHistory);
-            intent.putExtras(bundle);
-            context.startActivity(intent);
+            onChatClicked(context);
         });
         lastChat.setOnClickListener(view -> {
-            Intent intent=new Intent(context, activity_chatdetail.class);
-            Bundle bundle=new Bundle();
-            bundle.putSerializable("chat",chatHistory);
-            intent.putExtras(bundle);
-            context.startActivity(intent);
+            onChatClicked(context);
         });
+    }
+    public void onChatClicked(Context context){
+        Intent intent=new Intent(context, activity_chatdetail.class);
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("chat",chatHistory);
+        intent.putExtras(bundle);
+        Bitmap bitmap=getBitmap(userIcon.getDrawable());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();//初始化一个流对象
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);//把bitmap100%高质量压缩 到 output对象里
+        byte[] result = output.toByteArray();//转换成功了  result就是一个bit的资源数组
+        intent.putExtra("bitmap",result);
+        context.startActivity(intent);
+    }
+
+    private Bitmap getBitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                        : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        //canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
     }
 }

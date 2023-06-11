@@ -25,6 +25,7 @@ class image(models.Model):
 
 class comment(models.Model):
     comment_username = models.CharField(max_length=250)
+    comment_userid = models.IntegerField(default=0)
     comment_content = models.CharField(default="", max_length=250)
 
 
@@ -32,6 +33,7 @@ class pyq(models.Model):
     # avatar = models.IntegerField(verbose_name='头像')
     tag = models.CharField(verbose_name='tag', max_length=25)
     username = models.CharField(max_length=25, verbose_name='用户名')
+    userID = models.IntegerField(default=0)
     ID = models.AutoField(primary_key=True)
     posttime = models.DateTimeField(auto_now_add=True, verbose_name='发表时间')
     title = models.CharField(max_length=25, verbose_name='标题')
@@ -39,6 +41,8 @@ class pyq(models.Model):
     location = models.CharField(max_length=250, verbose_name='地点')
     image_contain = models.ManyToManyField(image)
     like_account_contain = models.ManyToManyField(account)
+    shoucang_account_contain = models.ManyToManyField(
+        account, related_name='shoucang')
     comment_contain = models.ManyToManyField(comment)
 
 

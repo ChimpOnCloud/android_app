@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
+import java.sql.Array;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +29,8 @@ public class Post implements Parcelable {
     private String tag;
     private int commentNumber = 0;
     private int thumbsupNumber = 0;
-    private int likeNumber;
+    private int likeNumber = 0;
+    private ArrayList<message> comments = new ArrayList<>();
     private String id;
     public static final String[] tagList=new String[]{
         "#默认话题",
@@ -49,7 +51,7 @@ public class Post implements Parcelable {
         this.images=new String[]{"","","","","",""};
         this.id = "-1";
     }
-    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int likenumber) {
+    public Post(String mAvatar, String mAuthor, String mTime, String mTitle, String mContent, String mTag, String id, int thumbsupNumber, int likeNumber, int commentNumber) {
         this.avatar = mAvatar;
         this.author = mAuthor;
         this.time = mTime;
@@ -58,7 +60,9 @@ public class Post implements Parcelable {
         this.tag = mTag;
         this.images = new String[]{"", "", "", "", "", ""};
         this.id = id;
-        this.likeNumber = likenumber;
+        this.thumbsupNumber = thumbsupNumber;
+        this.likeNumber = likeNumber;
+        this.commentNumber = commentNumber;
     }
 
     protected Post(Parcel in) {
@@ -80,6 +84,7 @@ public class Post implements Parcelable {
         thumbsupNumber=in.readInt();
         likeNumber=in.readInt();
         id=in.readString();
+        comments= (ArrayList<message>) in.readSerializable();
     }
 
     public static final Creator<Post> CREATOR = new Creator<Post>() {
@@ -178,6 +183,7 @@ public class Post implements Parcelable {
         parcel.writeInt(thumbsupNumber);
         parcel.writeInt(likeNumber);
         parcel.writeString(id);
+        parcel.writeSerializable(comments);
     }
 
     public void setLocation(String location) {
@@ -208,6 +214,9 @@ public class Post implements Parcelable {
     public void setThumbsupNumber(int thumbsupNumber) {
         this.thumbsupNumber = thumbsupNumber;
     }
+    public void setComments(ArrayList<message> comments) {
+        this.comments = comments;
+    }
 
     public int getCommentNumber() {
         return commentNumber;
@@ -219,5 +228,8 @@ public class Post implements Parcelable {
 
     public int getThumbsupNumber() {
         return thumbsupNumber;
+    }
+    public ArrayList<message> getComments(){
+        return comments;
     }
 }
