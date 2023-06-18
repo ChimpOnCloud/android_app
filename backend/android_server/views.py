@@ -813,14 +813,31 @@ def get_certain_post(request):
 def m_block(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        block.objects.all().delete()
         blockUsername = data['blockUsername']
+        isBlock = data['isBlock']
         blockuserID = account.objects.filter(
             username=blockUsername).first().__dict__['ID']
-        block.objects.create(user_ID=blockuserID)
+        if isBlock == 'true':
+            exists = block.objects.filter(user_ID=blockuserID).exists()
+            if not exists:
+                block.objects.create(user_ID=blockuserID)
+        else:
+            exists = block.objects.filter(user_ID=blockuserID).exists()
+            if exists:
+                deleteuser = block.objects.get(user_ID=blockuserID)
+                deleteuser.delete()
         return HttpResponse('ok')
 
 
+def get_block_usernames(request):
+    if request.method == 'POST':
+        all_data = block.objects.all()
+        return_dict = {}
+        for i, m_block in enumerate(all_data):
+            blockusername = account.objects.filter(
+                ID=m_block.user_ID).first().__dict__['username']
+            return_dict[i] = blockusername
+        return HttpResponse(json.dumps(return_dict))
 # def is_follow(request):
 #     if request.method == 'POST':
 #         json_data = json.loads(request.body)

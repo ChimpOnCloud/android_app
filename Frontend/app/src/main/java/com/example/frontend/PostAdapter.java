@@ -223,57 +223,139 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             blockButton = itemView.findViewById(R.id.post_block);
             context=itemView.getContext();
             blockButton.setOnClickListener(view -> {
+                String isBlock = "true";
                 int position = getAdapterPosition();
                 if (blockButton.getText().toString().equals("屏蔽此用户")) {
-//                    for (Post p : mPosts) {
-//                        if mPosts.
-//                    }
+                    String blockUsername = mPosts.get(position).getAuthor();
+                    if (!activity_homepage.blockUsernames.contains(blockUsername)) {
+                        activity_homepage.blockUsernames.add(blockUsername);
+                    }
+                    isBlock = "true";
+                    System.out.println(activity_homepage.blockUsernames);
+//                    String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\"}";
+                    String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\",\"isBlock\":\""+ isBlock +"\"}";
+                    System.out.println(JsonStr);
+                    String requestUrl = context.getString(R.string.ipv4)+"block/";
+                    OkHttpClient client = new OkHttpClient();
+                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                    @SuppressWarnings("deprecation")
+                    RequestBody body = RequestBody.create(JSON, JsonStr);
+                    Request request = new Request.Builder()
+                            .url(requestUrl)
+                            .post(body)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            System.out.println("failed");
+//                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+//                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+                            e.printStackTrace();
+                        }
 
+                        @Override
+                        public void onResponse(Call call, final Response response)
+                                throws IOException {
+                            Message msg = new Message();
+                            msg.obj = Objects.requireNonNull(response.body()).string();
+                            String msg_obj_string = msg.obj.toString();
+                            if (msg_obj_string.equals("ok")) {
 
-                    blockButton.setText("解除屏蔽");
-                    blockButton.setBackgroundColor(Color.RED);
+                            }
+                        }
+
+                    });
+                    for (Post p : mPosts) {
+                        if (p.getAuthor().equals(mPosts.get(position).getAuthor())) {
+                            blockButton.setText("解除屏蔽");
+                            blockButton.setBackgroundColor(Color.RED);
+                        }
+                    }
                 } else {
-                    blockButton.setText("屏蔽此用户");
-                    blockButton.setBackgroundColor(Color.YELLOW);
+                    String blockUsername = mPosts.get(position).getAuthor();
+                    if (activity_homepage.blockUsernames.contains(blockUsername)) {
+                        activity_homepage.blockUsernames.remove(blockUsername);
+                    }
+                    isBlock = "false";
+                    System.out.println(activity_homepage.blockUsernames);
+//                    String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\"}";
+                    String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\",\"isBlock\":\""+ isBlock +"\"}";
+                    System.out.println(JsonStr);
+                    String requestUrl = context.getString(R.string.ipv4)+"block/";
+                    OkHttpClient client = new OkHttpClient();
+                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                    @SuppressWarnings("deprecation")
+                    RequestBody body = RequestBody.create(JSON, JsonStr);
+                    Request request = new Request.Builder()
+                            .url(requestUrl)
+                            .post(body)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            System.out.println("failed");
+//                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+//                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, final Response response)
+                                throws IOException {
+                            Message msg = new Message();
+                            msg.obj = Objects.requireNonNull(response.body()).string();
+                            String msg_obj_string = msg.obj.toString();
+                            if (msg_obj_string.equals("ok")) {
+
+                            }
+                        }
+
+                    });
+                    for (Post p : mPosts) {
+                        if (p.getAuthor().equals(mPosts.get(position).getAuthor())) {
+                            blockButton.setText("屏蔽此用户");
+                            blockButton.setBackgroundColor(Color.RED);
+                        }
+                    }
                 }
 //                Intent intent=new Intent(context, activity_postinfo.class);
 //                intent.putExtra("post", mPosts.get(position));
 //                context.startActivity(intent);
-                String blockUsername = mPosts.get(position).getAuthor();
-                activity_homepage.blockUsernames.add(blockUsername);
-                System.out.println(activity_homepage.blockUsernames);
-                String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\"}";
-                System.out.println(JsonStr);
-                String requestUrl = context.getString(R.string.ipv4)+"block/";
-                OkHttpClient client = new OkHttpClient();
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-                @SuppressWarnings("deprecation")
-                RequestBody body = RequestBody.create(JSON, JsonStr);
-                Request request = new Request.Builder()
-                        .url(requestUrl)
-                        .post(body)
-                        .build();
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        System.out.println("failed");
-//                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
-//                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onResponse(Call call, final Response response)
-                            throws IOException {
-                        Message msg = new Message();
-                        msg.obj = Objects.requireNonNull(response.body()).string();
-                        String msg_obj_string = msg.obj.toString();
-                        if (msg_obj_string.equals("ok")) {
-
-                        }
-                    }
-
-                });
+//                String blockUsername = mPosts.get(position).getAuthor();
+//                activity_homepage.blockUsernames.add(blockUsername);
+//                System.out.println(activity_homepage.blockUsernames);
+//                String JsonStr = "{\"blockUsername\":\""+ blockUsername + "\"}";
+//                System.out.println(JsonStr);
+//                String requestUrl = context.getString(R.string.ipv4)+"block/";
+//                OkHttpClient client = new OkHttpClient();
+//                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+//                @SuppressWarnings("deprecation")
+//                RequestBody body = RequestBody.create(JSON, JsonStr);
+//                Request request = new Request.Builder()
+//                        .url(requestUrl)
+//                        .post(body)
+//                        .build();
+//                client.newCall(request).enqueue(new Callback() {
+//                    @Override
+//                    public void onFailure(Call call, IOException e) {
+//                        System.out.println("failed");
+////                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+////                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onResponse(Call call, final Response response)
+//                            throws IOException {
+//                        Message msg = new Message();
+//                        msg.obj = Objects.requireNonNull(response.body()).string();
+//                        String msg_obj_string = msg.obj.toString();
+//                        if (msg_obj_string.equals("ok")) {
+//
+//                        }
+//                    }
+//
+//                });
             });
 
             mTitle.setOnClickListener(view -> {

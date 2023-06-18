@@ -49,7 +49,8 @@ urlpatterns = [
     path('showFollowers/', views.show_followers),
     path('uploadImages/', views.upload_images),
     path('clearTmp/', views.clear_tmp),
-    path('block/', views.m_block)
+    path('block/', views.m_block),
+    path('getBlockUsernames/', views.get_block_usernames),
     # path('isFollow/', views.is_follow),
 ]
 

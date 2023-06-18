@@ -144,6 +144,46 @@ public class activity_homepage extends AppCompatActivity {
         System.out.println("start");
         super.onStart();
         posts = new ArrayList<>();
+        blockUsernames = new ArrayList<>();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                String jsonStr = "";
+                String requestUrl = getString(R.string.ipv4)+"getBlockUsernames/";
+                OkHttpClient client = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                @SuppressWarnings("deprecation")
+                RequestBody body = RequestBody.create(JSON, jsonStr);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                        buildDialog("Error","无法连接至服务器。。或许网络出错了？",activity_homepage.this);
+                        // System.out.println("failed");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response)
+                            throws IOException {
+                        LoadingDialogUtil.getInstance(activity_homepage.this).closeLoadingDialog();
+                        Message msg = new Message();
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        String msg_obj_string = msg.obj.toString();
+                        // String repeatString = "repeated!";
+                        JSONObject msg_json = JSONObject.parseObject(msg_obj_string);
+                        for (int i = 0; i < msg_json.size(); i++) {
+                            blockUsernames.add(msg_json.getString(Integer.toString(i)));
+                        }
+//                        System.out.println("shit" + blockUsernames);
+                    }
+                });
+            }
+        });
         LoadingDialogUtil.getInstance(this).showLoadingDialog("Loading...");
         // Populate the list with Post objects
         String jsonStr = "";

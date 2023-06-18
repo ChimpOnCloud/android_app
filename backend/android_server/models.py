@@ -68,4 +68,4 @@ class chats(models.Model):
 
 
 class block(models.Model):
-    user_ID = models.AutoField(primary_key=True)
+    user_ID = models.IntegerField(primary_key=True)
